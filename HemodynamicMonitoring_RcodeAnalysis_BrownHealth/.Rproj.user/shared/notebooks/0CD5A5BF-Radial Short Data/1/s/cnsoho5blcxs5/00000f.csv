@@ -1,0 +1,7 @@
+"0","totml_colloidRS <- "
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(totml_colloid),"
+"0","            Median = median(totml_colloid),"
+"0","            Stan.Dev. = sd(totml_colloid)"
+"0","            )"
+"0","totml_colloidRS"

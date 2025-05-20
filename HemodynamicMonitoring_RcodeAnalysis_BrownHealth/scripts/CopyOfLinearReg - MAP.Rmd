@@ -1,0 +1,2316 @@
+---
+title: "Linear Regression - MAP"
+author: "Matthew Maslow"
+date: "2023-07-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+# Read in data
+```{r}
+Data <- read.csv("CSVdata.csv") 
+Data <- Data %>% mutate(gender = ifelse(gender==1, 1, 0),
+                        scCABG = ifelse(surgtype==1, 1, 0),
+                        scAnyValve = ifelse(surgtype==2, 1, 0),
+                        scCABGValve = ifelse(surgtype==3, 1, 0),
+                        scOther = ifelse(surgtype==4, 1, 0),
+                        bmiGE35 = ifelse(bmi>=35, 0, 1),
+                        bmiGE40 = ifelse(bmi>=40, 0, 1),
+                        hyperlipid = ifelse(hyperlipid=="0", 0, 1),
+                        EF_pre = parse_number(EF_pre, na = "NA"),
+                        EF_post = parse_number(EF_post, na = "NA")
+                        )
+```
+
+# Adding Proper Variables:
+
+```{r}
+BLdata <- 
+  Data %>% 
+  filter(Group_char == "BL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+```{r}
+RLdata <- 
+  Data %>% 
+  filter(Group_char == "RL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+```{r}
+RSdata <- 
+  Data %>% 
+  filter(Group_char == "RS") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+
+# Brachial Long (BL)
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ age, data = BLdata)
+summary(age2BL)
+coef(age2BL)
+confint(age2BL)
+anova(age2BL)
+cbind(age2BL, deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ asaps, data = BLdata)
+summary(asaps2BL)
+coef(asaps2BL)
+confint(asaps2BL)
+anova(asaps2BL)
+cbind(asaps2BL, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ gender, data = BLdata)
+summary(gender2BL)
+coef(gender2BL)
+confint(gender2BL)
+anova(gender2BL)
+cbind(gender2BL, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ weight, data = BLdata)
+summary(wght2BL)
+coef(wght2BL)
+confint(wght2BL)
+anova(wght2BL)
+cbind(wght2BL, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ height, data = BLdata)
+summary(hght2BL)
+coef(hght2BL)
+confint(hght2BL)
+anova(hght2BL)
+cbind(hght2BL, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmi, data = BLdata)
+summary(bmi2BL)
+coef(bmi2BL)
+confint(bmi2BL)
+anova(bmi2BL)
+cbind(bmi2BL, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=0, No=1)
+
+```{r}
+bmi35_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE35, data = BLdata)
+summary(bmi35_2BL)
+coef(bmi35_2BL)
+confint(bmi35_2BL)
+anova(bmi35_2BL)
+cbind(bmi35_2BL, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=0, No=1)
+
+```{r}
+bmi40_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE40, data = BLdata)
+summary(bmi40_2BL)
+coef(bmi40_2BL)
+confint(bmi40_2BL)
+anova(bmi40_2BL)
+cbind(bmi40_2BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ af, data = BLdata, family = "binomial")
+summary(af2BL)
+coef(af2BL)
+confint(af2BL)
+anova(af2BL)
+cbind(af2BL,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ dm, data = BLdata, family = "binomial")
+summary(dm2BL)
+coef(dm2BL)
+confint(dm2BL)
+anova(dm2BL)
+cbind(dm2BL, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ ckd, data = BLdata, family = "binomial")
+summary(ckd2BL)
+coef(ckd2BL)
+confint(ckd2BL)
+anova(ckd2BL)
+cbind(ckd2BL, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ htn, data = BLdata)
+summary(htn2BL)
+coef(htn2BL)
+confint(htn2BL)
+anova(htn2BL)
+cbind(htn2BL, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ copd, data = BLdata, family = "binomial")
+summary(copd2BL)
+coef(copd2BL)
+confint(copd2BL)
+anova(copd2BL)
+cbind(copd2BL, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper2BL)
+coef(hyper2BL)
+confint(hyper2BL)
+anova(hyper2BL)
+cbind(hyper2BL, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ osa, data = BLdata)
+summary(osa2BL)
+coef(osa2BL)
+confint(osa2BL)
+anova(osa2BL)
+cbind(osa2BL, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ pad, data = BLdata)
+summary(pad2BL)
+coef(pad2BL)
+confint(pad2BL)
+anova(pad2BL)
+cbind(pad2BL, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_comorbid, data = BLdata)
+summary(tnComorbid2BL)
+coef(tnComorbid2BL)
+confint(tnComorbid2BL)
+anova(tnComorbid2BL)
+cbind(tnComorbid2BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4)
+
+##### CABG = 1
+
+```{r}
+sc1_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ scCABG, data = BLdata)
+summary(sc1_2BL)
+coef(sc1_2BL)
+confint(sc1_2BL)
+anova(sc1_2BL)
+cbind(sc1_2BL, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ scAnyValve, data = BLdata)
+summary(sc2_2BL)
+coef(sc2_2BL)
+confint(sc2_2BL)
+anova(sc2_2BL)
+cbind(sc2_2BL, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ scCABGValve, data = BLdata)
+summary(sc3_2BL)
+coef(sc3_2BL)
+confint(sc3_2BL)
+anova(sc3_2BL)
+cbind(sc3_2BL, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ scOther, data = BLdata)
+summary(sc4_2BL)
+coef(sc4_2BL)
+confint(sc4_2BL)
+anova(sc4_2BL)
+cbind(sc4_2BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ crystalloid, data = BLdata)
+summary(CrystUse2BL)
+coef(CrystUse2BL)
+confint(CrystUse2BL)
+anova(CrystUse2BL)
+cbind(CrystUse2BL, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ prbc, data = BLdata)
+summary(prbc2BL)
+coef(prbc2BL)
+confint(prbc2BL)
+anova(prbc2BL)
+cbind(prbc2BL, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ autologous, data = BLdata)
+summary(autolgs2BL)
+coef(autolgs2BL)
+confint(autolgs2BL)
+anova(autolgs2BL)
+cbind(autolgs2BL, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_colloid, data = BLdata)
+summary(tnColloid2BL)
+coef(tnColloid2BL)
+confint(tnColloid2BL)
+anova(tnColloid2BL)
+cbind(tnColloid2BL, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ totml_colloid, data = BLdata)
+summary(tmlsColloid2BL)
+coef(tmlsColloid2BL)
+confint(tmlsColloid2BL)
+anova(tmlsColloid2BL)
+cbind(tmlsColloid2BL, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ cellsaver_vol, data = BLdata)
+summary(csvol2BL)
+coef(csvol2BL)
+confint(csvol2BL)
+anova(csvol2BL)
+cbind(csvol2BL, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ urine, data = BLdata)
+summary(urine2BL)
+coef(urine2BL)
+confint(urine2BL)
+anova(urine2BL)
+cbind(urine2BL, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ cpb_duration, data = BLdata)
+summary(cpbDur2BL)
+coef(cpbDur2BL)
+confint(cpbDur2BL)
+anova(cpbDur2BL)
+cbind(cpbDur2BL, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ aortic_clamp_time, data = BLdata)
+summary(acTime2BL)
+coef(acTime2BL)
+confint(acTime2BL)
+anova(acTime2BL)
+cbind(acTime2BL, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_pre, data = BLdata)
+summary(efPre2BL)
+coef(efPre2BL)
+confint(efPre2BL)
+anova(efPre2BL)
+cbind(efPre2BL, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2BL <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_post, data = BLdata)
+summary(efPost2BL)
+coef(efPost2BL)
+confint(efPost2BL)
+anova(efPost2BL)
+cbind(efPost2BL, deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ age, data = BLdata)
+summary(age10BL)
+coef(age10BL)
+confint(age10BL)
+anova(age10BL)
+cbind(age10BL, deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ asaps, data = BLdata)
+summary(asaps10BL)
+coef(asaps10BL)
+confint(asaps10BL)
+anova(asaps10BL)
+cbind(asaps10BL, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ gender, data = BLdata)
+summary(gender10BL)
+coef(gender10BL)
+confint(gender10BL)
+anova(gender10BL)
+cbind(gender10BL, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ weight, data = BLdata)
+summary(wght10BL)
+coef(wght10BL)
+confint(wght10BL)
+anova(wght10BL)
+cbind(wght10BL, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ height, data = BLdata)
+summary(hght10BL)
+coef(hght10BL)
+confint(hght10BL)
+anova(hght10BL)
+cbind(hght10BL, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmi, data = BLdata)
+summary(bmi10BL)
+coef(bmi10BL)
+confint(bmi10BL)
+anova(bmi10BL)
+cbind(bmi10BL, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE35, data = BLdata)
+summary(bmi35_10BL)
+coef(bmi35_10BL)
+confint(bmi35_10BL)
+anova(bmi35_10BL)
+cbind(bmi35_10BL, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE40, data = BLdata)
+summary(bmi40_10BL)
+coef(bmi40_10BL)
+confint(bmi40_10BL)
+anova(bmi40_10BL)
+cbind(bmi40_10BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ af, data = BLdata)
+summary(af10BL)
+coef(af10BL)
+confint(af10BL)
+anova(af10BL)
+cbind(af10BL, deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ dm, data = BLdata)
+summary(dm10BL)
+coef(dm10BL)
+confint(dm10BL)
+anova(dm10BL)
+cbind(dm10BL, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ ckd, data = BLdata)
+summary(ckd10BL)
+coef(ckd10BL)
+confint(ckd10BL)
+anova(ckd10BL)
+cbind(ckd10BL, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ htn, data = BLdata)
+summary(htn10BL)
+coef(htn10BL)
+confint(htn10BL)
+anova(htn10BL)
+cbind(htn10BL, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ copd, data = BLdata)
+summary(copd10BL)
+coef(copd10BL)
+confint(copd10BL)
+anova(copd10BL)
+cbind(copd10BL, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ hyperlipid, data = BLdata)
+summary(hyper10BL)
+coef(hyper10BL)
+confint(hyper10BL)
+anova(hyper10BL)
+cbind(hyper10BL, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ osa, data = BLdata)
+summary(osa10BL)
+coef(osa10BL)
+confint(osa10BL)
+anova(osa10BL)
+cbind(osa10BL, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ pad, data = BLdata)
+summary(pad10BL)
+coef(pad10BL)
+confint(pad10BL)
+anova(pad10BL)
+cbind(pad10BL, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_comorbid, data = BLdata)
+summary(tnComorbid10BL)
+coef(tnComorbid10BL)
+confint(tnComorbid10BL)
+anova(tnComorbid10BL)
+cbind(tnComorbid10BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABG, data = BLdata)
+summary(sc1_10BL)
+coef(sc1_10BL)
+confint(sc1_10BL)
+anova(sc1_10BL)
+cbind(sc1_10BL, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ scAnyValve, data = BLdata)
+summary(sc2_10BL)
+coef(sc2_10BL)
+confint(sc2_10BL)
+anova(sc2_10BL)
+cbind(sc2_10BL, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABGValve, data = BLdata)
+summary(sc3_10BL)
+coef(sc3_10BL)
+confint(sc3_10BL)
+anova(sc3_10BL)
+cbind(sc3_10BL, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ scOther, data = BLdata)
+summary(sc4_10BL)
+coef(sc4_10BL)
+confint(sc4_10BL)
+anova(sc4_10BL)
+cbind(sc4_10BL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ crystalloid, data = BLdata)
+summary(CrystUse10BL)
+coef(CrystUse10BL)
+confint(CrystUse10BL)
+anova(CrystUse10BL)
+cbind(CrystUse10BL, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ prbc, data = BLdata)
+summary(prbc10BL)
+coef(prbc10BL)
+confint(prbc10BL)
+anova(prbc10BL)
+cbind(prbc10BL, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ autologous, data = BLdata)
+summary(autolgs10BL)
+coef(autolgs10BL)
+confint(autolgs10BL)
+anova(autolgs10BL)
+cbind(autolgs10BL, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_colloid, data = BLdata)
+summary(tnColloid10BL)
+coef(tnColloid10BL)
+confint(autolgs10BL)
+anova(tnColloid10BL)
+cbind(tnColloid10BL, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ totml_colloid, data = BLdata)
+summary(tmlsColloid10BL)
+coef(tmlsColloid10BL)
+confint(tmlsColloid10BL)
+anova(tmlsColloid10BL)
+cbind(tmlsColloid10BL, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ cellsaver_vol, data = BLdata)
+summary(csvol10BL)
+coef(csvol10BL)
+confint(csvol10BL)
+anova(csvol10BL)
+cbind(csvol10BL, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ urine, data = BLdata)
+summary(urine10BL)
+coef(urine10BL)
+confint(urine10BL)
+anova(urine10BL)
+cbind(urine10BL, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ cpb_duration, data = BLdata)
+summary(cpbDur10BL)
+coef(cpbDur10BL)
+confint(cpbDur10BL)
+anova(cpbDur10BL)
+cbind(cpbDur10BL, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ aortic_clamp_time, data = BLdata)
+summary(acTime10BL)
+coef(acTime10BL)
+confint(acTime10BL)
+anova(acTime10BL)
+cbind(acTime10BL, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_pre, data = BLdata)
+summary(efPre10BL)
+coef(efPre10BL)
+confint(efPre10BL)
+anova(efPre10BL)
+cbind(efPre10BL, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10BL <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_post, data = BLdata)
+summary(efPost10BL)
+coef(efPost10BL)
+confint(efPost10BL)
+anova(efPost10BL)
+cbind(efPost10BL, deparse.level = 2)
+```
+
+
+
+# Radial Long (RL)
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ age, data = RLdata)
+summary(age2RL)
+coef(age2RL)
+confint(age2RL)
+anova(age2RL)
+cbind(age2RL, deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ asaps, data = RLdata)
+summary(asaps2RL)
+coef(asaps2RL)
+confint(asaps2RL)
+anova(asaps2RL)
+cbind(asaps2RL, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ gender, data = RLdata)
+summary(gender2RL)
+coef(gender2RL)
+confint(gender2RL)
+anova(gender2RL)
+cbind(gender2RL, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ weight, data = RLdata)
+summary(wght2RL)
+coef(wght2RL)
+confint(wght2RL)
+anova(wght2RL)
+cbind(wght2RL, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ height, data = RLdata)
+summary(hght2RL)
+coef(hght2RL)
+confint(hght2RL)
+anova(hght2RL)
+cbind(hght2RL, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmi, data = RLdata)
+summary(bmi2RL)
+coef(bmi2RL)
+confint(bmi2RL)
+anova(bmi2RL)
+cbind(bmi2RL, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE35, data = RLdata)
+summary(bmi35_2RL)
+coef(bmi35_2RL)
+confint(bmi35_2RL)
+anova(bmi35_2RL)
+cbind(bmi35_2RL, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE40, data = RLdata)
+summary(bmi40_2RL)
+coef(bmi40_2RL)
+confint(bmi40_2RL)
+anova(bmi40_2RL)
+cbind(bmi40_2RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ af, data = RLdata, family = "binomial")
+summary(af2RL)
+coef(af2RL)
+confint(af2RL)
+anova(af2RL)
+cbind(af2RL,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ dm, data = RLdata, family = "binomial")
+summary(dm2RL)
+coef(dm2RL)
+confint(dm2RL)
+anova(dm2RL)
+cbind(dm2RL, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ ckd, data = RLdata, family = "binomial")
+summary(ckd2RL)
+coef(ckd2RL)
+confint(ckd2RL)
+anova(ckd2RL)
+cbind(ckd2RL, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ htn, data = RLdata)
+summary(htn2RL)
+coef(htn2RL)
+confint(htn2RL)
+anova(htn2RL)
+cbind(htn2RL, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ copd, data = RLdata, family = "binomial")
+summary(copd2RL)
+coef(copd2RL)
+confint(copd2RL)
+anova(copd2RL)
+cbind(copd2RL, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper2RL)
+coef(hyper2RL)
+confint(hyper2RL)
+anova(hyper2RL)
+cbind(hyper2RL, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ osa, data = RLdata)
+summary(osa2RL)
+coef(osa2RL)
+confint(osa2RL)
+anova(osa2RL)
+cbind(osa2RL, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ pad, data = RLdata)
+summary(pad2RL)
+coef(pad2RL)
+confint(pad2RL)
+anova(pad2RL)
+cbind(pad2RL, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_comorbid, data = RLdata)
+summary(tnComorbid2RL)
+coef(tnComorbid2RL)
+confint(tnComorbid2RL)
+anova(tnComorbid2RL)
+cbind(tnComorbid2RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ scCABG, data = RLdata)
+summary(sc1_2RL)
+coef(sc1_2RL)
+confint(sc1_2RL)
+anova(sc1_2RL)
+cbind(sc1_2RL, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ scAnyValve, data = RLdata)
+summary(sc2_2RL)
+coef(sc2_2RL)
+confint(sc2_2RL)
+anova(sc2_2RL)
+cbind(sc2_2RL, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ scCABGValve, data = RLdata)
+summary(sc3_2RL)
+coef(sc3_2RL)
+confint(sc3_2RL)
+anova(sc3_2RL)
+cbind(sc3_2RL, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ scOther, data = RLdata)
+summary(sc4_2RL)
+coef(sc4_2RL)
+confint(sc4_2RL)
+anova(sc4_2RL)
+cbind(sc4_2RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ crystalloid, data = RLdata)
+summary(CrystUse2RL)
+coef(CrystUse2RL)
+confint(CrystUse2RL)
+anova(CrystUse2RL)
+cbind(CrystUse2RL, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ prbc, data = RLdata)
+summary(prbc2RL)
+coef(prbc2RL)
+confint(prbc2RL)
+anova(prbc2RL)
+cbind(prbc2RL, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ autologous, data = RLdata)
+summary(autolgs2RL)
+coef(autolgs2RL)
+confint(autolgs2RL)
+anova(autolgs2RL)
+cbind(autolgs2RL, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_colloid, data = RLdata)
+summary(tnColloid2RL)
+coef(tnColloid2RL)
+confint(tnColloid2RL)
+anova(tnColloid2RL)
+cbind(tnColloid2RL, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ totml_colloid, data = RLdata)
+summary(tmlsColloid2RL)
+coef(tmlsColloid2RL)
+confint(tmlsColloid2RL)
+anova(tmlsColloid2RL)
+cbind(tmlsColloid2RL, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ cellsaver_vol, data = RLdata)
+summary(csvol2RL)
+coef(csvol2RL)
+confint(csvol2RL)
+anova(csvol2RL)
+cbind(csvol2RL, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ urine, data = RLdata)
+summary(urine2RL)
+coef(urine2RL)
+confint(urine2RL)
+anova(urine2RL)
+cbind(urine2RL, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ cpb_duration, data = RLdata)
+summary(cpbDur2RL)
+coef(cpbDur2RL)
+confint(cpbDur2RL)
+anova(cpbDur2RL)
+cbind(cpbDur2RL, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ aortic_clamp_time, data = RLdata)
+summary(acTime2RL)
+coef(acTime2RL)
+confint(acTime2RL)
+anova(acTime2RL)
+cbind(acTime2RL, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_pre, data = RLdata)
+summary(efPre2RL)
+coef(efPre2RL)
+confint(efPre2RL)
+anova(efPre2RL)
+cbind(efPre2RL, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RL <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_post, data = RLdata)
+summary(efPost2RL)
+coef(efPost2RL)
+confint(efPost2RL)
+anova(efPost2RL)
+cbind(efPost2RL, deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ age, data = RLdata)
+summary(age10RL)
+coef(age10RL)
+confint(age10RL)
+anova(age10RL)
+cbind(age10RL, deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ asaps, data = RLdata)
+summary(asaps10RL)
+coef(asaps10RL)
+confint(asaps10RL)
+anova(asaps10RL)
+cbind(asaps10RL, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ gender, data = RLdata)
+summary(gender10RL)
+coef(gender10RL)
+confint(gender10RL)
+anova(gender10RL)
+cbind(gender10RL, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ weight, data = RLdata)
+summary(wght10RL)
+coef(wght10RL)
+confint(wght10RL)
+anova(wght10RL)
+cbind(wght10RL, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ height, data = RLdata)
+summary(hght10RL)
+coef(hght10RL)
+confint(hght10RL)
+anova(hght10RL)
+cbind(hght10RL, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmi, data = RLdata)
+summary(bmi10RL)
+coef(bmi10RL)
+confint(bmi10RL)
+anova(bmi10RL)
+cbind(bmi10RL, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE35, data = RLdata)
+summary(bmi35_10RL)
+coef(bmi35_10RL)
+confint(bmi35_10RL)
+anova(bmi35_10RL)
+cbind(bmi35_10RL, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE40, data = RLdata)
+summary(bmi40_10RL)
+coef(bmi40_10RL)
+confint(bmi40_10RL)
+anova(bmi40_10RL)
+cbind(bmi40_10RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ af, data = RLdata)
+summary(af10RL)
+coef(af10RL)
+confint(af10RL)
+anova(af10RL)
+cbind(af10RL, deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ dm, data = RLdata)
+summary(dm10RL)
+coef(dm10RL)
+confint(dm10RL)
+anova(dm10RL)
+cbind(dm10RL, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ ckd, data = RLdata)
+summary(ckd10RL)
+coef(ckd10RL)
+confint(ckd10RL)
+anova(ckd10RL)
+cbind(ckd10RL, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ htn, data = RLdata)
+summary(htn10RL)
+coef(htn10RL)
+confint(htn10RL)
+anova(htn10RL)
+cbind(htn10RL, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ copd, data = RLdata)
+summary(copd10RL)
+coef(copd10RL)
+confint(copd10RL)
+anova(copd10RL)
+cbind(copd10RL, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ hyperlipid, data = RLdata)
+summary(hyper10RL)
+coef(hyper10RL)
+confint(hyper10RL)
+anova(hyper10RL)
+cbind(hyper10RL, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ osa, data = RLdata)
+summary(osa10RL)
+coef(osa10RL)
+confint(osa10RL)
+anova(osa10RL)
+cbind(osa10RL, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ pad, data = RLdata)
+summary(pad10RL)
+coef(pad10RL)
+confint(pad10RL)
+anova(pad10RL)
+cbind(pad10RL, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_comorbid, data = RLdata)
+summary(tnComorbid10RL)
+coef(tnComorbid10RL)
+confint(tnComorbid10RL)
+anova(tnComorbid10RL)
+cbind(tnComorbid10RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABG, data = RLdata)
+summary(sc1_10RL)
+coef(sc1_10RL)
+confint(sc1_10RL)
+anova(sc1_10RL)
+cbind(sc1_10RL, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ scAnyValve, data = RLdata)
+summary(sc2_10RL)
+coef(sc2_10RL)
+confint(sc2_10RL)
+anova(sc2_10RL)
+cbind(sc2_10RL, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABGValve, data = RLdata)
+summary(sc3_10RL)
+coef(sc3_10RL)
+confint(sc3_10RL)
+anova(sc3_10RL)
+cbind(sc3_10RL, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ scOther, data = RLdata)
+summary(sc4_10RL)
+coef(sc4_10RL)
+confint(sc4_10RL)
+anova(sc4_10RL)
+cbind(sc4_10RL, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ crystalloid, data = RLdata)
+summary(CrystUse10RL)
+coef(CrystUse10RL)
+confint(CrystUse10RL)
+anova(CrystUse10RL)
+cbind(CrystUse10RL, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ prbc, data = RLdata)
+summary(prbc10RL)
+coef(prbc10RL)
+confint(prbc10RL)
+anova(prbc10RL)
+cbind(prbc10RL, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ autologous, data = RLdata)
+summary(autolgs10RL)
+coef(autolgs10RL)
+confint(autolgs10RL)
+anova(autolgs10RL)
+cbind(autolgs10RL, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_colloid, data = RLdata)
+summary(tnColloid10RL)
+coef(tnColloid10RL)
+confint(autolgs10RL)
+anova(tnColloid10RL)
+cbind(tnColloid10RL, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ totml_colloid, data = RLdata)
+summary(tmlsColloid10RL)
+coef(tmlsColloid10RL)
+confint(tmlsColloid10RL)
+anova(tmlsColloid10RL)
+cbind(tmlsColloid10RL, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ cellsaver_vol, data = RLdata)
+summary(csvol10RL)
+coef(csvol10RL)
+confint(csvol10RL)
+anova(csvol10RL)
+cbind(csvol10RL, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ urine, data = RLdata)
+summary(urine10RL)
+coef(urine10RL)
+confint(urine10RL)
+anova(urine10RL)
+cbind(urine10RL, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ cpb_duration, data = RLdata)
+summary(cpbDur10RL)
+coef(cpbDur10RL)
+confint(cpbDur10RL)
+anova(cpbDur10RL)
+cbind(cpbDur10RL, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ aortic_clamp_time, data = RLdata)
+summary(acTime10RL)
+coef(acTime10RL)
+confint(acTime10RL)
+anova(acTime10RL)
+cbind(acTime10RL, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_pre, data = RLdata)
+summary(efPre10RL)
+coef(efPre10RL)
+confint(efPre10RL)
+anova(efPre10RL)
+cbind(efPre10RL, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RL <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_post, data = RLdata)
+summary(efPost10RL)
+coef(efPost10RL)
+confint(efPost10RL)
+anova(efPost10RL)
+cbind(efPost10RL, deparse.level = 2)
+```
+
+
+```{r}
+BLdata <- 
+  Data %>% 
+  filter(Group_char == "BL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+```{r}
+RLdata <- 
+  Data %>% 
+  filter(Group_char == "RL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+```{r}
+RSdata <- 
+  Data %>% 
+  filter(Group_char == "RS") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = map_cacc_postcpb2 - map_pacc_postcpb2,
+    pctCA_PA_mapPost10Diff = map_cacc_postcpb10-map_pacc_postcpb10)
+```
+
+
+# Radial Short (RS)
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ age, data = RSdata)
+summary(age2RS)
+coef(age2RS)
+confint(age2RS)
+anova(age2RS)
+cbind(age2RS, deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ asaps, data = RSdata)
+summary(asaps2RS)
+coef(asaps2RS)
+confint(asaps2RS)
+anova(asaps2RS)
+cbind(asaps2RS, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ gender, data = RSdata)
+summary(gender2RS)
+coef(gender2RS)
+confint(gender2RS)
+anova(gender2RS)
+cbind(gender2RS, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ weight, data = RSdata)
+summary(wght2RS)
+coef(wght2RS)
+confint(wght2RS)
+anova(wght2RS)
+cbind(wght2RS, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ height, data = RSdata)
+summary(hght2RS)
+coef(hght2RS)
+confint(hght2RS)
+anova(hght2RS)
+cbind(hght2RS, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ bmi, data = RSdata)
+summary(bmi2RS)
+coef(bmi2RS)
+confint(bmi2RS)
+anova(bmi2RS)
+cbind(bmi2RS, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE35, data = RSdata)
+summary(bmi35_2RS)
+coef(bmi35_2RS)
+confint(bmi35_2RS)
+anova(bmi35_2RS)
+cbind(bmi35_2RS, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ bmiGE40, data = RSdata)
+summary(bmi40_2RS)
+coef(bmi40_2RS)
+confint(bmi40_2RS)
+anova(bmi40_2RS)
+cbind(bmi40_2RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ af, data = RSdata, family = "binomial")
+summary(af2RS)
+coef(af2RS)
+confint(af2RS)
+anova(af2RS)
+cbind(af2RS,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ dm, data = RSdata, family = "binomial")
+summary(dm2RS)
+coef(dm2RS)
+confint(dm2RS)
+anova(dm2RS)
+cbind(dm2RS, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ ckd, data = RSdata, family = "binomial")
+summary(ckd2RS)
+coef(ckd2RS)
+confint(ckd2RS)
+anova(ckd2RS)
+cbind(ckd2RS, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ htn, data = RSdata)
+summary(htn2RS)
+coef(htn2RS)
+confint(htn2RS)
+anova(htn2RS)
+cbind(htn2RS, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ copd, data = RSdata, family = "binomial")
+summary(copd2RS)
+coef(copd2RS)
+confint(copd2RS)
+anova(copd2RS)
+cbind(copd2RS, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper2RS)
+coef(hyper2RS)
+confint(hyper2RS)
+anova(hyper2RS)
+cbind(hyper2RS, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ osa, data = RSdata)
+summary(osa2RS)
+coef(osa2RS)
+confint(osa2RS)
+anova(osa2RS)
+cbind(osa2RS, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ pad, data = RSdata)
+summary(pad2RS)
+coef(pad2RS)
+confint(pad2RS)
+anova(pad2RS)
+cbind(pad2RS, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_comorbid, data = RSdata)
+summary(tnComorbid2RS)
+coef(tnComorbid2RS)
+confint(tnComorbid2RS)
+anova(tnComorbid2RS)
+cbind(tnComorbid2RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABG, data = RSdata)
+summary(sc1_2RS)
+coef(sc1_2RS)
+confint(sc1_2RS)
+anova(sc1_2RS)
+cbind(sc1_2RS, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scAnyValve, data = RSdata)
+summary(sc2_2RS)
+coef(sc2_2RS)
+confint(sc2_2RS)
+anova(sc2_2RS)
+cbind(sc2_2RS, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABGValve, data = RSdata)
+summary(sc3_2RS)
+coef(sc3_2RS)
+confint(sc3_2RS)
+anova(sc3_2RS)
+cbind(sc3_2RS, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scOther, data = RSdata)
+summary(sc4_2RS)
+coef(sc4_2RS)
+confint(sc4_2RS)
+anova(sc4_2RS)
+cbind(sc4_2RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ crystalloid, data = RSdata)
+summary(CrystUse2RS)
+coef(CrystUse2RS)
+confint(CrystUse2RS)
+anova(CrystUse2RS)
+cbind(CrystUse2RS, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ prbc, data = RSdata)
+summary(prbc2RS)
+coef(prbc2RS)
+confint(prbc2RS)
+anova(prbc2RS)
+cbind(prbc2RS, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ autologous, data = RSdata)
+summary(autolgs2RS)
+coef(autolgs2RS)
+confint(autolgs2RS)
+anova(autolgs2RS)
+cbind(autolgs2RS, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ totnum_colloid, data = RSdata)
+summary(tnColloid2RS)
+coef(tnColloid2RS)
+confint(tnColloid2RS)
+anova(tnColloid2RS)
+cbind(tnColloid2RS, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ totml_colloid, data = RSdata)
+summary(tmlsColloid2RS)
+coef(tmlsColloid2RS)
+confint(tmlsColloid2RS)
+anova(tmlsColloid2RS)
+cbind(tmlsColloid2RS, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ cellsaver_vol, data = RSdata)
+summary(csvol2RS)
+coef(csvol2RS)
+confint(csvol2RS)
+anova(csvol2RS)
+cbind(csvol2RS, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ urine, data = RSdata)
+summary(urine2RS)
+coef(urine2RS)
+confint(urine2RS)
+anova(urine2RS)
+cbind(urine2RS, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ cpb_duration, data = RSdata)
+summary(cpbDur2RS)
+coef(cpbDur2RS)
+confint(cpbDur2RS)
+anova(cpbDur2RS)
+cbind(cpbDur2RS, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ aortic_clamp_time, data = RSdata)
+summary(acTime2RS)
+coef(acTime2RS)
+confint(acTime2RS)
+anova(acTime2RS)
+cbind(acTime2RS, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_pre, data = RSdata)
+summary(efPre2RS)
+coef(efPre2RS)
+confint(efPre2RS)
+anova(efPre2RS)
+cbind(efPre2RS, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RS <- lm(formula = pctCA_PA_mapPost2Diff ~ EF_post, data = RSdata)
+summary(efPost2RS)
+coef(efPost2RS)
+confint(efPost2RS)
+anova(efPost2RS)
+cbind(efPost2RS, deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ age, data = RSdata)
+summary(age10RS)
+coef(age10RS)
+confint(age10RS)
+anova(age10RS)
+cbind(age10RS, deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ asaps, data = RSdata)
+summary(asaps10RS)
+coef(asaps10RS)
+confint(asaps10RS)
+anova(asaps10RS)
+cbind(asaps10RS, deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ gender, data = RSdata)
+summary(gender10RS)
+coef(gender10RS)
+confint(gender10RS)
+anova(gender10RS)
+cbind(gender10RS, deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ weight, data = RSdata)
+summary(wght10RS)
+coef(wght10RS)
+confint(wght10RS)
+anova(wght10RS)
+cbind(wght10RS, deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ height, data = RSdata)
+summary(hght10RS)
+coef(hght10RS)
+confint(hght10RS)
+anova(hght10RS)
+cbind(hght10RS, deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ bmi, data = RSdata)
+summary(bmi10RS)
+coef(bmi10RS)
+confint(bmi10RS)
+anova(bmi10RS)
+cbind(bmi10RS, deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE35, data = RSdata)
+summary(bmi35_10RS)
+coef(bmi35_10RS)
+confint(bmi35_10RS)
+anova(bmi35_10RS)
+cbind(bmi35_10RS, deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ bmiGE40, data = RSdata)
+summary(bmi40_10RS)
+coef(bmi40_10RS)
+confint(bmi40_10RS)
+anova(bmi40_10RS)
+cbind(bmi40_10RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ af, data = RSdata)
+summary(af10RS)
+coef(af10RS)
+confint(af10RS)
+anova(af10RS)
+cbind(af10RS, deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ dm, data = RSdata)
+summary(dm10RS)
+coef(dm10RS)
+confint(dm10RS)
+anova(dm10RS)
+cbind(dm10RS, deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ ckd, data = RSdata)
+summary(ckd10RS)
+coef(ckd10RS)
+confint(ckd10RS)
+anova(ckd10RS)
+cbind(ckd10RS, deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ htn, data = RSdata)
+summary(htn10RS)
+coef(htn10RS)
+confint(htn10RS)
+anova(htn10RS)
+cbind(htn10RS, deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ copd, data = RSdata)
+summary(copd10RS)
+coef(copd10RS)
+confint(copd10RS)
+anova(copd10RS)
+cbind(copd10RS, deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ hyperlipid, data = RSdata)
+summary(hyper10RS)
+coef(hyper10RS)
+confint(hyper10RS)
+anova(hyper10RS)
+cbind(hyper10RS, deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ osa, data = RSdata)
+summary(osa10RS)
+coef(osa10RS)
+confint(osa10RS)
+anova(osa10RS)
+cbind(osa10RS, deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ pad, data = RSdata)
+summary(pad10RS)
+coef(pad10RS)
+confint(pad10RS)
+anova(pad10RS)
+cbind(pad10RS, deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_comorbid, data = RSdata)
+summary(tnComorbid10RS)
+coef(tnComorbid10RS)
+confint(tnComorbid10RS)
+anova(tnComorbid10RS)
+cbind(tnComorbid10RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABG, data = RSdata)
+summary(sc1_10RS)
+coef(sc1_10RS)
+confint(sc1_10RS)
+anova(sc1_10RS)
+cbind(sc1_10RS, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scAnyValve, data = RSdata)
+summary(sc2_10RS)
+coef(sc2_10RS)
+confint(sc2_10RS)
+anova(sc2_10RS)
+cbind(sc2_10RS, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scCABGValve, data = RSdata)
+summary(sc3_10RS)
+coef(sc3_10RS)
+confint(sc3_10RS)
+anova(sc3_10RS)
+cbind(sc3_10RS, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ scOther, data = RSdata)
+summary(sc4_10RS)
+coef(sc4_10RS)
+confint(sc4_10RS)
+anova(sc4_10RS)
+cbind(sc4_10RS, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ crystalloid, data = RSdata)
+summary(CrystUse10RS)
+coef(CrystUse10RS)
+confint(CrystUse10RS)
+anova(CrystUse10RS)
+cbind(CrystUse10RS, deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ prbc, data = RSdata)
+summary(prbc10RS)
+coef(prbc10RS)
+confint(prbc10RS)
+anova(prbc10RS)
+cbind(prbc10RS, deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ autologous, data = RSdata)
+summary(autolgs10RS)
+coef(autolgs10RS)
+confint(autolgs10RS)
+anova(autolgs10RS)
+cbind(autolgs10RS, deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ totnum_colloid, data = RSdata)
+summary(tnColloid10RS)
+coef(tnColloid10RS)
+confint(autolgs10RS)
+anova(tnColloid10RS)
+cbind(tnColloid10RS, deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ totml_colloid, data = RSdata)
+summary(tmlsColloid10RS)
+coef(tmlsColloid10RS)
+confint(tmlsColloid10RS)
+anova(tmlsColloid10RS)
+cbind(tmlsColloid10RS, deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ cellsaver_vol, data = RSdata)
+summary(csvol10RS)
+coef(csvol10RS)
+confint(csvol10RS)
+anova(csvol10RS)
+cbind(csvol10RS, deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ urine, data = RSdata)
+summary(urine10RS)
+coef(urine10RS)
+confint(urine10RS)
+anova(urine10RS)
+cbind(urine10RS, deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ cpb_duration, data = RSdata)
+summary(cpbDur10RS)
+coef(cpbDur10RS)
+confint(cpbDur10RS)
+anova(cpbDur10RS)
+cbind(cpbDur10RS, deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ aortic_clamp_time, data = RSdata)
+summary(acTime10RS)
+coef(acTime10RS)
+confint(acTime10RS)
+anova(acTime10RS)
+cbind(acTime10RS, deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_pre, data = RSdata)
+summary(efPre10RS)
+coef(efPre10RS)
+confint(efPre10RS)
+anova(efPre10RS)
+cbind(efPre10RS, deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RS <- lm(formula = pctCA_PA_mapPost10Diff ~ EF_post, data = RSdata)
+summary(efPost10RS)
+coef(efPost10RS)
+confint(efPost10RS)
+anova(efPost10RS)
+cbind(efPost10RS, deparse.level = 2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

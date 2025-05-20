@@ -1,0 +1,4 @@
+"0","shapiro.test(x = is.numeric(BLRLdata$CA_PA_systPreDiff))"
+"2","Error in shapiro.test(x = is.numeric(BLRLdata$CA_PA_systPreDiff)) : 
+  is.numeric(x) is not TRUE
+"

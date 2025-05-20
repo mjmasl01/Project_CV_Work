@@ -1,0 +1,8 @@
+"0","paccSystTENpostBL <- "
+"0","  BLdata %>% "
+"0","  mutate(syst_pacc_postcpb10 = parse_number(syst_pacc_postcpb10)) %>%"
+"0","  summarise(Mean = mean(syst_pacc_postcpb10, na.rm = TRUE),"
+"0","            Median = median(syst_pacc_postcpb10, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(syst_pacc_postcpb10,na.rm = TRUE)"
+"0","            )"
+"0","paccSystTENpostBL"

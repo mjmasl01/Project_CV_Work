@@ -1,0 +1,4 @@
+"0","# RS"
+"0","# n = 68"
+"0","RSdata <- data %>% filter(Group_char == ""RS"")"
+"0","RSdata"

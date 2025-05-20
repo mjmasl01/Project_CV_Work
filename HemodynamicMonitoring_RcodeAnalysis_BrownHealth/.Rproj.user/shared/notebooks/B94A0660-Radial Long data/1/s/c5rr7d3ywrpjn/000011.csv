@@ -1,0 +1,7 @@
+"0","cellsaver_volRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(cellsaver_vol),"
+"0","            Median = median(cellsaver_vol),"
+"0","            Stan.Dev. = sd(cellsaver_vol)"
+"0","            )"
+"0","cellsaver_volRL"

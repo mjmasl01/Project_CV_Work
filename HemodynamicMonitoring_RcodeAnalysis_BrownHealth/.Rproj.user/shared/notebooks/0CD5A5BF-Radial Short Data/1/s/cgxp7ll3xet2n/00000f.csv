@@ -1,0 +1,7 @@
+"0","copdRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(copd),"
+"0","            Median = median(copd),"
+"0","            Stan.Dev. = sd(copd)"
+"0","            )"
+"0","copdRS"

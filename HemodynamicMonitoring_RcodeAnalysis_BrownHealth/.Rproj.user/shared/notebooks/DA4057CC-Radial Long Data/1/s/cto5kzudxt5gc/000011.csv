@@ -1,0 +1,7 @@
+"0","intra_norepRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(Intra_norep),"
+"0","            Median = median(Intra_norep),"
+"0","            Stan.Dev. = sd(Intra_norep)"
+"0","            )"
+"0","intra_norepRL"

@@ -1,0 +1,87 @@
+---
+title: "Permutation Tests"
+author: "Stat 326 (Chapman)"
+date: "3/30/2023 or 4/4/2023"
+output: word_document
+---
+
+Permutation Test example 1: A subset of the "Flight Data"
+```{r}
+library(tidyverse)
+library(resampledata)
+data("FlightDelays")# this dataset is quite large, and I want a small sample of it for class
+set.seed(4445557)
+FDclass = slice_sample(FlightDelays, n=50) %>% 
+  select(Carrier, Delay)
+```
+
+Understand our data
+```{r}
+# "Explore" data
+FDclass %>% 
+  ggplot(aes(x=Carrier,y=Delay,fill=Carrier)) + 
+  geom_boxplot()
+# summary statistics
+FDclass %>%
+  group_by(Carrier) %>%
+  summarize(n=n(),
+            mean=mean(Delay))
+```
+
+Code for Permutation Test: Difference in Pop means for carriers
+```{r}
+# From our summary statistics
+AA = FDclass %>% filter(Carrier == "AA") %>% select(Delay)
+AA = AA$Delay
+UA = FDclass %>% filter(Carrier == "UA") %>% select(Delay)
+UA = UA$Delay
+teststat = round(mean(AA) - mean(UA),2) # AA Sample mean - UA Sample mean
+
+nA = length(AA)  # these are important
+nU = length(UA)  # these are important
+
+nulldist = NULL   # an object to store our teststats under the null hypothesis
+nPerm = 5000        # number of permutation samples
+
+for (i in 1:nPerm)
+{
+  onepop = c(AA,UA) # Under Ho, there is really only one population
+  
+  AAind = sample(1:(nA+nU),nA)  # there are nA+nU flights in our population;
+                                # random pick nA of them to arbitrarily label as "AA"
+                                # note that this code picks indices between 1 and nA+nU
+  arbAA = onepop[AAind]    # pull the chosen flights out of the pop and arbitrarily call AA
+  arbUA = onepop[-AAind]  # pull the remaining flights from the pop and arbitrarily call UA
+  
+  dstar = mean(arbAA) - mean(arbUA)
+  nulldist[i] = dstar
+}
+
+# visualize our null distribution
+hist(nulldist,col="mediumseagreen", xlab="Distribution of xbar-ybar under Ho of 'One Pop'")
+# visualize our test statistic on the null distribution
+abline(v=teststat,col="red",lwd=2)
+
+# "conservative" p-value ("+1" represents our original sample; avoids p-value=0)
+# if Ha: mu_AA > mu_UA
+(sum(nulldist > teststat)+1)/(nPerm+1)
+
+# if Ha: mu_AA not equal mu_UA
+2*(sum(nulldist > teststat)+1)/(nPerm+1)
+
+```
+
+Example 2: Spruce
+
+In the Black Spruce Case Study in Section 1.9, seedlings were planted in plots that were
+either subject to competition (from other plants) or not. Use the data set Spruce to conduct a test to see if there is evidence that the mean growth ("Ht.change") differs for the two treatments (C = Competition or NC = No Competition).
+
+```{r}
+data("Spruce")
+```
+
+
+```{r}
+
+```
+

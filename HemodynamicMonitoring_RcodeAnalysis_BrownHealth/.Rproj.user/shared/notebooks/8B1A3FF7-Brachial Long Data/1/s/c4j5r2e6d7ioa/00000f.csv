@@ -1,0 +1,8 @@
+"0","paccMapTENpostBL <- "
+"0","  BLdata %>% "
+"0","  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10)) %>%"
+"0","  summarise(Mean = mean(map_pacc_postcpb10, na.rm = TRUE),"
+"0","            Median = median(map_pacc_postcpb10, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(map_pacc_postcpb10,na.rm = TRUE)"
+"0","            )"
+"0","paccMapTENpostBL"

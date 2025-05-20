@@ -1,0 +1,7 @@
+"0","bmiRL <- "
+"0","  RLdata %>% "
+"0","  summarise(Mean = mean(bmi),"
+"0","            Median = median(bmi),"
+"0","            Stan.Dev. = sd(bmi)"
+"0","            )"
+"0","bmiRL"

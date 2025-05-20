@@ -1,0 +1,7 @@
+"0","paccSYSTpreRL <- "
+"0","  RLdata %>% "
+"0","  summarise(Mean = mean(syst_pacc_precpb,na.rm = TRUE),"
+"0","            Median = median(syst_pacc_precpb,na.rm = TRUE),"
+"0","            Stan.Dev. = sd(syst_pacc_precpb,na.rm = TRUE)"
+"0","            )"
+"0","paccSYSTpreRL"

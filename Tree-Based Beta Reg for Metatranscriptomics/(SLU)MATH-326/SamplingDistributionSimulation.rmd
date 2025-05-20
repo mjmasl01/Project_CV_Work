@@ -1,0 +1,196 @@
+---
+title: "Sampling Distribution Simulation"
+author: "Stat 326 (Chapman)"
+date: "1/19/2023"
+output:
+  word_document: default
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+### Starting a Simulation 
+
+1. Choose a population model for the simulation. 
+
+  Let's start with Normal($\mu$=10, $\sigma^2$=4).
+
+2. Choose a sample size for the simulation.
+
+  Let's start with $n$=5.
+  
+3. Choose a calculation for the simulation.
+
+  Let's start with the sample mean, $\bar{x}$.
+
+
+### Look at what happens when we do this one time
+
+Carefully look through this code and output to understand the process of generating a sample from a population and computing a statistic.
+```{r CHUNK1}
+
+n = 5       # sample size
+mu = 10     # population mean
+sigma = 2   # population standard deviation
+
+# generate a random sample of n observations from population
+my.sample = round(rnorm(n, mu, sigma ),2)  
+# look at the sample
+my.sample   
+
+# compute the sample mean
+my.mean = mean(my.sample)
+# look at the sample mean
+my.mean     
+
+
+## visualize all of the above simultaneously
+
+# generate a range of values that span the population
+xvals = seq(mu-4*sigma, mu+4*sigma, by=0.1)   
+
+# plot the normal density curve over the above range 
+plot(xvals, dnorm(xvals, mu, sigma), type="l")
+
+# plot the n sample points
+points(my.sample,rep(0,n), pch=19)
+
+# plot the sample mean
+abline(v=my.mean,col="red", lwd=2)          
+```
+  
+### Repeat process a large number of times
+```{r CHUNK2}
+
+n = 5            # sample size
+mu = 10          # population mean
+sigma = 2        # population standard deviation
+nsim = 5000      # number of simulations
+
+# the following code allocates space to save the results for each of our simulated values
+my.means = numeric(nsim)   
+
+for (i in 1:nsim) # loop through the iterations in the simulation
+{
+  my.sample = round(rnorm(n, mu, sigma ), 2)
+  my.means[i] = mean(my.sample) 
+}
+
+# summarize the simulation results
+hist(my.means, main=paste("Sampling Distribution of the \n Sample Mean when n =",n))
+mean(my.means)
+var(my.means)
+
+# What is the probability that we observe a sample mean larger than 11?
+mean(my.means>11)
+
+# What is the probability that we observe a sample mean less than or equal to 9.5?
+mean(my.means<=9.5)
+
+
+```
+
+### Discussion Questions
+ 
+1. Run CHUNK2 several times. How do the results change (or not)? 
+2. What can we conclude about the sampling distribution of $\bar{x}$ when taking samples of $n=5$ from _this_ population? 
+3. How do the simulation results compare to the result from Stat 325?
+```{r CHUNK3}
+hist(my.means, main=paste("Sampling Distribution of the \n Sample Mean when n =",n),freq=FALSE)
+lines(xvals, dnorm(xvals, mu, sigma/sqrt(n)),col="blue",lwd=2)
+```
+
+4. Increase the sample size in CHUNK2 and rerun CHUNK2 and CHUNK3. How do the results (mean, standard deviation, and probabilities) change? Do the changes make sense?
+
+### Consider a non-Normal population
+
+Now consider an Exponential(0.5) population. Go back to a sample size of $n=5$ and continue calculating the sample mean, $\bar{x}$.
+
+5. In CHUNK4, I modified the CHUNK1 code to do all of the same things as CHUNK1 (examine a single sample from the known population), but for an Exponential population. What are some changes I made and why?
+
+
+```{r CHUNK4}
+
+n = 5       # sample size
+lambda = 0.5
+mu = 1/lambda   # population mean
+sigma = sqrt(1/lambda^2)  # population standard deviation
+
+# generate a random sample of n observations from population
+my.sample = round(rexp(n, lambda),2)  
+# look at the sample
+my.sample   
+
+# compute the sample mean
+my.mean = mean(my.sample)
+# look at the sample mean
+my.mean     
+
+
+## visualize all of the above simultaneously
+
+# generate a range of values that span the population
+xvals = seq(0,4.5*sigma, by=0.1)   
+
+# plot the normal density curve over the above range 
+plot(xvals, dexp(xvals, lambda), type="l")
+
+# plot the n sample points
+points(my.sample,rep(0,n), pch=19)
+
+# plot the sample mean
+abline(v=my.mean,col="red", lwd=2)          
+```
+
+6. Run CHUNK5 (below) to explore the sampling distribution of $\bar{x}$ when the population is Exponential and the sample size is $n=5$. Summarize what you notice about the sampling distribution of $\bar{x}$ when taking a sample of size $n=5$ from an Exponential(0.5) population.
+
+
+```{r CHUNK5}
+
+n = 5       # sample size
+lambda = 0.5
+mu = 1/lambda   # population mean
+sigma = sqrt(1/lambda^2)  # population standard deviation
+
+# the following code allocates space to save the results for each of our simulated values
+my.means = numeric(nsim)   
+
+for (i in 1:nsim) # loop through the iterations in the simulation
+{
+  my.sample = round(rexp(n, lambda), 2)
+  my.means[i] = mean(my.sample) 
+}
+
+# summarize the simulation results
+hist(my.means, main=paste("Sampling Distribution of the \n Sample Mean when n =",n),freq=FALSE)
+mean(my.means)
+var(my.means)
+
+``` 
+
+
+
+
+7. Increase the sample size in CHUNK5 to $n=50$. What do you notice about the sampling distribution of $\bar{x}$ now? What is this called?
+
+
+8. In general, what are some other ways you could summarize a sample of data? (i.e., other calculations you could do?)
+
+
+
+## Repeat above for the sample minimum
+
+Copy CHUNK1 and paste it below (rename it CHUNK6). Change the statistic calculated to be the sample minimum. Run CHUNK6 a few times so that you understand our problem.
+
+
+9. PREDICT WHAT MIGHT HAPPEN NEXT: Based on what you've seen by rerunning CHUNK6. Where do you expect the center of the sampling distribution of the sample minimum to be relative to 10?
+
+Copy CHUNK2 and paste it below (rename it CHUNK7). Change the statistic calculated to be the sample minimum. Run CHUNK7 to explore the sampling distribution of the sample minimum. 
+
+
+10. Summarize what you notice about the sampling distribution. How does it compare to the sampling distribution of the sample mean? Does that make sense? Why or why not?
+
+
+11. Report the probability that the sample minimum is less than or equal to 9.5. How does it compare to the probability that the sample mean is less than or equal to 9.5? Does that make sense? Why or why not?
+
+12. Increase the sample size to 50. Summarize how the sampling distribution of the sample minimum when $n=50$ differs from when $n=5$.

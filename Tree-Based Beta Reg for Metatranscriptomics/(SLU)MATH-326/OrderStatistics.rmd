@@ -1,0 +1,59 @@
+---
+title: "Order Statistics"
+author: "Stat 326 (Chapman)"
+date: "1/24/2023"
+output: html_document
+---
+
+Plot the pdf of the population model
+```{r pdfY}
+y = seq(3, 12, by=0.01) # create a range that spans the support of our RV (where pdf is not 0)
+
+fy = dunif(y,3,12)  # the "d" functions plug y into the RV's pdf from our distribution sheet
+
+plot(y, fy, type="l", 
+     ylab = "f(y)", 
+     main = "Density function of the Population Model" ) # note that is the letter 'l' for type
+```
+
+
+
+Plot the pdf of the sample minimum, $Y_{(1)}$, for our example.
+
+```{r pdfMin}
+y = seq(3, 12, by=0.01) # create a range that spans the support of our RV (where pdf is not 0)
+
+fy = 1/3*((12-y)/9)^2   # type out the formula for your pdf
+
+plot(y, fy, type="l", 
+     ylab = expression("f"[(1)]*"(y)"), 
+     main = "Density function of the Sample Minimum" ) # note that is the letter 'l' for type
+```
+
+
+Here is it again, if you *really* want to use the "tidyverse".
+```{r}
+library(tidyverse)
+dat = data.frame(y = seq(3, 12, by=0.01), fy = dunif(y,3,12))
+
+ggplot(dat, aes(x=y, y=fy)) + 
+  geom_line() + 
+  labs(y="f(y)",title = "Density function of the Sample Minimum")
+
+```
+
+
+
+```{r tidypdfMin}
+library(tidyverse)
+
+dat = data.frame(y = seq(3, 12, by=0.01), fy = 1/3*((12-y)/9)^2)
+
+ggplot(dat, aes(x=y, y=fy)) + 
+  geom_line() + 
+  labs(y=expression("f"[(1)]*"(y)"),title = "Density function of the Sample Minimum")
+```
+
+
+Task: Repeat for the sample maximum.
+

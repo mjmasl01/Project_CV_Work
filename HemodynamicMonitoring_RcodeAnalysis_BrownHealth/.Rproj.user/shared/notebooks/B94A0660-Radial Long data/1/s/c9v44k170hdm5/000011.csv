@@ -1,0 +1,7 @@
+"0","htnRL <-"
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(htn),"
+"0","            Median = median(htn),"
+"0","            Stan.Dev. = sd(htn)"
+"0","            )"
+"0","htnRL"

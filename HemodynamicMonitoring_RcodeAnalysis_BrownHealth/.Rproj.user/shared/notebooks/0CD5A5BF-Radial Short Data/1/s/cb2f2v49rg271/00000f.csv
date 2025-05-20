@@ -1,0 +1,7 @@
+"0","aortic_clamp_timeRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(aortic_clamp_time),"
+"0","            Median = median(aortic_clamp_time),"
+"0","            Stan.Dev. = sd(aortic_clamp_time)"
+"0","            )"
+"0","aortic_clamp_timeRS"

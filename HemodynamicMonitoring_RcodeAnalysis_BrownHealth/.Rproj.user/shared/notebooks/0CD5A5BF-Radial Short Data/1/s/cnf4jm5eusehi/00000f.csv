@@ -1,0 +1,7 @@
+"0","bmiGE35RS <- "
+"0","  RSdata %>% "
+"0","  summarise(Mean = mean(bmiGE35),"
+"0","            Median = median(bmiGE35),"
+"0","            Stan.Dev. = sd(bmiGE35)"
+"0","            )"
+"0","bmiGE35RS"

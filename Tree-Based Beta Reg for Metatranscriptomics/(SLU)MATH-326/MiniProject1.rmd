@@ -1,0 +1,38 @@
+---
+title: "Markdown File for Mini-Project 1"
+author: "Stat 326 (Chapman)"
+date: "Due by 2/17"
+output:
+  word_document: default
+  html_document: default
+---
+
+Recap of Ymin and Ymax from Normal Population (Class simulation and prep task)
+```{r}
+n = 5             # sample size
+mu = 10           # population mean
+sigma = 2         # population standard deviation
+nsim = 5000       # number of simulations (samples to generate)
+
+my.mins = numeric(nsim)     # a place to store my sample minimums
+my.maxs = numeric(nsim)     # a place to store my sample maximums
+
+for (i in 1:nsim)
+{
+  my.sample = round( rnorm(n,mu,sigma) , 2)   # take a sample from my population
+  # note that you can calculate both of the desired statistics for each sample generated
+  my.mins[i] = min(my.sample)                 # compute the min from the sample
+  my.maxs[i] = max(my.sample)                 # compute the max from the sample
+}
+
+hist(my.mins, xlab=expression("Y"[min]), main=paste("Sampling Distribution of the\n Sample Min when n = ",n))
+hist(my.maxs, xlab=expression("Y"[max]), main=paste("Sampling Distribution of the\n Sample Max when n = ",n))
+
+mean(my.mins)
+mean(my.maxs)
+
+var(my.mins)
+var(my.maxs)
+
+```
+

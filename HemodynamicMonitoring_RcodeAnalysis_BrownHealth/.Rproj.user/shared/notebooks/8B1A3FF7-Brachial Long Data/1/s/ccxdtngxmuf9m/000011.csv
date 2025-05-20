@@ -1,0 +1,14 @@
+"0","paccMAPcicuBL <- "
+"0","  BLdata %>% "
+"0","  mutate(map_pacc_cicu = parse_number(map_pacc_cicu)) %>%"
+"0","  summarise(Mean = mean(map_pacc_cicu, na.rm = TRUE),"
+"0","            Median = median(map_pacc_cicu, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(map_pacc_cicu,na.rm = TRUE)"
+"0","            )"
+"2","Warning: [38;5;232mThere was 1 warning in `mutate()`.[39m
+[38;5;232m[36mℹ[38;5;232m In argument: `map_pacc_cicu = parse_number(map_pacc_cicu)`.[39m
+Caused by warning:
+[33m![39m 1 parsing failure.
+row col expected actual
+ 53  -- a number      ."
+"0","paccMAPcicuBL"

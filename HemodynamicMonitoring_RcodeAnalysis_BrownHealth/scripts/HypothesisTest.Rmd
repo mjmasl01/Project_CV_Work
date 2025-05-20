@@ -1,0 +1,554 @@
+---
+title: "BL,RL,RS Data Tests"
+author: "Matthew Maslow"
+date: "2023-07-08"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Packages
+
+```{r}
+library(tidyverse)
+```
+
+# Read in data
+```{r}
+BLdata <- read.csv("BLdata.csv")
+RLdata <- read.csv("RLdata.csv")
+RSdata <- read.csv("RSdata.csv")
+```
+
+# Test's
+
+
+### Brachial Long:
+
+#### Pre
+
+##### 1: CA_Syst - PA_Syst
+
+```{r}
+
+kruskal.test(x = BLdata$syst_cacc_precpb, g = BLdata$syst_pacc_precpb)
+t.test(x = BLdata$syst_cacc_precpb, y = BLdata$syst_pacc_precpb)
+```
+
+##### 2: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = BLdata$map_cacc_precpb, g = BLdata$map_pacc_precpb)
+t.test(x = BLdata$map_cacc_precpb, y = BLdata$map_pacc_precpb)
+```
+
+
+#### Post 2 Minutes
+
+##### 3: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = BLdata$syst_cacc_postcpb2, g = BLdata$syst_pacc_postcpb2)
+t.test(x = BLdata$syst_cacc_postcpb2, y = BLdata$syst_pacc_postcpb2)
+```
+
+##### 4: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = BLdata$map_cacc_postcpb2, g = BLdata$map_pacc_postcpb2)
+t.test(x = BLdata$map_cacc_postcpb2, y = BLdata$map_pacc_postcpb2)
+```
+
+#### Post 10 Minutes
+
+##### 5: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = BLdata$syst_cacc_postcpb10, g = BLdata$syst_pacc_postcpb10)
+t.test(x = BLdata$syst_cacc_postcpb10, y = BLdata$syst_pacc_postcpb10)
+```
+
+##### 6: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = BLdata$map_cacc_postcpb10, g = BLdata$map_pacc_postcpb10)
+t.test(x = BLdata$map_cacc_postcpb10, y = BLdata$map_pacc_postcpb10)
+```
+
+
+### Radial Long:
+
+#### Pre
+
+##### 7: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = RLdata$syst_cacc_precpb, g = RLdata$syst_pacc_precpb)
+t.test(x = RLdata$syst_cacc_precpb, y = RLdata$syst_pacc_precpb)
+```
+
+##### 8: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = RLdata$map_cacc_precpb, g = RLdata$map_pacc_precpb)
+t.test(x = RLdata$map_cacc_precpb, y = RLdata$map_pacc_precpb)
+```
+
+
+#### Post 2 Minutes
+
+##### 9: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = RLdata$syst_cacc_postcpb2, g = RLdata$syst_pacc_postcpb2)
+t.test(x = RLdata$syst_cacc_postcpb2, y = RLdata$syst_pacc_postcpb2)
+```
+
+##### 10: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = RLdata$map_cacc_postcpb2, g = RLdata$map_pacc_postcpb2)
+t.test(x = RLdata$map_cacc_postcpb2, y = RLdata$map_pacc_postcpb2)
+```
+
+#### Post 10 Minutes
+
+##### 11: CA_Syst - PA_Syst
+
+```{r}
+RLdata <- 
+  RLdata %>% 
+  mutate(syst_pacc_postcpb10 = parse_number(syst_pacc_postcpb10))
+```
+```{r}
+kruskal.test(x = RLdata$syst_cacc_postcpb10, g = RLdata$syst_pacc_postcpb10)
+t.test(x = RLdata$syst_cacc_postcpb10, y = RLdata$syst_pacc_postcpb10)
+```
+
+
+##### 12: CA_MAP - PA_MAP
+
+```{r}
+RLdata <- 
+  RLdata %>% 
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10))
+```
+```{r}
+kruskal.test(x = RLdata$map_cacc_postcpb10, g = RLdata$map_pacc_postcpb10)
+t.test(x = RLdata$map_cacc_postcpb10, y = RLdata$map_pacc_postcpb10)
+```
+
+
+### Radial Short:
+
+#### Pre
+
+##### 13: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = RSdata$syst_cacc_precpb, g = RSdata$syst_pacc_precpb)
+t.test(x = RSdata$syst_cacc_precpb, y = RSdata$syst_pacc_precpb)
+```
+
+##### 14: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = RSdata$map_cacc_precpb, g = RSdata$map_pacc_precpb)
+t.test(x = RSdata$map_cacc_precpb, y = RSdata$map_pacc_precpb)
+```
+
+
+#### Post 2 Minutes
+
+##### 15: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = RSdata$syst_cacc_postcpb2, g = RSdata$syst_pacc_postcpb2)
+t.test(x = RSdata$syst_cacc_postcpb2, y = RSdata$syst_pacc_postcpb2)
+```
+
+##### 16: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = RSdata$map_cacc_postcpb2, g = RSdata$map_pacc_postcpb2)
+t.test(x = RSdata$map_cacc_postcpb2, y = RSdata$map_pacc_postcpb2)
+```
+
+#### Post 10 Minutes
+
+##### 17: CA_Syst - PA_Syst
+
+```{r}
+kruskal.test(x = RSdata$syst_cacc_postcpb10, g = RSdata$syst_pacc_postcpb10)
+t.test(x = RSdata$syst_cacc_postcpb10, y = RSdata$syst_pacc_postcpb10)
+```
+
+##### 18: CA_MAP - PA_MAP
+
+```{r}
+kruskal.test(x = RSdata$map_cacc_postcpb10, g = RSdata$map_pacc_postcpb10)
+t.test(x = RSdata$map_cacc_postcpb10, y = RSdata$map_pacc_postcpb10)
+```
+
+
+
+### Comparisons:
+
+#### Adding Proper Variables:
+
+```{r}
+BLdata <- 
+  BLdata %>%
+  mutate(CA_PA_systPreDiff = syst_cacc_precpb - syst_pacc_precpb,
+         CA_PA_systPost2Diff =  syst_cacc_postcpb2 - syst_pacc_postcpb2,
+         CA_PA_systPost10Diff = syst_cacc_postcpb10 - syst_pacc_postcpb10,
+         CA_PA_mapPreDiff = map_cacc_precpb - map_pacc_precpb,
+         CA_PA_mapPost2Diff =  map_cacc_postcpb2 - map_pacc_postcpb2,
+         CA_PA_mapPost10Diff = map_cacc_postcpb10 - map_pacc_postcpb10
+         )
+```
+```{r}
+RLdata <- 
+  RLdata %>%
+  mutate(CA_PA_systPreDiff = syst_cacc_precpb - syst_pacc_precpb,
+         CA_PA_systPost2Diff =  syst_cacc_postcpb2 - syst_pacc_postcpb2,
+         CA_PA_systPost10Diff = syst_cacc_postcpb10 - syst_pacc_postcpb10,
+         CA_PA_mapPreDiff = map_cacc_precpb - map_pacc_precpb,
+         CA_PA_mapPost2Diff =  map_cacc_postcpb2 - map_pacc_postcpb2,
+         CA_PA_mapPost10Diff = map_cacc_postcpb10 - map_pacc_postcpb10
+         )
+```
+```{r}
+RSdata <- 
+  RSdata %>%
+  mutate(CA_PA_systPreDiff = syst_cacc_precpb - syst_pacc_precpb,
+         CA_PA_systPost2Diff =  syst_cacc_postcpb2 - syst_pacc_postcpb2,
+         CA_PA_systPost10Diff = syst_cacc_postcpb10 - syst_pacc_postcpb10,
+         CA_PA_mapPreDiff = map_cacc_precpb - map_pacc_precpb,
+         CA_PA_mapPost2Diff =  map_cacc_postcpb2 - map_pacc_postcpb2,
+         CA_PA_mapPost10Diff = map_cacc_postcpb10 - map_pacc_postcpb10
+         )
+```
+
+#### Setting Up Data Pools:
+
+```{r}
+# BL and RL
+
+BLdata$hyperlipid <-is.integer(BLdata$hyperlipid)
+RLdata$hyperlipid <-is.integer(RLdata$hyperlipid)
+
+BLdata$EF_pre <-is.double(BLdata$EF_pre)
+RLdata$EF_pre <-is.double(RLdata$EF_pre)
+
+BLdata$EF_post <-is.double(BLdata$EF_post)
+RLdata$EF_post <-is.double(RLdata$EF_post)
+
+BLdata$diast_pacc_precpb <-is.integer(BLdata$diast_pacc_precpb)
+RLdata$diast_pacc_precp <-is.integer(RLdata$diast_pacc_precp)
+
+BLdata$wave_pacc_postcpb10 <-is.integer(BLdata$wave_pacc_postcpb10)
+RLdata$wave_pacc_postcpb10 <-is.integer(RLdata$wave_pacc_postcpb10)
+
+BLdata$X.4 <- is.integer(BLdata$X.4)
+RLdata$X.4 <- is.integer(RLdata$X.4)
+
+BLRLdata <- bind_rows(BLdata, RLdata)
+```
+
+
+```{r}
+# BL and RS
+
+BLdata$syst_pacc_cicu <-is.integer(BLdata$syst_pacc_cicu)
+RSdata$syst_pacc_cicu <-is.integer(RSdata$syst_pacc_cicu)
+
+BLdata$diast_pacc_cicu <-is.integer(BLdata$diast_pacc_cicu)
+RSdata$diast_pacc_cicu <-is.integer(RSdata$diast_pacc_cicu)
+
+BLdata$map_pacc_cicu <-is.integer(BLdata$map_pacc_cicu)
+RSdata$map_pacc_cicu <-is.integer(RSdata$map_pacc_cicu)
+
+BLdata$wave_pacc_cicu <-is.integer(BLdata$wave_pacc_cicu)
+RSdata$wave_pacc_cicu <-is.integer(RSdata$wave_pacc_cicu)
+
+BLRSdata <- bind_rows(BLdata, RSdata)
+```
+
+```{r}
+# RL and RS
+
+RLdata$syst_pacc_cicu <- is.integer(RLdata$syst_pacc_cicu)
+RSdata$syst_pacc_cicu <- is.integer(RSdata$syst_pacc_cicu)
+
+RLdata$diast_pacc_cicu <- is.integer(RLdata$diast_pacc_cicu)
+RSdata$diast_pacc_cicu <- is.integer(RSdata$diast_pacc_cicu)
+
+RLdata$map_pacc_cicu <- is.integer(RLdata$map_pacc_cicu)
+RSdata$map_pacc_cicu <- is.integer(RSdata$map_pacc_cicu)
+
+RLdata$wave_pacc_cicu <- is.integer(RLdata$wave_pacc_cicu)
+RSdata$wave_pacc_cicu <- is.integer(RSdata$wave_pacc_cicu)
+
+RLRSdata <- bind_rows(RLdata, RSdata)
+```
+
+
+
+
+
+#### Pre
+
+##### 1v7: BL(CA_Syst - PA_Syst) Vs. RL(CA_Syst - PA_Syst) 
+
+```{r}
+shapiro.test(x = is.numeric(BLRLdata$CA_PA_systPreDiff))
+
+t.test(x = BLdata$CA_PA_systPreDiff, y = RLdata$CA_PA_systPreDiff)
+```
+
+##### 2v8: BL(CA_MAP - PA_MAP) Vs. RL(CA_MAP - PA_MAP) 
+
+```{r}
+kruskal.test(x = BLRLdata$CA_PA_mapPreDiff, g = BLRLdata$CA_PA_mapPreDiff)
+
+t.test(x = BLdata$CA_PA_mapPreDiff, y = RLdata$CA_PA_mapPreDiff)
+```
+
+##### 1v13: BL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst) 
+
+```{r}
+kruskal.test(x = BLRSdata$CA_PA_systPreDiff, g = BLRSdata$CA_PA_systPreDiff)
+
+t.test(x = BLdata$CA_PA_systPreDiff, y = RSdata$CA_PA_systPreDiff)
+```
+
+##### 2v14: BL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+kruskal.test(x = BLRSdata$CA_PA_mapPreDiff, g = BLRSdata$CA_PA_mapPreDiff)
+t.test(x = BLdata$CA_PA_mapPreDiff, y = RSdata$CA_PA_mapPreDiff)
+```
+
+##### 7v13: RL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst) 
+
+```{r}
+kruskal.test(x = RLRSdata$CA_PA_systPreDiff, g = RLRSdata$CA_PA_systPreDiff)
+t.test(x = RLdata$CA_PA_systPreDiff, y = RSdata$CA_PA_systPreDiff)
+```
+
+##### 8v14:RL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+kruskal.test(x = RLRSdata$CA_PA_mapPreDiff, g = RLRSdata$CA_PA_mapPreDiff)
+t.test(x = RLdata$CA_PA_mapPreDiff, y = RSdata$CA_PA_mapPreDiff)
+```
+
+
+#### Post 2 Minutes
+
+##### 3v9: BL(CA_Syst - PA_Syst) Vs. RL(CA_Syst - PA_Syst)
+
+```{r}
+kruskal.test(x = BLRLdata$CA_PA_systPost2Diff, g = BLRLdata$CA_PA_systPost2Diff)
+t.test(x = BLdata$CA_PA_systPost2Diff, y = RLdata$CA_PA_systPost2Diff)
+```
+
+##### 4v10: BL(CA_MAP - PA_MAP) Vs. RL(CA_MAP - PA_MAP)
+
+```{r}
+kruskal.test()
+t.test(x = BLdata$CA_PA_mapPost2Diff, y = RLdata$CA_PA_mapPost2Diff)
+```
+
+##### 3v15: BL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst)
+
+```{r}
+kruskal.test(x = BLdata$CA_PA_systPost2Diff, g = RSdata$CA_PA_systPost2Diff)
+t.test(x = BLdata$CA_PA_systPost2Diff, y = RSdata$CA_PA_systPost2Diff)
+```
+
+##### 4v16: BL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+kruskal.test(x = BLdata$CA_PA_mapPost2Diff, g = RSdata$CA_PA_mapPost2Diff)
+t.test(x = BLdata$CA_PA_mapPost2Diff, y = RSdata$CA_PA_mapPost2Diff)
+```
+
+##### 9v15: RL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst)
+
+```{r}
+t.test(x = RLdata$CA_PA_systPost2Diff, y = RSdata$CA_PA_systPost2Diff)
+```
+
+##### 10v16: RL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+t.test(x = RLdata$CA_PA_mapPost2Diff, y = RSdata$CA_PA_mapPost2Diff)
+```
+
+#### Post 10 Minutes
+
+##### 5v11: BL(CA_Syst - PA_Syst) Vs. RL(CA_Syst - PA_Syst)
+
+```{r}
+t.test(x = BLdata$CA_PA_systPost10Diff, y = RLdata$CA_PA_systPost10Diff)
+```
+
+##### 6v12: BL(CA_MAP - PA_MAP) Vs. RL(CA_MAP - PA_MAP)
+
+```{r}
+t.test(x = BLdata$CA_PA_mapPost10Diff, y = RLdata$CA_PA_mapPost10Diff)
+```
+
+##### 5v17: BL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst)
+
+```{r}
+kruskal.test(x = BLdata$CA_PA_systPost10Diff, g = RSdata$CA_PA_systPost10Diff)
+t.test(x = BLdata$CA_PA_systPost10Diff, y = RSdata$CA_PA_systPost10Diff)
+```
+
+##### 6v18: BL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+kruskal.test(x = BLdata$CA_PA_mapPost10Diff, g = RSdata$CA_PA_mapPost10Diff)
+t.test(x = BLdata$CA_PA_mapPost10Diff, y = RSdata$CA_PA_mapPost10Diff)
+```
+
+##### 11v17: RL(CA_Syst - PA_Syst) Vs. RS(CA_Syst - PA_Syst)
+
+```{r}
+t.test(x = RLdata$CA_PA_systPost10Diff, y = RSdata$CA_PA_systPost10Diff)
+```
+
+##### 12v18: RL(CA_MAP - PA_MAP) Vs. RS(CA_MAP - PA_MAP)
+
+```{r}
+t.test(x = RLdata$CA_PA_mapPost10Diff, y = RSdata$CA_PA_mapPost10Diff)
+```
+
+### Statistical Summary of Differences
+
+#### Brachial Long
+
+##### Pre
+
+
+```{r}
+BLdata %>%
+  summarise(Mean_PreSyst = mean(CA_PA_systPreDiff),
+            SD_PreSyst = sd(CA_PA_systPreDiff),
+            Mean_PreMAP = mean(CA_PA_mapPreDiff),
+            SD_PreMAP = sd(CA_PA_mapPreDiff)
+            ) 
+```
+
+##### Post 2 Minutes
+
+```{r}
+BLdata %>%
+  summarise(Mean_Post2Syst = mean(CA_PA_systPost2Diff),
+            SD_Post2Syst = sd(CA_PA_systPost2Diff),
+            Mean_Post2MAP = mean(CA_PA_mapPost2Diff),
+            SD_Post2MAP = sd(CA_PA_mapPost2Diff)
+            )
+```
+
+##### Post 10 Minutes
+
+```{r}
+BLdata %>%
+  summarise(Mean_Post10Syst = mean(CA_PA_systPost10Diff),
+            SD_Post10Syst = sd(CA_PA_systPost10Diff),
+            Mean_Post10MAP = mean(CA_PA_mapPost10Diff),
+            SD_Post10MAP = sd(CA_PA_mapPost10Diff)
+            )
+```
+
+#### Radial Long
+
+##### Pre
+
+
+```{r}
+RLdata %>%
+  summarise(Mean_PreSyst = mean(CA_PA_systPreDiff),
+            SD_PreSyst = sd(CA_PA_systPreDiff),
+            Mean_PreMAP = mean(CA_PA_mapPreDiff),
+            SD_PreMAP = sd(CA_PA_mapPreDiff)
+            )
+```
+
+##### Post 2 Minutes
+
+```{r}
+RLdata %>%
+  summarise(Mean_Post2Syst = mean(CA_PA_systPost2Diff),
+            SD_Post2Syst = sd(CA_PA_systPost2Diff),
+            Mean_Post2MAP = mean(CA_PA_mapPost2Diff),
+            SD_Post2MAP = sd(CA_PA_mapPost2Diff)
+            )
+```
+
+##### Post 10 Minutes
+
+```{r}
+RLdata %>%
+  summarise(Mean_Post10Syst = mean(CA_PA_systPost10Diff,na.rm = TRUE),
+            SD_Post10Syst = sd(CA_PA_systPost10Diff,na.rm = TRUE),
+            Mean_Post10MAP = mean(CA_PA_mapPost10Diff,na.rm = TRUE),
+            SD_Post10MAP = sd(CA_PA_mapPost10Diff,na.rm = TRUE)
+            )
+```
+
+#### Radial Short
+
+##### Pre
+
+
+```{r}
+RSdata %>%
+  summarise(Mean_PreSyst = mean(CA_PA_systPreDiff),
+            SD_PreSyst = sd(CA_PA_systPreDiff),
+            Mean_PreMAP = mean(CA_PA_mapPreDiff),
+            SD_PreMAP = sd(CA_PA_mapPreDiff)
+            )
+```
+
+##### Post 2 Minutes
+
+```{r}
+RSdata %>%
+  summarise(Mean_Post2Syst = mean(CA_PA_systPost2Diff),
+            SD_Post2Syst = sd(CA_PA_systPost2Diff),
+            Mean_Post2MAP = mean(CA_PA_mapPost2Diff),
+            SD_Post2MAP = sd(CA_PA_mapPost2Diff)
+            )
+```
+
+##### Post 10 Minutes
+
+```{r}
+RSdata %>%
+  summarise(Mean_Post10Syst = mean(CA_PA_systPost10Diff),
+            SD_Post10Syst = sd(CA_PA_systPost10Diff),
+            Mean_Post10MAP = mean(CA_PA_mapPost10Diff),
+            SD_Post10MAP = sd(CA_PA_mapPost10Diff)
+            )
+```
+
+
+
+
+
+
+
+
+
+
+

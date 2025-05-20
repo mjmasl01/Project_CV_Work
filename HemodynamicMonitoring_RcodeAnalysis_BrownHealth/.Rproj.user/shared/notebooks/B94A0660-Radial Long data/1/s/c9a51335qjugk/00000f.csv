@@ -1,0 +1,15 @@
+"0","paccSYSTcicuRL <- "
+"0","  RLdata %>% "
+"0","  mutate(syst_pacc_cicu = parse_number(syst_pacc_cicu)) %>%"
+"0","  summarise(Mean = mean(syst_pacc_cicu, na.rm = TRUE),"
+"0","            Median = median(syst_pacc_cicu, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(syst_pacc_cicu,na.rm = TRUE)"
+"0","            )"
+"2","Warning: [38;5;232mThere was 1 warning in `mutate()`.[39m
+[38;5;232m[36mℹ[38;5;232m In argument: `syst_pacc_cicu = parse_number(syst_pacc_cicu)`.[39m
+Caused by warning:
+[33m![39m 2 parsing failures.
+row col expected actual
+ 12  -- a number      .
+ 57  -- a number      ."
+"0","paccSYSTcicuRL"

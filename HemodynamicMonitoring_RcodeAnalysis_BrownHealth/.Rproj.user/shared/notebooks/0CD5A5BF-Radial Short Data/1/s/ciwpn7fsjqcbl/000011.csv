@@ -1,0 +1,7 @@
+"0","osaRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(osa),"
+"0","            Median = median(osa),"
+"0","            Stan.Dev. = sd(osa)"
+"0","            )"
+"0","osaRS"

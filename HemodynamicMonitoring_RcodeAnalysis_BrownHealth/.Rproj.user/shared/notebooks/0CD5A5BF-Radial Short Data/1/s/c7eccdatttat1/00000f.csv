@@ -1,0 +1,7 @@
+"0","urineRS <- "
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(urine),"
+"0","            Median = median(urine),"
+"0","            Stan.Dev. = sd(urine)"
+"0","            )"
+"0","urineRS"

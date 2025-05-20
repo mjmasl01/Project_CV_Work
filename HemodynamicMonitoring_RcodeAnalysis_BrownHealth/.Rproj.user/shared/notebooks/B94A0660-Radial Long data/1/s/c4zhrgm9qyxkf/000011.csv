@@ -1,0 +1,7 @@
+"0","crystalloidRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(crystalloid),"
+"0","            Median = median(crystalloid),"
+"0","            Stan.Dev. = sd(crystalloid)"
+"0","            )"
+"0","crystalloidRL"

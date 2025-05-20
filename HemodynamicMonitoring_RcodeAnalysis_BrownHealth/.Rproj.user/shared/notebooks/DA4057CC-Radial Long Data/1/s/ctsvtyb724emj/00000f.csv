@@ -1,0 +1,8 @@
+"0","paccDIASTpreRL <- "
+"0","  RLdata %>% "
+"0","  mutate(diast_pacc_precpb = parse_number(diast_pacc_precpb)) %>%"
+"0","  summarise(Mean = mean(diast_pacc_precpb,na.rm = TRUE),"
+"0","            Median = median(diast_pacc_precpb,na.rm = TRUE),"
+"0","            Standard_Deviation = sd(diast_pacc_precpb,na.rm = TRUE)"
+"0","            )"
+"0","paccDIASTpreRL"

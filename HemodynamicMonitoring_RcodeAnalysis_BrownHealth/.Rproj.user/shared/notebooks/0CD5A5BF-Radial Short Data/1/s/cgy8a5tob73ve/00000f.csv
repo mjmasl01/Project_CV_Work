@@ -1,0 +1,8 @@
+"0","paccMAPcicuRS <- "
+"0","  RSdata %>% "
+"0","  mutate(map_pacc_cicu = parse_number(map_pacc_cicu)) %>%"
+"0","  summarise(Mean = mean(map_pacc_cicu, na.rm = TRUE),"
+"0","            Median = median(map_pacc_cicu, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(map_pacc_cicu,na.rm = TRUE)"
+"0","            )"
+"0","paccMAPcicuRS"

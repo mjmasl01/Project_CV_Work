@@ -1,0 +1,7 @@
+"0","caccMapTWOpostRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(map_cacc_postcpb2, na.rm = TRUE),"
+"0","            Median = median(map_cacc_postcpb2, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(map_cacc_postcpb2,na.rm = TRUE)"
+"0","            )"
+"0","caccMapTWOpostRL"

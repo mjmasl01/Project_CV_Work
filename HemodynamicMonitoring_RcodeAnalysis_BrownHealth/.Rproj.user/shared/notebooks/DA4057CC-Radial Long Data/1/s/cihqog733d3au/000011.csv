@@ -1,0 +1,7 @@
+"0","padRL <-"
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(pad),"
+"0","            Median = median(pad),"
+"0","            Stan.Dev. = sd(pad)"
+"0","            )"
+"0","padRL"

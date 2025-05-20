@@ -1,0 +1,7 @@
+"0","surgFreqRS <- "
+"0","  surgeryinfoRS %>%"
+"0","  summarise(Mean = mean(surgtype),"
+"0","            Median = median(surgtype),"
+"0","            Stan.Dev. = sd(surgtype)"
+"0","            )"
+"0","surgFreqRS"

@@ -1,0 +1,7 @@
+"0","intraPost_milRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(post_mil),"
+"0","            Median = median(post_mil),"
+"0","            Stan.Dev. = sd(post_mil)"
+"0","            )"
+"0","intraPost_milRL"

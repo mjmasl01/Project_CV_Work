@@ -1,0 +1,443 @@
+---
+title: 'Poisson-Gamma Review'
+author: "578"
+date: "2024sep17"
+output:
+  html_document:
+    highlight: pygments
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(fig.align = 'center', message = FALSE)
+library(knitr)
+library(ggplot2)
+library(cowplot)
+library(reshape)
+```
+
+### Poisson distribution
+
+if $Y \sim \text{Poisson}(\theta)$ then
+
+-   $p(Y = y \mid \theta) = \theta^y e^{-\theta} / y!$
+-   $\mathbb{E}(Y) = \text{Var}(Y) = \theta$
+
+### Posterior inference
+
+Recall how we concluded that $Y = \sum Y_i$ is a sufficient statistic
+for $n$ independent Bernoulli trials.
+
+For binary data $Y_1, \dots, Y_n$,
+
+\begin{align}
+p(\theta \mid y) &= \frac{p(y \mid \theta) p(\theta)}{p(y)} \\
+&= \frac{\theta^{\sum y_i} (1 - \theta)^{n - \sum y_i} p(\theta)}{p(y)} & \text{(distrib of i.i.d. sample)} \\
+\end{align}
+
+(In the text, Hoff shows (pg 35) the ratio) \begin{align}
+\frac{p(\theta_a|y_1, \dots, y_n)}{p(\theta_a|y_1, \dots, y_n)}
+\end{align}
+
+to make the point that $\sum_{i = 1}^n Y_i$ is the only statistic that
+is needed to calculate posterior probabilities of $\theta$. So, the the
+sum of the sample (and thus the sample mean) is a *sufficient statistic*
+for making inference about $\theta$.
+
+<br><br>
+
+#### **Similarly,** for the Poisson,
+
+$\sum_i y_i$ is a sufficient statistic for a sample of $n$ i.i.d.
+Poisson variables.
+
+State the likelihood,
+
+\begin{align}
+P(Y_1 = y_1, \dots, Y_n = y_n \mid \theta) &=
+\prod_i p(y_i \mid \theta) \\
+&= \prod_i \frac{\theta^{y_i} e^{-\theta}}{y_i !} \\
+&= \theta^{\sum_i y_i} e^{-n \theta} \prod_i \frac{1}{y_i !} & \\
+\end{align}
+
+and form the ratio for two values of $\theta$,
+
+\begin{align}
+\frac{p(\theta_a \mid y_1, \dots, y_n)}{p(\theta_b \mid y_1, \dots, y_n)} &= \dots
+\end{align}
+
+the $\prod_i 1 / y_i !$ term cancels out and the
+$\theta_{a, b}^{\sum_i y_i}$ terms are the only terms remaining in the
+fraction. As in the binomial, $\sum_i y_i$ is a sufficient statistic.
+
+<br><br>
+
+#### **Now proceed as before with binomial data**
+
+Use Bayes to show that with Poisson data and a Gamma prior, the
+posterior is distrabuted as a Gamma distribution.
+
+This is a demonstration of conjugacy.
+
+### Conjugate prior
+
+Using Bayes' rule and the sampling model above
+
+\begin{align}
+p(\theta \mid y) &= \frac{p(\theta)p(y \mid \theta)}{p(y)} \\
+&\propto p(\theta) p(y \mid \theta) \\
+&\propto p(\theta) \times \theta^{\sum y_i} e^{-n\theta} \\
+\end{align}
+
+#### \*\* Now for the prior ,,,\*\*
+
+\begin{align}
+\text{If  }
+\theta \sim \text{Gamma}(a, b)   
+\end{align} \begin{align}
+\text{  then  }   
+
+p(\theta) = \frac{b^a}{\Gamma(a)}\theta^{a - 1} e^{-b \theta}
+\end{align}
+
+**Note that** <br> \begin{align}
+\mathbb{E}(\theta) &= a/b  
+\end{align} \begin{align}
+\text{Var}(\theta) &= a/b^2
+\end{align}
+
+**Now show conjugacy**
+
+\begin{align}
+p(\theta \mid y) &= \frac{p(\theta) p(y \mid \theta)}{p(y)} \\
+&= \underbrace{\left( \frac{b^a}{\Gamma(a)} \theta^{a - 1} e^{-b \theta}
+\right)}_{p(\theta)} \underbrace{\left( \theta^{\sum y_i} e^{-n \theta} \prod_i
+\frac{1}{y_i !} \right)}_{p(y \mid \theta)} \left( \frac{1}{p(y)} \right) \\
+&= c \times \left( \theta^{a - 1 + \sum y_i} e^{-(b + n) \theta} \right)
+\end{align}
+
+Where $c = f(y, a, b)$ <br>in other words throw all the stuff that
+doesn't depend on $\theta$ into the normalizing constant so that <br>
+
+$\int p(\theta \mid y) \; d\theta = 1$.
+
+Like the Binomial model, we recognize from the proportionality to
+$\theta^{a - 1} e^{-b \theta}$ that the posterior distribution of
+$\theta$ is Gamma distributed. Specifically
+
+\begin{align}
+\theta \mid y_1, \dots, y_n \sim \text{Gamma}(a + \sum_i y_i, b + n)
+\end{align}
+
+and the expectation is
+
+\begin{align}
+\mathbb{E}(\theta \mid y_1, \dots, y_n) &= \frac{a + \sum y_i}{b + n} \\
+&= \frac{b}{b + n} \frac{a}{b} + \frac{n}{b + n}\frac{\sum y_i}{n} \\
+\end{align}
+
+### Posterior predictive distribution
+
+\begin{align}
+p(\tilde{y} \mid y_1, \dots, y_n) &= \int_0^{\infty} p(\tilde{y} \mid \theta, y_1, \dots, y_n) p(\theta \mid y_1, \dots, y_n) \; d\theta & \text{Marginalization} \\
+&= \int_0^{\infty} p(\tilde{y} \mid \theta) p(\theta \mid y_1, \dots, y_n) \; d\theta & \text{Since $\tilde{y}$ and $y_i$s c.i. given $\theta$} \\
+&= \int_0^{\infty} \left[ \frac{\theta^{\tilde{y}} e^{-\theta}}{\tilde{y}!} \right] \times \left[ \frac{(b + n)^{a + \sum y_i}}{\Gamma(a + \sum y_i)} \theta^{a + \sum y_i - 1} e^{-(b + n)\theta} \right] \; d\theta \\
+&= \int_0^{\infty} \left[ \frac{\theta^{\tilde{y} + a + \sum y_i - 1} e^{-(b + n + 1)\theta}}{\tilde{y}!} \right] \times \left[ \frac{(b + n)^{a + \sum y_i}}{\Gamma(a + \sum y_i)} \right] \; d\theta & \text{Combine $\theta$s, $e$s} \\
+&= \frac{(b + n)^{a + \sum y_i}}{\Gamma(\tilde{y} + 1) \Gamma(a + \sum y_i)} \int_0^{\infty} \theta^{\tilde{y} + a + \sum y_i - 1} e^{-(b + n + 1)\theta} \; d\theta \\
+\end{align}
+
+Notice that the integrand is proportional to a Gamma density:
+
+\begin{align}
+& \int_0^{\infty} \frac{b^a}{\Gamma(a)} \theta^{a - 1} e^{-b \theta} \; d\theta = 1\\
+\implies& \int_0^{\infty} \theta^{a - 1} e^{-b\theta} \; d\theta = \frac{\Gamma(a)}{b^a} \\
+\end{align}
+
+So
+
+\begin{align}
+p(\tilde{y} \mid y_1, \dots, y_n) &= \dots \\
+&= \left( \frac{(b + n)^{a + \sum y_i}}{\Gamma(\tilde{y} + 1) \Gamma(a + \sum y_i)} \right) \left( \frac{\Gamma(\tilde{y} + a + \sum y_i)}{(b + n + 1)^{\tilde{y} + a + \sum y_i}} \right) \\
+&= \left( \frac{\Gamma(\tilde{y} + a + \sum y_i)}{\Gamma(\tilde{y} + 1) \Gamma(a + \sum y_i)} \right) \left( \frac{(b + n)^{a + \sum y_i}}{(b + n + 1)^{\tilde{y} + a + \sum y_i}} \right) & \text{Swapping numerators} \\
+&= \left( \frac{\Gamma(\tilde{y} + a + \sum y_i)}{\Gamma(\tilde{y} + 1) \Gamma(a + \sum y_i)} \right) \left( \frac{b + n}{b + n + 1} \right)^{a + \sum y_i} \left( \frac{1}{b + n + 1} \right)^{\tilde{y}} \\
+&= \text{dnbinom}(\tilde{y}, a + \sum y_i, b + n) \\
+\end{align}
+
+The negative binomial distribution here, whose parameters look just like
+the Gamma posterior on theta, can be thought of as a predictive Poisson
+distribution with increased variance owing to the increased uncertainty
+on the value of $\theta$. Notice
+
+\begin{align}
+\mathbb{E}(\tilde{Y} \mid y_1, \dots, y_n) &= \frac{a + \sum y_i}{b + n} = \mathbb{E}(\theta \mid y_1, \dots, y_n) \\
+\text{Var}(\tilde{Y} \mid y_1, \dots, y_n) &= \frac{a + \sum y_i}{b + n} \frac{b
++ n + 1}{b + n} = \mathbb{E}(\theta \mid y_1, \dots, y_n) \times \frac{b + n + 1}{b + n}
+\\
+\end{align}
+
+So as $n$ grows large, the variance on $\tilde{Y}$ approaches the
+variance of its expectation $\mathbb{E}(\tilde{Y})$.
+
+## Example: Birth Rates
+
+In the 1990s, did women with college degrees have different numbers of
+children than women without college degrees?
+
+We sample $n_1$ women without college degrees, denoted
+$Y_{1,1}, \dots, Y_{n_1, 1}$, and $n_2$ women with college degrees,
+$Y_{1, 2}, \dots, Y_{n_2, 2}$. For some parameter $\theta$ we can model
+the number of children for each woman as being i.i.d
+$\text{Poisson}(\theta_1)$ and $\text{Poisson}(\theta_2)$, respectively.
+We may be interested in conducting hypothesis tests to see whether or
+not these $\theta$ are different.
+
+Recall that, in this two samples, the *sufficient* statistic is simply
+the sum of all of the $Y_i$. Say we observe
+
+-   No college: $n_1 = 111$, $\sum Y_i = 217$, $\sum Y_i / n_1 = 1.95$\
+-   College: $n_2 = 44$, $\sum Y_i = 66$, $\sum Y_i / n_2 = 1.50$
+
+Say our prior on both $\theta$ is $\text{Gamma(a = 2, 1)}$.
+
+You can try different priors by changing `a` and `b` below:
+
+```{r}
+a = 2
+b = 1
+n1 = 111
+sy1 = 217
+n2 = 44
+sy2 = 66
+df = data.frame(
+  theta = seq(0, 5, by = 0.01),
+  prior = dgamma(seq(0, 5, by = 0.01), a, b),
+  pos.theta1 = dgamma(seq(0, 5, by = 0.01), a + sy1, b + n1),
+  pos.theta2 = dgamma(seq(0, 5, by = 0.01), a + sy2, b + n2)
+)
+df.long = melt(df, id.vars = 'theta', variable_name = 'dist')
+ggplot(df.long, aes(x = theta, y = value, group = dist, color = dist)) +
+  geom_line() +
+  ylab('probability')
+```
+
+Notice that we can calculate the probability that $\theta_1 > \theta_2$
+by integrating over the joint density $p(\theta_1, \theta_2)$ over the
+region where $\theta_1 > \theta_2$.
+
+### Calulate
+
+OK, we have posterior distributions for women without ($\theta_1$) and
+with bachelor's degrees ($\theta_2$). Recall
+
+\begin{align}
+\left(\theta_1 \;\middle|\; \sum_i Y_{i, 1} = 217\right) &\sim \text{Gamma}(219, 112) \\
+\left(\theta_2 \;\middle|\; \sum_i Y_{i, 2} = 217\right) &\sim \text{Gamma}(68, 45)
+\end{align}
+
+```{r echo=FALSE}
+a = 2
+b = 1
+n1 = 111
+sy1 = 217
+n2 = 44
+sy2 = 66
+df = data.frame(
+  theta = seq(0, 5, by = 0.01),
+  prior = dgamma(seq(0, 5, by = 0.01), a, b),
+  pos.theta1 = dgamma(seq(0, 5, by = 0.01), a + sy1, b + n1),
+  pos.theta2 = dgamma(seq(0, 5, by = 0.01), a + sy2, b + n2)
+)
+df.long = melt(df, id.vars = 'theta', variable_name = 'dist')
+ggplot(df.long, aes(x = theta, y = value, group = dist, color = dist)) +
+  geom_line() +
+  ylab('probability')
+```
+
+To calculate the probability under these models that the mean number of
+children of women without bachelor's degrees are higher than the mean
+number of those with bachelor's degrees
+$P(\theta_1 > \theta_2 \mid \dots)$, we can do so analytically.
+
+Notice that since $\theta_1$ and $\theta_2$ are independent,
+$p(\theta_1, \theta_2) = p(\theta_1) p(\theta_2)$. If we plot $\theta_1$
+and $\theta_2$ on the cartesian coordinate plane, the line
+$\theta_1 = \theta_2$ divides two regions of the plane - one where
+$\theta_1 > \theta_2$, the other where $\theta_2 > \theta_1$. We
+double-integrate the joint density $p(\theta_1, \theta_2)$ over the
+region we're interested in.
+
+Since for this example, the supports of $\theta_1$ and $\theta_2$ are
+$[0,
+\infty]$, we integrate over a portion of that region up to the line
+$\theta_1 = \theta_2$:
+
+\begin{align}
+P(\theta_1 > \theta_2 \mid y) &= \int_0^\infty \left( \int_0^{\theta_1}
+p(\theta_1 \mid y) p(\theta_2 \mid y) \; d\theta_2 \right) \; d\theta_1 \\
+&= \int_0^\infty \left( \int_0^{\theta_1}
+\text{dgamma}(\theta_1, 219, 112) \times \text{dgamma}(\theta_2, 68, 45) \; d\theta_2 \right) \; d\theta_1 \\
+\end{align}
+
+Since Gamma distributions have well-defined PDFs, in this case the
+integral is computable and is reasonably easy in R:
+
+```{r}
+inner.int = function(Theta.1) {
+  sapply(Theta.1, function(theta.1) {
+    integrate(function(theta.2) dgamma(theta.1, 219, 112) * dgamma(theta.2, 68, 45), 0, theta.1)$value
+  })
+}
+integrate(inner.int, 0, 50)
+```
+
+### Monte Carlo
+
+When inference gets complicated, integrals may not be tractable.
+
+calculate estimates via Monte Carlo estimation.
+
+Notice that we can implement computational tools that allow us to sample
+arbitrarily from the Gamma distributions of $\theta_1$ and $\theta_2$.
+
+The details of implementing these samplers, i.e. functions that can draw
+some $\theta_i \sim p(\theta \mid y)$, are non-trivial.
+
+BUT you have R where you can make $n$ random draws from a gamma
+distribution with parameters $a$ and $b$ with the function call
+`rgamma(n, a, b)`.
+
+The law of large numbers states that, for $S$ i.i.d. draws
+$\theta^1, \dots,\theta^S$ from a distribution $p(\theta)$, as
+$S \rightarrow \infty$,
+$\frac{1}{S} \sum \theta^i \rightarrow \mathbb{E}(p(\theta))$.
+
+This also implies that the variance of the sample approaches the
+variance of the distribution.
+
+By the Glivenko-Cantelli Lemma, the empirical distribution function of
+$\theta^1, \dots, \theta^S$ approaches $p(\theta)$.
+
+So, you can approximate any quantity of interest of $p(\theta)$ to
+arbitrary precision using a large enough sample from that function.
+
+You can see this in this example -- which demonstrates how the histogram
+and kernel density estimates of larger and large samples from the
+$\theta_2 \sim \text{Gamma}(68, 45)$ distribution approach the
+distribution itself. In each panel, the true distribution is the dotted
+blue line.
+
+```{r warning=FALSE}
+a = 68
+b = 45
+
+std.gamma = data.frame(theta = seq(0, 3, by = 0.01), p = dgamma(seq(0, 3, by = 0.01), a, b))
+mc10 = data.frame(theta = rgamma(10, a, b), type = '10 samples')
+mc100 = data.frame(theta = rgamma(100, a, b), type = '100 samples')
+mc1000 = data.frame(theta = rgamma(1000, a, b), type = '1000 samples')
+
+mcs = rbind(mc10, mc100, mc1000)
+
+ggplot(mcs, aes(x = theta, y = ..density..)) +
+  geom_histogram(bins = 10, fill = NA, color = 'black') +
+  stat_density(fill = NA, color = 'black') +
+  scale_x_continuous(limits = c(1, 2)) +
+  geom_line(data = std.gamma, mapping = aes(x = theta, y = p), lty = 2, color = 'blue') +
+  ylab('density') +
+  facet_grid(. ~ type)
+```
+
+## Numerical evaluation
+
+The actual posterior mean of $\theta_2 \mid y$ is $68/45 = 1.51$. Notice
+we can approximate this mean with the mean of the above
+
+```{r}
+means = c('10 samples' = mean(mc10$theta),
+          '100 samples' = mean(mc100$theta),
+          '1000 samples' = mean(mc1000$theta))
+kable(means, col.names = 'Estimate of E(theta)')
+```
+
+We can calculate probabilities of events concerning theta by counting
+the number of times in our sample the randomly sampled value satisfies
+the event. For example, to calculate $P(\theta < 1.75 \mid y)$, we
+observe the number of times a sampled $\theta^{i} < 1.75$. In R,
+comparison operators like `>` or `==` operate element-wise, so
+`mc1000$theta < 1.75` returns a boolean vector of `T`s and `F`s
+depending on whether the specific $\theta^i$ is indeed less than 1.75:
+
+Thus, we can calculate
+
+```{r}
+means = c('10 samples' = mean(mc10$theta < 1.75),
+          '100 samples' = mean(mc100$theta < 1.75),
+          '1000 samples' = mean(mc1000$theta < 1.75))
+kable(means, col.names = 'Estimate of P(theta < 1.75)')
+```
+
+Notice the true probability can be calculated with via
+`pgamma(1.75, 68, 45)` and is `r round(pgamma(1.75, 68, 45), 3)`.
+
+## Convergence
+
+We can measure how quickly our estimates converge to the true mean (for
+this example, when the true mean is known) by plotting the estimate thus
+far as the number of samples in our estimation increase, as below:
+
+```{r}
+cstats = melt(data.frame(
+  n = seq_along(mc1000$theta),
+  'Expectation' = cumsum(mc1000$theta) / seq_along(mc1000$theta),
+  'Probability' = cumsum(mc1000$theta < 1.75) / seq_along(mc1000$theta < 1.75)
+), id.vars = 'n')
+realstats = data.frame(
+  stat = c(68 / 45, pgamma(1.75, 68, 45)),
+  variable = c('Expectation', 'Probability')
+)
+ggplot(cstats, aes(x = n, y = value)) +
+  facet_wrap(~ variable, scales = 'free') +
+  geom_line() +
+  ylab('Estimate') + xlab('Number of samples') +
+  geom_hline(data = realstats, mapping = aes(yintercept = stat), lty = 2)
+```
+
+Since, due to the central limit theorem, estimates of the mean of
+$\theta^1, \dots,
+\theta^S$ (and other quantities??) are approximately normally
+distributed for large $S$, we can construct confidence intervals for our
+estimates based on the sample size.
+
+Specifically, an approximate 95% confidence interval for $\theta$ is
+
+$$
+\hat{\theta} \pm 1.96 \sqrt{\hat{\sigma}^2 / S}
+$$
+
+where $\hat{\sigma}^2$ is the unbiased estimator of the population
+variance (hence the *approximate* confidence interval; divide by
+$S - 1$, not $S$). Using this, we can estimate the number of samples we
+ought to take to report our estimate to a certain degree of precision.
+We ought to take enough samples such that the standard error
+$\sqrt{\hat{\sigma}^2/S} < \alpha$ where $\alpha$ is the desired level
+of precision. Of course, since we don't know how variable our samples
+are, we don't know how big $\hat{\sigma}^2$ is, so we cannot *a priori*
+determine the number of samples to run. It is possible, however, to run
+a smaller number of samples first to determine an estimate of
+$\hat{\sigma}^2$ and thus the standard error, then conservatively use
+that estimate to identify the size of $S$ required for the desired
+precision.
+
+# Posterior inference for arbitrary functions
+
+If we can sample
+$\theta^{(1)}, \dots, \theta^{(S)} \sim p(\theta \mid y)$ i.i.d., then
+we can obtain distributions for any arbitrary function $g(\theta)$. We
+just need to sample $S$ $\theta^{(i)}$, then apply $g$ to each
+$\theta^{(i)}$ to obtain the value of interest, say $\gamma^{(i)}$. This
+step is deterministic, so we are actually sampling from
+$p(\gamma \mid y)$. Thus, by the sample law of large numbers and central
+limit theorem derivations as before, Monte Carlo estimations can
+estimate arbitrary functions to any degree of accuracy. This is very
+powerful and flexible!

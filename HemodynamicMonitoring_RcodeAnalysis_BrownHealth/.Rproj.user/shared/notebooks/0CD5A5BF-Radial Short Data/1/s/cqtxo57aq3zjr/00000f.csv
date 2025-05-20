@@ -1,0 +1,7 @@
+"0","intra_nitroRS <- "
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(intra_nitro),"
+"0","            Median = median(intra_nitro),"
+"0","            Stan.Dev. = sd(intra_nitro)"
+"0","            )"
+"0","intra_nitroRS"

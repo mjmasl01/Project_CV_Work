@@ -1,0 +1,8 @@
+"0","paccWaveTENpostBL <- "
+"0","  BLdata %>% "
+"0","  mutate(wave_pacc_postcpb10 = parse_number(wave_pacc_postcpb10)) %>%"
+"0","  summarise(Mean = mean(wave_pacc_postcpb10, na.rm = TRUE),"
+"0","            Median = median(wave_pacc_postcpb10, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(wave_pacc_postcpb10,na.rm = TRUE)"
+"0","            )"
+"0","paccWaveTENpostBL"

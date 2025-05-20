@@ -1,0 +1,7 @@
+"0","heightRL<-"
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(height),"
+"0","            Median = median(height),"
+"0","            Stan.Dev. = sd(height)"
+"0","            )"
+"0","heightRL"

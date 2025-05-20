@@ -1,0 +1,66 @@
+---
+title: "Bayesian Models for Poisson Data"
+author: "Stat 325 (Chapman)"
+date: "3/28 and 30/2023"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+Finding a prior for lambda (with "typical" = mode)
+```{r}
+target = 0.8
+priors = data.frame(a = seq(1, 20, .01))
+priors = priors %>%
+  mutate(b = 2*a-2,   
+         p = pgamma(2, a, b),
+         offtarget = abs(p-target))
+
+priors %>%
+  slice(which.min(offtarget))
+```
+
+Finding a prior for lambda (with "typical" = mean)
+```{r}
+target = 0.95
+priors = data.frame(a = seq(0.01, 5, .01))
+priors = priors %>%
+  mutate(b = 2*a,   
+         p = pgamma(2, a, b),
+         offtarget = abs(p-target))
+
+priors %>%
+  slice(which.min(offtarget))
+```
+
+Plot the prior and posterior distributions
+```{r}
+curve(dgamma(x,  ,  ),from=0,to=2, xlab="lambda = mean rate",ylab="density",lwd=2,col="blue") # posterior we found
+curve(dgamma(x,     ,   ),from=0, to=2, add=TRUE,lty=2,lwd=2) # prior we used
+legend("topright",legend = c("prior", "posterior"), col=c("black","blue"),lty=c(2,1))
+
+```
+
+Find 95% credible interval and posterior median for posteriors
+```{r}
+# credible interval
+qgamma( c(0.025, 0.975)  ,     ,      )
+# posterior median
+qgamma( 0.5  ,     ,    )
+
+
+```
+
+
+
+```{r}
+
+achedata<- list(
+  N = 38,
+  y=c(2,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0))
+
+```
+
+

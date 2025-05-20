@@ -1,0 +1,15 @@
+"0","asa_psRS <- "
+"0","  RSdata %>% "
+"0","  summarise(Mean = mean(asaps),"
+"0","            Median = median(asaps),"
+"0","            Stan.Dev. = sd(asaps)"
+"0","            )"
+"0","asa_psRS %>% pander::pander()"
+"1","
+----------------------------
+ Mean    Median   Stan.Dev. 
+------- -------- -----------
+ 3.971     4       0.1702   
+----------------------------
+
+"

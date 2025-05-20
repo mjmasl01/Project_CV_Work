@@ -1,0 +1,112 @@
+---
+title: "Bootstrap Confidence Intervals"
+author: "Stat 326 (Chapman)"
+date: "3/14/2023"
+output: word_document
+---
+
+## Bootstrap for a Population Mean
+The number of hours of exercise per week for a random sample of Stat 113 students are provided.
+```{r}
+data = c(12,3,4,10,8,17,15,5,8,10,8,25,1,15,2,14,10,8,6,14,5,6,12,3)
+
+hist(data)
+mean(data)
+
+
+n=length(data)
+means = NULL
+B = 1000
+
+for (i in 1:B)
+{
+	boot_sample = sample(data,n,replace=T)
+	boot_mean = mean(boot_sample)
+	means = c(means, boot_mean)
+}
+
+hist(means,col="medium sea green")
+abline(v=mean(data),col="red",lwd=2)
+
+# mean of bootstrap distribution (should be close to our statistic)
+mean(means)
+
+# 90% CI
+quantile(means,c(0.05, 0.95))
+
+# 95% CI
+quantile(means,c(0.025, 0.975))
+
+```
+
+
+## Bootstrap for a Population Proportion
+In a random sample of 588 adults, 16.67% reported that key lime pie is their favorite kind of pie. Construct a 95% Bootstrap percentile confidence interval that have key lime as their favorite pie.
+```{r}
+data = c( rep(1, round(588*.1667)), rep(0, 588-round(588*.1667)))
+n=length(data)
+props = NULL
+B = 5000
+
+
+
+
+
+
+
+hist(props,col="medium sea green")
+abline(v=mean(data),col="red",lwd=2)
+
+# center of bootstrap distribution (should be close to our sample statistic)
+mean(props)
+
+# 90% CI
+quantile(props,c(0.05, 0.95))
+
+# 95% CI
+quantile(props,c(0.025, 0.975))
+
+```
+
+
+## Bootstrap for Two Samples
+```{r}
+sampleNo=c(6,2,5,6,10,2,14,4,6,0,4,5,1,5,8,8,10,14,5,10,7,9)
+sampleYes=c(7,20,12,5,18,7,15,18,13,0,8,7,12,12,20,13,16)
+
+n1 = length(sampleNo)
+n2 = length(sampleYes)
+
+mean(sampleYes) - mean(sampleNo) # our sample statistic (diff. in means)
+mean(sampleYes)/mean(sampleNo) # our sample statistic (ratio of means)
+
+diffs = NULL
+ratios = NULL
+B = 5000
+
+
+
+
+
+
+
+par(mfrow=c(1,2))
+hist(diffs,col="medium sea green")
+abline(v=(mean(sampleYes) - mean(sampleNo)),col="red",lwd=2)
+hist(ratios, col="light sea green")
+abline(v=mean(sampleYes)/mean(sampleNo),col="red",lwd=2)
+
+# mean of the bootstrap distribution of diffs
+mean(diffs)
+# mean of the bootstrap distribution of diffs
+mean(ratios)
+
+# 90% CI diffs
+quantile(diffs,c(0.05, 0.95))
+
+# 90% CI ratios
+quantile(ratios,c(0.05, 0.95))
+
+```
+
+

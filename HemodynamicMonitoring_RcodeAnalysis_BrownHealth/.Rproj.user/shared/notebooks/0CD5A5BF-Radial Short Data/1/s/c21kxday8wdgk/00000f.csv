@@ -1,0 +1,7 @@
+"0","cpbDurationRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(cpb_duration),"
+"0","            Median = median(cpb_duration),"
+"0","            Stan.Dev. = sd(cpb_duration)"
+"0","            )"
+"0","cpbDurationRS"

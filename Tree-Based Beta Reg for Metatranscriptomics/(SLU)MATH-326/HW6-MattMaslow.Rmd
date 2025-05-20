@@ -1,0 +1,219 @@
+---
+title: "HW6 - MattMaslow"
+author: "Matthew Maslow"
+date: "3/27/2023"
+output:
+  word_document: default
+  html_document: default
+---
+#### Packages:
+```{r message=FALSE, warning=FALSE}
+library(resampledata)
+library(dplyr)
+library(ggplot2)
+```
+
+## 7.6
+
+#### 12.
+
+###### a.
+
+```{r}
+data("Girls2004")
+```
+```{r}
+smoke <- 
+  Girls2004 %>% filter(
+    Smoker == "Yes"
+  ) %>% 
+  ggplot(smoke, mapping = aes(Weight) ) +
+  geom_histogram(col="black") +
+  labs(title = "Smokes") + theme_light()
+
+noSmoke <- Girls2004 %>% filter(
+  Smoker == "No"
+       )  %>% 
+  ggplot(noSmoke, mapping = aes(Weight) ) +
+  geom_histogram(col = "black") +
+  labs(title = "Doesn't Smoke") + theme_light()
+
+smoke
+noSmoke
+```
+
+###### b.
+
+```{r}
+# 95% CI for lower bound of the diff in means of baby weights of
+#   smokes vs. non-smokers
+NSbar = mean(noSmoke$data$Weight)
+Smkbar = mean(smoke$data$Weight)
+sNS = sd(noSmoke$data$Weight)
+sSmk = sd(smoke$data$Weight)
+(df = ( (sNS^2/ 69)^2 + (sSmk^2 / 11)^2 ) / ( ( ( (sNS^2/ 69)^2) / 68 + (sSmk^2 / 11)^2 / 10) ) )
+t = -2.218
+result = (NSbar - Smkbar) + (t) * (sqrt( (sNS^2/69) + (sSmk^2/11) ) )
+result
+```
+
+We are 95% confident the that the lower bound of the mean difference of baby
+weights of non-smokers versus smokers is -56.11419 grams.
+
+#### 13.
+
+```{r}
+data(Spruce)
+```
+
+###### a.
+
+```{r}
+fertilized <- 
+  Spruce %>% filter(
+    Fertilizer == "F"
+  ) %>% 
+  ggplot(fertilized, mapping = aes(Ht.change) ) +
+  geom_density(col = "darkgreen")+
+  labs(title = "Fertilized" ) + theme_light()
+
+nonFertilized <- 
+  Spruce %>% filter(
+    Fertilizer == "NF"
+  ) %>% 
+  ggplot(nonFertilized, mapping = aes(Ht.change) ) +
+  geom_density(col = "darkgreen")+
+  labs(title = "Not Fertilized") + theme_light()
+
+fertilized
+nonFertilized
+```
+
+###### b.
+
+```{r}
+# 95% CI for the lower bound of the diff in mean height change for the Spruces
+FertBar <- mean(fertilized$data$Ht.change)
+nonFertBar <- mean(nonFertilized$data$Ht.change)
+sFert <- sd(fertilized$data$Ht.change)
+sNonFert <- sd(nonFertilized$data$Ht.change)
+(df = ( (sFert^2/ 36)^2 + (sNonFert^2 / 36)^2 ) / ( ( ( (sFert^2/ 36)^2) / 35 + (sNonFert^2 / 36)^2 / 35) ) )
+t = -2.030
+answer = (FertBar - nonFertBar) + (t) * (sqrt( (sFert^2/36) + (sNonFert^2/36) ) )
+answer
+```
+
+We are 95% confident that the lower bound of the mean difference between Spruces
+with fertilizer versus without is 10.76 feet.
+
+## 5.6:
+
+#### 12.
+
+```{r}
+data("FishMercury")
+```
+
+###### a.
+
+```{r}
+fmPlot <-
+  FishMercury %>%
+  ggplot(aes(Mercury)) +
+  geom_dotplot(col = "darkblue") +
+  labs(title = "Mercury Content in Fish")
+fmPlot
+```
+
+Most of the data on the fishes are located under 0.25mg, then there is an outlier
+that is above 1.75mg.
+
+###### b.
+
+```{r}
+hist(FishMercury$Mercury)
+mean(FishMercury$Mercury)
+
+
+n=length(FishMercury$Mercury)
+means = NULL
+B = 1000
+
+for (i in 1:B)
+{
+	boot_sample = sample(FishMercury$Mercury,n,replace=T)
+	boot_mean = mean(boot_sample)
+	means = c(means, boot_mean)
+}
+
+hist(means,col="green")
+abline(v=mean(FishMercury$Mercury),col="red",lwd=2)
+
+# mean of bootstrap distribution (should be close to our statistic)
+mean(means)
+sd(boot_sample)
+
+# 95% CI
+quantile(means,c(0.025, 0.975))
+
+```
+
+$Bootstrap mean = 0.1821461$ $Bootstrap StandErr = 0.3221959$ 
+Bootstrap percentile interval for 95% is $(0.1133625,0.3060025)$
+
+###### c.
+
+```{r}
+newFishMercury <-
+  FishMercury %>%
+  filter(Mercury < 1)
+```
+```{r}
+hist(newFishMercury$Mercury)
+mean(newFishMercury$Mercury)
+
+
+n=length(newFishMercury$Mercury)
+means = NULL
+B = 1000
+
+for (i in 1:B)
+{
+	boot_sample = sample(newFishMercury$Mercury,n,replace=T)
+	boot_mean = mean(boot_sample)
+	means = c(means, boot_mean)
+}
+
+hist(means,col="green")
+abline(v=mean(newFishMercury$Mercury),col="red",lwd=2)
+
+# mean of bootstrap distribution (should be close to our statistic)
+mean(means)
+sd(boot_sample)
+
+# 95% CI
+quantile(means,c(0.025, 0.975))
+
+```
+
+Bootstrap percentile interval for 95% without the outlier is...
+$(0.1080681, 0.1400698)$
+
+###### d.
+
+By removing the outlier it significantly improved the distribution of data.
+The mean of the data is now centered in the histogram, which also has a normal
+shape now, where the original was skewed. Also, looking at 95% bootstrap 
+interval it narrowed the width of bounds.
+
+
+
+
+
+
+
+
+
+
+
+

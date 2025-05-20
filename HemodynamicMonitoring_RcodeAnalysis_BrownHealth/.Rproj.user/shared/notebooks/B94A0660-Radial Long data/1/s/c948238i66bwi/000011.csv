@@ -1,0 +1,7 @@
+"0","caccSystTENpostRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(syst_cacc_postcpb10, na.rm = TRUE),"
+"0","            Median = median(syst_cacc_postcpb10, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(syst_cacc_postcpb10,na.rm = TRUE)"
+"0","            )"
+"0","caccSystTENpostRL"

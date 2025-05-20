@@ -1,0 +1,7 @@
+"0","paccWAVEpreRL <- "
+"0","  RLdata %>% "
+"0","  summarise(Mean = mean(wave_pacc_precpb,na.rm = TRUE),"
+"0","            Median = median(wave_pacc_precpb,na.rm = TRUE),"
+"0","            Standard_Deviation = sd(wave_pacc_precpb,na.rm = TRUE)"
+"0","            )"
+"0","paccWAVEpreRL"

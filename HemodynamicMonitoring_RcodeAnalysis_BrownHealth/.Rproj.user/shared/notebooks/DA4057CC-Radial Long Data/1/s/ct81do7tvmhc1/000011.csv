@@ -1,0 +1,7 @@
+"0","intraPost_norepRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(post_norep),"
+"0","            Median = median(post_norep),"
+"0","            Stan.Dev. = sd(post_norep)"
+"0","            )"
+"0","intraPost_norepRL"

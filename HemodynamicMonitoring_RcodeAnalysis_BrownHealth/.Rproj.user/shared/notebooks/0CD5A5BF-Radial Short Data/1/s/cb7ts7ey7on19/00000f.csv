@@ -1,0 +1,7 @@
+"0","autologousRS <- "
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(autologous),"
+"0","            Median = median(autologous),"
+"0","            Stan.Dev. = sd(autologous)"
+"0","            )"
+"0","autologousRS"

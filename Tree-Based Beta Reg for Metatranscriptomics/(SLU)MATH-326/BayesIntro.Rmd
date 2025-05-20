@@ -1,0 +1,84 @@
+---
+title: "Introduction to Bayesian Statistics: Binomial Data"
+author: "Stat 326 (Chapman)"
+date: "3/16/2023"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+Binomial Data with Beta(1,1)=Uniform(0,1) prior
+```{r}
+curve(dbeta(x,1,21),from=0,to=1, xlab="p=probability of 'Trotter'",ylab="density", col="blue") # posterior we found
+curve(dbeta(x,1,1),from=0, to=1, add=TRUE,lty=2) # prior we used
+legend("topright",legend = c("prior", "posterior"), col=c("black","blue"),lty=c(2,1))
+
+1/(1+21) # posterior mean
+
+qbeta(c(0.025,0.975),1,21) # 95% credible interval
+```
+
+
+Jeffreys Prior = Beta(0.5, 0.5)
+```{r}
+curve(dbeta(x,0.5,20.5),from=0,to=1, xlab="p=probability of 'Trotter'",ylab="density",col="blue") # posterior we found
+curve(dbeta(x,0.5,0.5),from=0, to=1, add=TRUE,lty=2) # prior we used
+legend("topright",legend = c("prior", "posterior"), col=c("black","blue"),lty=c(2,1))
+
+0.5/(0.5+20.5)  # posterior mean
+
+qbeta(c(0.025,0.975),0.5,20.5) # 95% credible interval
+```
+
+
+Binomial data: Find a Beta prior that has mean = 1/6
+```{r}
+
+# need to find an alpha and beta that simultaneously have alpha/(alpha+beta) = 1/6
+# and P(p<0.5) = 0.9
+
+mean = 1/6   # set a target for the mean = alpha/(alpha+beta) of our beta distribution
+  # set up our probability statement
+target = 0.9
+
+priors = data.frame(alphas = seq(0.1,50,by=0.05))
+priors = priors %>%
+  mutate(betas = alphas*(1/mean - 1),
+         probs = pbeta(0.5,alphas, betas),
+         offtarget = abs(probs - target))
+
+
+priors %>%
+  slice(which.min(offtarget))
+
+```
+
+plot posterior and prior we found
+```{r}
+curve(dbeta(x,0.35,21.75),from=0,to=1, xlab="p=probability of 'Trotter'",ylab="density",lwd=2,col="blue") # posterior we found
+curve(dbeta(x,0.35,1.75),from=0, to=1, add=TRUE,lty=2,lwd=2) # prior we used
+legend("topright",legend = c("prior", "posterior"), col=c("black","blue"),lty=c(2,1))
+
+0.35/(0.35+21.75)  # posterior mean
+
+qbeta(c(0.025,0.975),0.35,21.7)  # 95% credible interval
+```
+
+
+What if: we don't have a good guess about the value of p, but we are just "pretty sure" it is less than 1/6?
+```{r}
+agrid <- seq(0.1,5,by=0.01)  # change by value to create a courser or finer grid
+bgrid <- seq(0.1,5,by=0.01)  # change by value to create a courser or finer grid
+priors2 <-   expand.grid(alpha=agrid,beta=bgrid)  
+
+priors2 = priors2 %>%
+  mutate(p = pbeta(1/6,alpha,beta),
+         offtarget = abs(p-0.9))
+
+priors2 %>%
+  slice(which.min(offtarget))
+```
+

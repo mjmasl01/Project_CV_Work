@@ -1,0 +1,93 @@
+---
+title: "Empirical Power"
+author: "Stat 326 (Chapman)"
+date: "4/13/2023"
+output:
+  word_document: default
+  html_document: default
+---
+
+*Case 1: Empirical power for one sample t test (standard assumptions met)*
+
+Empirically investigate power of one-sample t test with Ho: mu = 10 versus Ha: mu <10 for different "true" alternatives. I am using the same population as in the "Pumpkin" power example (so sigma = 3.6)
+```{r}
+true_means = seq(3, 11, by = 0.5)         # specify the range of possible alternatives for which power will be approximated
+nsim = 1000   # specify number of random datasets to be generated for each case (to approximate the power)
+# the above choices should be the same for all cases/scenarios you investigate
+
+# specify a sample size for my first case/scenario
+n = 5   
+# initialize a vector to store the approximate power for each possible alternative
+case1_power = rep(0,length(true_means))    
+
+for (i in 1:length(true_means))     # loop through all of the possible alternatives
+{
+  rejects = 0            # initialize a counter for how many times you reject Ho out of the nsim datasets
+  for (j in 1:nsim)      # loop through the nsim datasets you will generate
+  {
+     # generate one random dataset for your scenario
+    x = rnorm(n, true_means[i], 3.6)  
+    # update your counter if you reject Ho at 5% level
+    if (t.test(x,mu=10,alternative="less")$p.value < 0.05) rejects = rejects+ 1
+  }
+  case1_power[i]=rejects/nsim    # determine the proportion of times you rejected Ho out of nsim replications
+}
+```
+
+
+
+
+*Case 2; change something about the previous scenario and see how that impacts power*
+
+I am going to investigate a larger sample size
+```{r}
+true_means = seq(3, 11, by = 0.5)         # specify the range of possible alternatives for which power will be approximated
+nsim = 1000   # specify number of random datasets to be generated for each case (to approximate the power)
+# the above choices should be the same for all cases/scenarios you investigate
+
+# specify a sample size for my second case/scenario
+n = 50
+# initialize a vector to store the approximate power for each possible alternative
+case2_power = rep(0,length(true_means))
+
+
+for (i in 1:length(true_means))     # loop through all of the possible alternatives
+{
+  rejects = 0            # initialize a counter for how many times you reject Ho out of the nsim datasets
+  for (j in 1:nsim)      # loop through the nsim datasets you will generate
+  {
+    # generate one random dataset for your scenario
+    x = rnorm(n, true_means[i], 3.6)        
+    # update your counter if you reject Ho at 5% level
+    if (t.test(x,mu=10,alternative="less")$p.value < 0.05) rejects = rejects+1       
+  }
+  case2_power[i]=rejects/nsim    # determine the proportion of times you rejected Ho out of nsim replications
+}
+```
+
+
+*Plot the power curves for each to compare*
+```{r}
+# initialize plot with curve for first scenario
+plot(true_means,case1_power,type="l",ylim=c(0,1),lwd=2,xlab="True mean", ylab='Power')    
+# add power curve for second scenario
+lines(true_means, case2_power,col="blue",lwd=2)       
+# could add power curves for other cases (only make sense if all cases explore the same true means)
+abline(h=0.05,col="red",lty=2,lwd=2) # plot 5% significance level as a reference
+legend("left",legend=c("One-sample t with n = 5", "One-sample t with n = 50"),col=c("black","blue"),lty=1,lwd=2)
+abline(h=0.9,lty=3,col="gray")  # a line to represent 90% power (just for fun)
+```
+
+*Tidyverse friendly plot*
+```{r}
+library(tidyverse)
+
+results_dataframe = data.frame(true_means = true_means, case1_power=case1_power,case2_power=case2_power)
+
+
+results_dataframe %>%
+  pivot_longer(., c(case1_power, case2_power), names_to = "Case",values_to = "power") %>%
+  ggplot(.,aes(x=true_means,y=power,col=Case) ) +
+  geom_line()
+```
+

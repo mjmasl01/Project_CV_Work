@@ -1,0 +1,7 @@
+"0","intra_vasoRS <- "
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(intra_vaso),"
+"0","            Median = median(intra_vaso),"
+"0","            Stan.Dev. = sd(intra_vaso)"
+"0","            )"
+"0","intra_vasoRS"

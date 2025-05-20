@@ -1,0 +1,8 @@
+"0","ef_preRS <-"
+"0","  RSdata %>%"
+"0","  mutate(EF_pre = parse_number(EF_pre)) %>%"
+"0","  summarise(Mean = mean(EF_pre,na.rm = TRUE),"
+"0","            Median = median(EF_pre, na.rm = TRUE),"
+"0","            Stan.Dev. = sd(EF_pre, na.rm = TRUE)"
+"0","            )"
+"0","ef_preRS"

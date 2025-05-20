@@ -1,0 +1,8 @@
+"0","hyperlipidRL <-"
+"0","  RLdata %>% "
+"0","  mutate(hyperlipid = parse_number(hyperlipid)) %>%"
+"0","  summarise(Mean = mean(hyperlipid),"
+"0","            Median = median(hyperlipid),"
+"0","            Stan.Dev. = sd(hyperlipid)"
+"0","            )"
+"0","hyperlipidRL"

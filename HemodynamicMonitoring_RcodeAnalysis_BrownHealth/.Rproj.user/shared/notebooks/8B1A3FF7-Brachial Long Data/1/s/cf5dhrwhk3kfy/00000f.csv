@@ -1,0 +1,15 @@
+"0","ageBL <- "
+"0","  BLdata %>% "
+"0","  summarise(Mean = mean(age),"
+"0","            Median = median(age),"
+"0","            Stan.Dev. = sd(age)"
+"0","            )"
+"0","ageBL %>% pander::pander()"
+"1","
+----------------------------
+ Mean    Median   Stan.Dev. 
+------- -------- -----------
+ 66.78     69       10.51   
+----------------------------
+
+"

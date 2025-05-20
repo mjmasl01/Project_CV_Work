@@ -1,0 +1,848 @@
+---
+title: "Radial Long Data"
+author: "Matthew Maslow"
+date: "2023-07-02"
+output: html_document 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+```
+
+
+# Read in data
+
+```{r}
+data <- read.csv("CSVdata.csv")
+colnames(data)
+```
+
+
+
+
+# Radial Long (RL)
+
+```{r}
+# RL
+# n = 63
+RLdata <- data %>% filter(Group_char == "RL")
+RLdata%>% pander::pander()
+```
+```{r}
+# readr::write_csv(RLdata, file = "~/Desktop/LifeSpan Data Work/RLdata.csv")
+```
+
+### Patient Demo:
+
+###### age
+```{r}
+ageRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(age),
+            Median = median(age),
+            Stan.Dev. = sd(age)
+            )
+ageRL %>% pander::pander()
+```
+
+###### ASA PS
+
+```{r}
+asa_psRL <- 
+  RSdata %>% 
+  summarise(Mean = mean(asaps),
+            Median = median(asaps),
+            Stan.Dev. = sd(asaps)
+            )
+asa_psRL %>% pander::pander()
+```
+
+###### gender
+
+```{r}
+
+# 1 <- Males
+# 2 <- Females
+
+genderRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(gender),
+            Median = median(gender),
+            Stan.Dev. = sd(gender)
+            )
+genderRL%>% pander::pander()
+```
+
+###### weight
+
+```{r}
+weightRL<-
+  RLdata %>%
+  summarise(Mean = mean(weight),
+            Median = median(weight),
+            Stan.Dev. = sd(weight)
+            )
+weightRL %>% pander::pander()
+```
+
+###### height
+
+```{r}
+heightRL<-
+  RLdata %>%
+  summarise(Mean = mean(height),
+            Median = median(height),
+            Stan.Dev. = sd(height)
+            )
+heightRL %>% pander::pander()
+```
+
+###### bmi
+
+```{r}
+bmiRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(bmi),
+            Median = median(bmi),
+            Stan.Dev. = sd(bmi)
+            )
+bmiRL %>% pander::pander()
+```
+
+###### bmiGE35
+
+```{r}
+bmiGE35RL <- 
+  RLdata %>% 
+  summarise(Mean = mean(bmiGE35),
+            Median = median(bmiGE35),
+            Stan.Dev. = sd(bmiGE35)
+            )
+bmiGE35RL %>% pander::pander()
+```
+
+###### bmiGE40
+
+```{r}
+bmiGE40RL <- 
+  RLdata %>% 
+  summarise(Mean = mean(bmiGE40),
+            Median = median(bmiGE40),
+            Stan.Dev. = sd(bmiGE40)
+            )
+bmiGE40RL %>% pander::pander()
+```
+
+
+### Prior History:
+
+###### AF
+
+```{r}
+afRL <-
+  RLdata %>%
+  summarise(Mean = mean(af),
+            Median = median(af),
+            Stan.Dev. = sd(af)
+            )
+afRL %>% pander::pander()
+```
+
+###### DM
+
+```{r}
+dmRL <-
+  RLdata %>%
+  summarise(Mean = mean(dm),
+            Median = median(dm),
+            Stan.Dev. = sd(dm)
+            )
+dmRL %>% pander::pander()
+```
+
+###### CKD
+
+```{r}
+ckdRL <-
+  RLdata %>%
+  summarise(Mean = mean(ckd),
+            Median = median(ckd),
+            Stan.Dev. = sd(ckd)
+            )
+ckdRL %>% pander::pander()
+```
+
+###### HTN
+
+```{r}
+htnRL <-
+  RLdata %>%
+  summarise(Mean = mean(htn),
+            Median = median(htn),
+            Stan.Dev. = sd(htn)
+            )
+htnRL %>% pander::pander()
+```
+
+###### COPD
+
+```{r}
+copdRL <-
+  RLdata %>%
+  summarise(Mean = mean(copd),
+            Median = median(copd),
+            Stan.Dev. = sd(copd)
+            )
+copdRL %>% pander::pander()
+```
+
+###### Hyperlipidemia
+
+```{r}
+hyperlipidRL <-
+  RLdata %>% 
+  mutate(hyperlipid = parse_number(hyperlipid)) %>%
+  summarise(Mean = mean(hyperlipid),
+            Median = median(hyperlipid),
+            Stan.Dev. = sd(hyperlipid)
+            )
+hyperlipidRL %>% pander::pander()
+```
+
+###### OSA
+
+```{r}
+osaRL <-
+  RLdata %>%
+  summarise(Mean = mean(osa),
+            Median = median(osa),
+            Stan.Dev. = sd(osa)
+            )
+osaRL %>% pander::pander()
+```
+
+###### PAD
+
+```{r}
+padRL <-
+  RLdata %>%
+  summarise(Mean = mean(pad),
+            Median = median(pad),
+            Stan.Dev. = sd(pad)
+            )
+padRL %>% pander::pander()
+```
+
+###### Total Num of Comorbidities
+
+```{r}
+totnum_comorbidRL <-
+  RLdata %>%
+  summarise(Mean = mean(totnum_comorbid),
+            Median = median(totnum_comorbid),
+            Stan.Dev. = sd(totnum_comorbid)
+            )
+totnum_comorbidRL %>% pander::pander()
+```
+
+### Surgery:
+
+###### Group Variables
+
+```{r}
+surgeryinfoRL <- 
+  RLdata %>% select(surgtype_char, surgtype)
+surgeryinfoRL
+```
+
+###### Surgery occurences
+
+```{r}
+surgFreqRL <- 
+  surgeryinfoRL %>%
+  summarise(Mean = mean(surgtype),
+            Median = median(surgtype),
+            Stan.Dev. = sd(surgtype)
+            )
+surgFreqRL
+```
+
+### Intraop FLuids:
+
+###### Crystalloid Use
+
+```{r}
+crystalloidRL <- 
+  RLdata %>%
+  summarise(Mean = mean(crystalloid),
+            Median = median(crystalloid),
+            Stan.Dev. = sd(crystalloid)
+            )
+crystalloidRL
+```
+
+###### PRBC
+
+```{r}
+prbcRL <- 
+  RLdata %>%
+  summarise(Mean = mean(prbc),
+            Median = median(prbc),
+            Stan.Dev. = sd(prbc)
+            )
+prbcRL
+```
+
+###### Autologous
+
+```{r}
+autologousRL <- 
+  RLdata %>%
+  summarise(Mean = mean(autologous),
+            Median = median(autologous),
+            Stan.Dev. = sd(autologous)
+            )
+autologousRL
+```
+
+###### Total Num of Colloid Products
+
+```{r}
+totnum_colloidRL <- 
+  RLdata %>%
+  summarise(Mean = mean(totnum_colloid),
+            Median = median(totnum_colloid),
+            Stan.Dev. = sd(totnum_colloid)
+            )
+totnum_colloidRL %>% pander::pander()
+```
+
+###### Total Colloid Products (mls)
+
+```{r}
+totml_colloidRL <- 
+  RLdata %>%
+  summarise(Mean = mean(totml_colloid),
+            Median = median(totml_colloid),
+            Stan.Dev. = sd(totml_colloid)
+            )
+totml_colloidRL%>% pander::pander()
+```
+
+###### Cell Saver Volume Retained
+
+```{r}
+cellsaver_volRL <- 
+  RLdata %>%
+  summarise(Mean = mean(cellsaver_vol),
+            Median = median(cellsaver_vol),
+            Stan.Dev. = sd(cellsaver_vol)
+            )
+cellsaver_volRL%>% pander::pander()
+```
+
+###### Urine Output
+
+```{r}
+urineRL <- 
+  RLdata %>%
+  summarise(Mean = mean(urine),
+            Median = median(urine),
+            Stan.Dev. = sd(urine)
+            )
+urineRL%>% pander::pander()
+```
+
+### Surgical Time:
+
+###### CPB duration (min)
+
+```{r}
+cpbDurationRL <-
+  RLdata %>%
+  summarise(Mean = mean(cpb_duration),
+            Median = median(cpb_duration),
+            Stan.Dev. = sd(cpb_duration)
+            )
+cpbDurationRL%>% pander::pander()
+  
+```
+
+###### Aortic Clamp time (min)
+
+```{r}
+aortic_clamp_timeRL <-
+  RLdata %>%
+  summarise(Mean = mean(aortic_clamp_time),
+            Median = median(aortic_clamp_time),
+            Stan.Dev. = sd(aortic_clamp_time)
+            )
+aortic_clamp_timeRL%>% pander::pander()
+```
+
+###### Ejection Fraction PRE (%)
+
+```{r}
+ef_preRL <-
+  RLdata %>%
+  mutate(EF_pre = parse_number(EF_pre)) %>%
+  summarise(Mean = mean(EF_pre,na.rm = TRUE),
+            Median = median(EF_pre, na.rm = TRUE),
+            Stan.Dev. = sd(EF_pre, na.rm = TRUE)
+            )
+ef_preRL%>% pander::pander()
+```
+
+###### Ejection Fraction POST (%)
+
+```{r}
+ef_postRL <-
+  RLdata %>%
+  mutate(EF_post = parse_number(EF_post)) %>%
+  summarise(Mean = mean(EF_post,na.rm = TRUE),
+            Median = median(EF_post, na.rm = TRUE),
+            Stan.Dev. = sd(EF_post, na.rm = TRUE)
+            )
+ef_postRL%>% pander::pander()
+```
+
+### Intra-Operative Meds:
+
+###### IntraOp Norepinephrine
+
+```{r}
+intra_norepRL <- 
+  RLdata %>%
+  summarise(Mean = mean(Intra_norep),
+            Median = median(Intra_norep),
+            Stan.Dev. = sd(Intra_norep)
+            )
+intra_norepRL%>% pander::pander()
+```
+
+###### IntraOp Nitroglycerin
+
+```{r}
+intra_nitroRL <- 
+  RLdata %>%
+  summarise(Mean = mean(intra_nitro),
+            Median = median(intra_nitro),
+            Stan.Dev. = sd(intra_nitro)
+            )
+intra_nitroRL%>% pander::pander()
+```
+
+###### IntraOp Vasopressin
+
+```{r}
+intra_vasoRL <- 
+  RLdata %>%
+  summarise(Mean = mean(intra_vaso),
+            Median = median(intra_vaso),
+            Stan.Dev. = sd(intra_vaso)
+            )
+intra_vasoRL%>% pander::pander()
+```
+
+###### IntraOp Milrinone
+
+```{r}
+intra_milRL <- 
+  RLdata %>%
+  summarise(Mean = mean(intra_mil),
+            Median = median(intra_mil),
+            Stan.Dev. = sd(intra_mil)
+            )
+intra_milRL%>% pander::pander()
+```
+
+###### IntraOp Epinephrine
+
+```{r}
+intra_epiRL <- 
+  RLdata %>%
+  summarise(Mean = mean(intra_epi),
+            Median = median(intra_epi),
+            Stan.Dev. = sd(intra_epi)
+            )
+intra_epiRL%>% pander::pander()
+```
+
+###### IntraOp Phenylephrine
+
+```{r}
+intra_phenylRL <- 
+  RLdata %>%
+  summarise(Mean = mean(intra_phenyl),
+            Median = median(intra_phenyl),
+            Stan.Dev. = sd(intra_phenyl)
+            )
+intra_phenylRL%>% pander::pander()
+```
+
+### Post Bypass Meds:
+
+###### IntraOp Norepinephrine
+
+```{r}
+intraPost_norepRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_norep),
+            Median = median(post_norep),
+            Stan.Dev. = sd(post_norep)
+            )
+intraPost_norepRL%>% pander::pander()
+```
+
+###### IntraOp Nitroglycerin
+
+```{r}
+intraPost_nitroRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_nitro),
+            Median = median(post_nitro),
+            Stan.Dev. = sd(post_nitro)
+            )
+intraPost_nitroRL%>% pander::pander()
+```
+
+###### IntraOp Vasopressin
+
+```{r}
+intraPost_vasoRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_vaso),
+            Median = median(post_vaso),
+            Stan.Dev. = sd(post_vaso)
+            )
+intraPost_vasoRL%>% pander::pander()
+```
+
+###### IntraOp Milrinone
+
+```{r}
+intraPost_milRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_mil),
+            Median = median(post_mil),
+            Stan.Dev. = sd(post_mil)
+            )
+intraPost_milRL%>% pander::pander()
+```
+
+###### IntraOp Epinephrine
+
+```{r}
+intraPost_epiRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_epi),
+            Median = median(post_epi),
+            Stan.Dev. = sd(post_epi)
+            )
+intraPost_epiRL%>% pander::pander()
+```
+
+###### IntraOp Phenylephrine
+
+```{r}
+intraPost_phenylRL <- 
+  RLdata %>%
+  summarise(Mean = mean(post_phenyl),
+            Median = median(post_phenyl),
+            Stan.Dev. = sd(post_phenyl)
+            )
+intraPost_phenylRL%>% pander::pander()
+```
+
+### Central Aortic Cannula Pressures:
+
+###### syst_cacc_precpb
+
+```{r}
+caccSYSTpreRL <-
+  RLdata %>% 
+  summarise(Mean = mean(syst_cacc_precpb,na.rm = TRUE),
+            Median = median(syst_cacc_precpb,na.rm = TRUE),
+            Standard_Deviation = sd(syst_cacc_precpb,na.rm = TRUE)
+            )
+caccSYSTpreRL%>% pander::pander()
+```
+
+
+###### map_cacc_precpb
+
+```{r}
+caccMAPpreRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(map_pacc_precpb,na.rm = TRUE),
+            Median = median(map_cacc_precpb,na.rm = TRUE),
+            Standard_Deviation = sd(map_cacc_precpb,na.rm = TRUE)
+            )
+caccMAPpreRL%>% pander::pander()
+```
+
+###### syst_cacc_postcpb2
+
+```{r}
+caccSystTWOpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(syst_cacc_postcpb2, na.rm = TRUE),
+            Median = median(syst_cacc_postcpb2, na.rm = TRUE),
+            Standard_Deviation = sd(syst_cacc_postcpb2,na.rm = TRUE)
+            )
+caccSystTWOpostRL%>% pander::pander()
+```
+
+###### map_cacc_postcpb2
+
+```{r}
+caccMapTWOpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(map_cacc_postcpb2, na.rm = TRUE),
+            Median = median(map_cacc_postcpb2, na.rm = TRUE),
+            Standard_Deviation = sd(map_cacc_postcpb2,na.rm = TRUE)
+            )
+caccMapTWOpostRL%>% pander::pander()
+```
+
+###### syst_cacc_postcpb10
+
+```{r}
+caccSystTENpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(syst_cacc_postcpb10, na.rm = TRUE),
+            Median = median(syst_cacc_postcpb10, na.rm = TRUE),
+            Standard_Deviation = sd(syst_cacc_postcpb10,na.rm = TRUE)
+            )
+caccSystTENpostRL%>% pander::pander()
+```
+
+###### map_cacc_postcpb10
+
+```{r}
+caccMapTENpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(map_cacc_postcpb10, na.rm = TRUE),
+            Median = median(map_cacc_postcpb10, na.rm = TRUE),
+            Standard_Deviation = sd(map_cacc_postcpb10,na.rm = TRUE)
+            )
+caccMapTENpostRL%>% pander::pander()
+```
+
+
+### Peripheral Arterial Catheter Pressures:
+
+#### First Time Frame: Pre
+
+###### syst_pacc_precpb
+
+```{r}
+paccSYSTpreRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(syst_pacc_precpb,na.rm = TRUE),
+            Median = median(syst_pacc_precpb,na.rm = TRUE),
+            Stan.Dev. = sd(syst_pacc_precpb,na.rm = TRUE)
+            )
+paccSYSTpreRL%>% pander::pander()
+```
+
+###### map_pacc_precpb
+
+```{r}
+paccMAPpreRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(map_pacc_precpb,na.rm = TRUE),
+            Median = median(map_pacc_precpb,na.rm = TRUE),
+            Standard_Deviation = sd(map_pacc_precpb,na.rm = TRUE)
+            )
+paccMAPpreRL%>% pander::pander()
+```
+
+###### diast_pacc_precpb
+
+```{r}
+paccDIASTpreRL <- 
+  RLdata %>% 
+  mutate(diast_pacc_precpb = parse_number(diast_pacc_precpb)) %>%
+  summarise(Mean = mean(diast_pacc_precpb,na.rm = TRUE),
+            Median = median(diast_pacc_precpb,na.rm = TRUE),
+            Standard_Deviation = sd(diast_pacc_precpb,na.rm = TRUE)
+            )
+paccDIASTpreRL%>% pander::pander()
+```
+
+###### wave_pacc_precpb
+
+```{r}
+paccWAVEpreRL <- 
+  RLdata %>% 
+  summarise(Mean = mean(wave_pacc_precpb,na.rm = TRUE),
+            Median = median(wave_pacc_precpb,na.rm = TRUE),
+            Standard_Deviation = sd(wave_pacc_precpb,na.rm = TRUE)
+            )
+paccWAVEpreRL%>% pander::pander()
+```
+
+
+
+
+
+#### Second Time Frame: 2-Min-Post:
+
+###### syst_pacc_postcpb2
+
+```{r}
+paccSystTWOpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(syst_pacc_postcpb2, na.rm = TRUE),
+            Median = median(syst_pacc_postcpb2, na.rm = TRUE),
+            Standard_Deviation = sd(syst_pacc_postcpb2,na.rm = TRUE)
+            )
+paccSystTWOpostRL%>% pander::pander()
+```
+
+###### map_pacc_postcpb2
+
+```{r}
+paccMapTWOpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(map_pacc_postcpb2, na.rm = TRUE),
+            Median = median(map_pacc_postcpb2, na.rm = TRUE),
+            Standard_Deviation = sd(map_pacc_postcpb2,na.rm = TRUE)
+            )
+paccMapTWOpostRL%>% pander::pander()
+```
+
+###### wave_pacc_postcpb2
+
+```{r}
+paccWaveTWOpostRL <- 
+  RLdata %>%
+  summarise(Mean = mean(wave_pacc_postcpb2, na.rm = TRUE),
+            Median = median(wave_pacc_postcpb2, na.rm = TRUE),
+            Standard_Deviation = sd(wave_pacc_postcpb2,na.rm = TRUE)
+            )
+paccWaveTWOpostRL%>% pander::pander()
+```
+
+
+
+#### Third Time Frame: 10-Min-Post:
+
+###### syst_pacc_postcpb10
+
+```{r}
+paccSystTENpostRL <- 
+  RLdata %>% 
+  mutate(syst_pacc_postcpb10 = parse_number(syst_pacc_postcpb10)) %>%
+  summarise(Mean = mean(syst_pacc_postcpb10, na.rm = TRUE),
+            Median = median(syst_pacc_postcpb10, na.rm = TRUE),
+            Standard_Deviation = sd(syst_pacc_postcpb10,na.rm = TRUE)
+            )
+paccSystTENpostRL%>% pander::pander()
+```
+
+###### map_pacc_postcpb10
+
+```{r}
+paccMapTENpostRL <- 
+  RLdata %>% 
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10)) %>%
+  summarise(Mean = mean(map_pacc_postcpb10, na.rm = TRUE),
+            Median = median(map_pacc_postcpb10, na.rm = TRUE),
+            Standard_Deviation = sd(map_pacc_postcpb10,na.rm = TRUE)
+            )
+paccMapTENpostRL%>% pander::pander()
+```
+
+###### wave_pacc_postcpb10
+
+```{r}
+paccWaveTENpostRL <- 
+  RLdata %>% 
+  mutate(wave_pacc_postcpb10 = parse_number(wave_pacc_postcpb10)) %>%
+  summarise(Mean = mean(wave_pacc_postcpb10, na.rm = TRUE),
+            Median = median(wave_pacc_postcpb10, na.rm = TRUE),
+            Standard_Deviation = sd(wave_pacc_postcpb10,na.rm = TRUE)
+            )
+paccWaveTENpostRL%>% pander::pander()
+```
+
+
+
+
+#### CICU:
+
+###### syst_pacc_cicu
+
+```{r}
+paccSYSTcicuRL <- 
+  RLdata %>% 
+  mutate(syst_pacc_cicu = parse_number(syst_pacc_cicu)) %>%
+  summarise(Mean = mean(syst_pacc_cicu, na.rm = TRUE),
+            Median = median(syst_pacc_cicu, na.rm = TRUE),
+            Standard_Deviation = sd(syst_pacc_cicu,na.rm = TRUE)
+            )
+paccSYSTcicuRL%>% pander::pander()
+```
+
+###### diast_pacc_cicu
+
+```{r}
+paccDIASTcicuRL <- 
+  RLdata %>% 
+  mutate(diast_pacc_cicu = parse_number(diast_pacc_cicu)) %>%
+  summarise(Mean = mean(diast_pacc_cicu, na.rm = TRUE),
+            Median = median(diast_pacc_cicu, na.rm = TRUE),
+            Standard_Deviation = sd(diast_pacc_cicu,na.rm = TRUE)
+            )
+paccDIASTcicuRL%>% pander::pander()
+```
+
+###### map_pacc_cicu
+
+```{r}
+paccMAPcicuRL <- 
+  RLdata %>% 
+  mutate(map_pacc_cicu = parse_number(map_pacc_cicu)) %>%
+  summarise(Mean = mean(map_pacc_cicu, na.rm = TRUE),
+            Median = median(map_pacc_cicu, na.rm = TRUE),
+            Standard_Deviation = sd(map_pacc_cicu,na.rm = TRUE)
+            )
+paccMAPcicuRL%>% pander::pander()
+```
+
+###### wave_pacc_cicu
+
+```{r}
+paccWAVEcicuRL <- 
+  RLdata %>% 
+  mutate(wave_pacc_cicu = parse_number(wave_pacc_cicu)) %>%
+  summarise(Mean = mean(wave_pacc_cicu, na.rm = TRUE),
+            Median = median(wave_pacc_cicu, na.rm = TRUE),
+            Standard_Deviation = sd(wave_pacc_cicu,na.rm = TRUE)
+            )
+paccWAVEcicuRL%>% pander::pander()
+```
+
+
+
+
+
+
+
+
+
+
+

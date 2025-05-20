@@ -1,0 +1,7 @@
+"0","intra_epiRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(intra_epi),"
+"0","            Median = median(intra_epi),"
+"0","            Stan.Dev. = sd(intra_epi)"
+"0","            )"
+"0","intra_epiRL"

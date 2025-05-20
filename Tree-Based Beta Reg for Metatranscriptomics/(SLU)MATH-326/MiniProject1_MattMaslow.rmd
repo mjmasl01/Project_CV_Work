@@ -1,0 +1,167 @@
+---
+title: "Markdown File for Mini-Project 1"
+author: "Stat 326 (Chapman)"
+date: "Due by 2/17"
+output:
+  html_document: default
+  word_document: default
+---
+
+### Simulations:
+
+```{r}
+n = 5             # sample size
+mu = 10           # population mean
+sigma = 2         # population standard deviation
+nsim = 5000       # number of simulations (samples to generate)
+
+my.mins = numeric(nsim)     # a place to store my sample minimums
+my.maxs = numeric(nsim)     # a place to store my sample maximums
+
+for (i in 1:nsim)
+{
+  my.sample = round( rnorm(n,mu,sigma) , 2)   # take a sample from my population
+  # note that you can calculate both of the desired statistics for each sample generated
+  my.mins[i] = min(my.sample)                 # compute the min from the sample
+  my.maxs[i] = max(my.sample)                 # compute the max from the sample
+}
+
+hist(my.mins, xlab=expression("Y"[min]), main=paste("Sampling Distribution of the\n Sample Min when n = ",n))
+hist(my.maxs, xlab=expression("Y"[max]), main=paste("Sampling Distribution of the\n Sample Max when n = ",n))
+
+mean(my.mins)
+mean(my.maxs)
+
+var(my.mins)
+var(my.maxs)
+
+```
+
+```{r}
+n = 5             # sample size
+theta1 = 7   
+theta2 = 13
+nsim = 5000       # number of simulations (samples to generate)
+
+my.mins = numeric(nsim)     # a place to store my sample minimums
+my.maxs = numeric(nsim)     # a place to store my sample maximums
+
+for (i in 1:nsim)
+{
+  my.sample = round( runif(n,theta1, theta2) , 2)   # take a sample from my population
+  # note that you can calculate both of the desired statistics for each sample generated
+  my.mins[i] = min(my.sample)                 # compute the min from the sample
+  my.maxs[i] = max(my.sample)                 # compute the max from the sample
+}
+
+hist(my.mins, xlab=expression("Y"[min]), main=paste("Sampling Distribution of the\n Sample Min when n = ",n))
+hist(my.maxs, xlab=expression("Y"[max]), main=paste("Sampling Distribution of the\n Sample Max when n = ",n))
+
+mean(my.mins)
+mean(my.maxs)
+
+var(my.mins)
+var(my.maxs)
+
+```
+
+```{r}
+n = 5             # sample size
+lambda = 0.5
+nsim = 5000       # number of simulations (samples to generate)
+
+my.mins = numeric(nsim)     # a place to store my sample minimums
+my.maxs = numeric(nsim)     # a place to store my sample maximums
+
+for (i in 1:nsim)
+{
+  my.sample = round( rexp(n,lambda) , 2)   # take a sample from my population
+  # note that you can calculate both of the desired statistics for each sample generated
+  my.mins[i] = min(my.sample)                 # compute the min from the sample
+  my.maxs[i] = max(my.sample)                 # compute the max from the sample
+}
+
+hist(my.mins, xlab=expression("Y"[min]), main=paste("Sampling Distribution of the\n Sample Min when n = ",n))
+hist(my.maxs, xlab=expression("Y"[max]), main=paste("Sampling Distribution of the\n Sample Max when n = ",n))
+
+mean(my.mins)
+mean(my.maxs)
+
+var(my.mins)
+var(my.maxs)
+
+```
+
+```{r}
+n = 5             # sample size
+alpha = 8   
+beta = 2
+nsim = 5000       # number of simulations (samples to generate)
+
+my.mins = numeric(nsim)     # a place to store my sample minimums
+my.maxs = numeric(nsim)     # a place to store my sample maximums
+
+for (i in 1:nsim)
+{
+  my.sample = round( rbeta(n,alpha, beta) , 2)   # take a sample from my population
+  # note that you can calculate both of the desired statistics for each sample generated
+  my.mins[i] = min(my.sample)                 # compute the min from the sample
+  my.maxs[i] = max(my.sample)                 # compute the max from the sample
+}
+
+hist(my.mins, xlab=expression("Y"[min]), main=paste("Sampling Distribution of the\n Sample Min when n = ",n))
+hist(my.maxs, xlab=expression("Y"[max]), main=paste("Sampling Distribution of the\n Sample Max when n = ",n))
+
+mean(my.mins)
+mean(my.maxs)
+
+var(my.mins)
+var(my.maxs)
+
+```
+
+### Questions: 
+
+#### 1.Stat 325 Review: Briefly discuss/describe situations when each of the above population models (Normal, Uniform, Exponential, and Beta) should be used. 
+
+##### Normal: 
+
+The normal model should be used when the data is equal plotted on either side of the mean, which would infer the equal chance of data ending up above or below data creating the bell curve shape. In other words the data lies with in two standard deviations of the mean.
+
+##### Uniform: 
+
+The uniform model should be used when we want our data to be set within a certain range of values. Also, used in models with sample spaces that have equal probability throughout.
+
+##### Exponential:
+
+The exponential model should be used when smaller values occur more frequently/often than the largers ones.
+
+##### Beta:
+
+The beta model should be used when the values are in between zero to one, and is good at showing success.
+
+#### 2.Briefly summarize how 𝑉𝑎𝑟(𝑌min ) and 𝑉𝑎𝑟(𝑌max ) compare for the above population models. Can you propose a general rule or result for how 𝑉𝑎𝑟(𝑌min ) and 𝑉𝑎𝑟(𝑌max ) compare? 
+
+Looking at the normal distribution model, the variations of the max's and min's seem to be similar. The uniform distribution model, the variation's appear to be close to equal. Then looking at both the exponeital and beta distribution models the variations do not compare too simarily. The resason why the exponential and beta varaitions are not equal is because the shapes of their histograms betweent he max and min do not look to equal in shape, unlike normal where they both have a bell shape and uniform where they are both skewed but opposite directions. Instead the exp. and beta histograms each seem to have their own unique shape, causing a bigger difference in the variations. 
+
+Id say overall for a general rule of thumb, the variations of the max's and min's are usually close in value depending on the type of distribution since the majority of the data will usually be around the center/mean, therefore, fewer points will lie in the lower and upper bounds.
+
+#### 3.Briefly summarize how the shapes of the two sampling distributions compare for the above population models. Can you propose a general rule or result for how the two sampling distributions compare? 
+
+For the normal model, the population has a bell shaped curve and so do the histograms. 
+
+For the uniform model, the population has a constant line/trend at a give density/probability, and the histograms are both skewed. Therefore, it make sense since if we are looking at mins then it will be right skewed and all data is centered on left side, while the maxs will be left-side skewed since all of the data will be centered on the right.
+
+For the exponential model, the population starts out high then has a steep to gradual decrease and the histograms both mimic that.
+
+For the beta model, the population starts out at zero then has a gradual to steep increase, then reachs a maximum then has a steep decrese, and both histograms portray this.
+
+Id say overall the populations models of the distributions have a lot to do with the sample distribution models. They seems to act as a general layout/pattern for data following and then be manipulated by to plot data.
+
+
+
+
+
+
+
+

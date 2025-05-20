@@ -1,0 +1,72 @@
+---
+title: "Consistency"
+author: "Stat 326 (Chapman)"
+date: "2/16/2023"
+output: html_document
+---
+
+
+```{r Binomial}
+p=1/4 # specify probability of success for the simulation
+
+nsim=1000 # specify range of possible ns (how long we will run the simulation)
+
+# initialize a blank plot to store the results
+plot(0,0,type="n",xlim=c(0,nsim),ylim=c(0,1),xlab="n",ylab="Sample Proportion")
+
+# add a reference line at the true probability
+abline(h=p,col="red",lwd=2)
+
+# initialize number of successes
+successes=0
+
+for (trials in 1:nsim) # loop from 1 to the number of simulations
+{
+   x=rbinom(1, 1, p) # randomly generate a bernoulli (binomial with n=1) observation
+
+   successes = successes + x  # add the observation to the running count of total successes
+
+   points(trials, successes/trials, pch=16, cex=.75) # plot successes/trials
+
+}
+```
+
+
+
+
+```{r Uniform}
+
+theta = 10  # specify an upper bound for our model
+
+nsim=1000 # specify range of possible sample sizes (how long we will run the simulation)
+
+# initialize a blank plot to store the results
+plot(0,0,type="n",xlim=c(0,nsim),ylim=c(4,12),xlab="n",ylab="Estimate")
+
+# add a reference line at the true upper bound
+abline(h=theta,col="red",lwd=2)
+
+dat = NULL
+
+for (n in 1:nsim) # loop from 1 to the number of simulations
+{
+   x=runif(1, 0, theta) # randomly generate a uniform(0, theta) observation
+
+   dat = c(dat,x)
+   
+   mom = 2*mean(dat)
+   
+   mle = max(dat)
+   
+   mod.mle = (n+1)/n*mle
+
+   points(n, mom, pch=16, cex=.75) # plot mom estimate
+   points(n, mle, pch=16, cex=.75, col="blue") # plot mle
+   points(n, mod.mle, pch=16, cex=.75, col="red")
+
+}
+
+```
+
+
+

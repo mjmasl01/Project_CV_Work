@@ -1,0 +1,68 @@
+---
+title: "Maximum Likelihood Estimation"
+author: "Stat 326 (Chapman)"
+date: "1/31/2023"
+output: html_document
+---
+
+
+## Motivation 
+
+*Stat 325*
+You started with a given/specified probability model and investigated the probability/chance of different outcomes.
+For example, let $X$ ~ Binomial(n=20, p=1/3).
+```{r}
+x = 0:20
+px = dbinom(x, 20, 1/3)
+
+plot(x,px,type="h",xlab="x",ylab="P(X=x)")
+```
+
+*Stat 326*  (MLE Example 1)
+You start with data and choose an appropriate probability model for the data. Use the data to understand the most plausible values for the parameters in the chosen model. For example, suppose you have data that can be modeled with a Binomial model.
+```{r}
+
+ps = seq(0,1, by = 0.01)
+like.fun = dbinom(4, 20, ps)
+plot(ps, like.fun, type="l", xlab="p", ylab="Likelihood")
+```
+
+
+*MLE Example 2*
+```{r}
+
+thetas = seq(0,30, by = 0.1)  # note that I came to 30 by rerunning the code and watching the graph
+like.fun = function(theta)
+{
+  dat = c(3,1,2,4)
+  L = 1
+  for (i in 1:length(dat))
+  {
+    L = L*2*dat[i]/theta*exp(-dat[i]^2/theta)
+  }
+  return(L)
+}
+
+plot(thetas,like.fun(thetas) , type="l", xlab=expression(theta), ylab="Likelihood")
+```
+
+
+
+*MLE Example 3*
+```{r}
+lambdas = seq(1,10,by=0.01) # note that I came to 10 by rerunning the code and watching the graph
+
+like.fun = function(lambda)
+{
+  L=1
+  dat = c(8,0,4,9,1)
+  for (i in 1:length(dat))
+  {
+    L = L*dpois(dat[i],lambda)
+  }
+  return(L)
+}
+
+plot(lambdas,like.fun(lambdas) , type="l", xlab=expression(lambda), ylab="Likelihood")
+```
+

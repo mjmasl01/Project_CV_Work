@@ -1,0 +1,108 @@
+---
+title: "Class 1"
+author: MA578
+Date: "2024 sep 4"
+format: revealjs
+editor: visual
+---
+
+## Bayesian inference - simple example 1
+
+### Coin flipping
+
+You are sitting with a friend flipping a coin. Nothing special about the coin -- a quarter. Your friend calls "heads" or "tails" when the coin is in the air. You flip the coin 10 times and your friend is correct 9 times.
+
+You know the binomial distribution is used to model coin flipping. Taking $X$ as a random variable defined as the number of correct guesses out of $n$ flips you write: $x \sim binomial(n,\theta)$.
+
+------------------------------------------------------------------------
+
+You know $n=10$ and $x=0$. You calculate $\hat{\theta} = \frac{x}{n} = 0.9$ <br> and $V(\hat{\theta}) = \left ( \frac{(\hat{\theta})(1-\hat{\theta})}{n} \right )^{1/2} = 0.095$ <br> Using these calculations, you construct a 95% confidence interval for $\theta$.
+
+95% CI $= .9 \pm 2(0.095) = (.71, 1)$
+
+Are you done? What have you learned?
+
+------------------------------------------------------------------------
+
+Let's think about this. <br> Using a model sounds like the right way to analyze this situation -- and the binomial distribution fits the situation well. <br> But, how does your model help you interpret the situation? Not so much. <br> Could you use this model to predict your friend's future coin-flip-calling accuracy? Probably not. <br> You make one more calculation. $P(x = \text{9 out of 10 flips})$ when $(\theta = 0.5)$ = $\binom{10}{9}(.5)^9(1-.5)^1 \approx 0.01$ <br> Now you try another game.
+
+------------------------------------------------------------------------
+
+## Simple example 2
+
+As it turns out, your friend is a symphony orchestra conductor. <br> So, you alter the coin flipping game, making it about music. When you flip heads (your friend can't see the coin), you play music composed by Mozart. When you flip tails, you play music by other composers who were contempararies of Mozart. <br> This is different. Your friend knows knows the music and identifies Mozart vs non-Mozart 9 time out of 10. <br> This is different. Given your friend's musical knowledge you expect a near-perfect score.
+
+## What's going on?
+
+Two simple games with the same outcome, 9 success out of 10 trials where flipping a coin provides randomization. <br> In both of these scenarios, your understanding of your friend's skills is the informationg needed to offer a meaningful interpretation of the results. Probabilities based solely on relative frequency fail to make sense. <br> So, how can you incorporate your "prior information" in your analyze of the data (9 sucesses out of 10 trials)? <br> Bayes rule gives you a way to bring your understanding into the statistical analysis, making it more meaningful.
+
+## Bayes Rule
+
+$p(\theta | x) = \frac{p(x|\theta)p(\theta)}{p(x)}$ <br> Where<br> $P(x|\theta) \overset{\underset{\mathrm{def}}{}}{=} likelihood$ <br> $P(\theta) \overset{\underset{\mathrm{def}}{}}{=} Prior information$ <br> $$P(\theta | x) \overset{\underset{\mathrm{def}}{}}{=}$$ Posterior probability of $\theta$ given the data. <br> Note how Bayes Rule includes prior information as a probabily distribution, treating both the data and $\theta$ as random variables.
+
+------------------------------------------------------------------------
+
+If $\theta$ is a random variable, it must have a distribution.<br> Let's give it one - the simplest we know, discret uniform. <br> $P(\theta =0.25) = P(\theta = 0.50) = P(\theta = 0.75) =  \frac{1}{3}$
+
+```{r}
+prior1 = 1/3
+
+theta = c(.25, .5, .75)
+
+## prob(x = 9 | theta = .25)
+options(digits=3, scipen=999)
+
+pm25 <- dbinom(9, 10, theta[1] )
+
+## prob(x = 9 | theta = .5)
+
+pm50 <- dbinom(9, 10, theta[2] )
+
+## prob(x = 9 | theta = .75)
+
+pm75 <- dbinom(9, 10, theta[3] )
+
+total_p <-  (pm25*prior1) + (pm50*prior1) + (pm75*prior1)
+
+options(digits=5)
+
+```
+
+$p(x|\theta = 0.25)$ = `r pm25` $p(x|\theta = 0.50)$ = `r pm50` $p(x|\theta = 0.75)$ = `r pm75` <br>
+
+Total probability = $p(x|\theta = 0.25)P(\theta = 0.25)$ + \<br $p(x|\theta = 0.50)P(\theta = 0.50)$ + <br> $p(x|\theta = 0.75)P(x|\theta = 0.75)$ = `r total_p`
+
+------------------------------------------------------------------------
+
+```{r}
+post25 <-  (pm25 * prior1)/total_p
+
+post50 <-  (pm50 * prior1)/total_p
+
+post75 <-  (pm75 * prior1)/total_p
+
+ratio_1 <- post75/post50
+
+ratio_2 <- pm75/(pm50*20)
+
+new_post50 <- post75*ratio_2
+
+new_post75 <- (1-new_post50)/2
+
+```
+
+$P(\theta = 0.25 | x)$ = `r post25`
+
+$P(\theta = 0.50| x)$ = `r post50`
+
+$P(\theta = 0.75 | x)$ = `r post75`
+
+Now you can express your prior belief about coin flips.
+
+prior: $P(\theta = .25) = p(\theta = .75) = p$
+
+and $p(\theta = .5) = 20p$
+
+Updated posterior
+
+posterior probabilities for $\theta = .25$ and \$\theta = .75

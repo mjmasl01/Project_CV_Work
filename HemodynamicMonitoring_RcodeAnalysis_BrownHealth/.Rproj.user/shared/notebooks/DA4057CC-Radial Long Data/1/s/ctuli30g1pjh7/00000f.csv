@@ -1,0 +1,15 @@
+"0","totnum_colloidRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(totnum_colloid),"
+"0","            Median = median(totnum_colloid),"
+"0","            Stan.Dev. = sd(totnum_colloid)"
+"0","            )"
+"0","totnum_colloidRL %>% pander::pander()"
+"1","
+------------------------------
+  Mean     Median   Stan.Dev. 
+--------- -------- -----------
+ 0.04762     0       0.2799   
+------------------------------
+
+"

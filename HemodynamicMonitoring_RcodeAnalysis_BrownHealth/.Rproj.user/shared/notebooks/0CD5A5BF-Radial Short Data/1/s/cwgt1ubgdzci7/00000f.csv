@@ -1,0 +1,7 @@
+"0","dmRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(dm),"
+"0","            Median = median(dm),"
+"0","            Stan.Dev. = sd(dm)"
+"0","            )"
+"0","dmRS"

@@ -1,0 +1,131 @@
+---
+title: "Confidence Intervals for a Population Mean and What is Confidence?"
+author: "Stat 326 (Chapman)"
+date: "2/28/2023"
+output: word_document
+---
+
+## Part 1: Summary Stats and Checking for "Plausibly Normal" in R
+
+
+How to find critical values in R
+```{r}
+qt( 0.975  , 10  )
+```
+
+
+What if you need to enter your own data?
+
+
+Checking for Normality in the tidyverse
+```{r tidyverse}
+library(tidyverse)
+
+heights = data.frame(height = c(68, 65.4, 68, 66, 66.6, 69.8, 68, 70, 70.3, 65.7, 75.9))
+
+# Normal QQplot
+ggplot(heights, aes(sample=height)) +
+  stat_qq() + stat_qq_line()
+
+# Boxplot
+ggplot(heights, aes(y=height)) +
+  geom_boxplot()
+
+# Histogram
+ggplot(heights, aes(x=height)) +
+  geom_histogram(binwidth=1)
+```
+
+
+Checking for Normality in base R
+```{r base}
+
+height = c(68, 65.4, 68, 66, 66.6, 69.8, 68, 70, 70.3, 65.7, 75.9)
+
+# Normal QQplot
+qqnorm(height,pch=15)
+qqline(height)
+
+# Boxplot
+boxplot(height)
+
+# Histogram
+hist(height)
+```
+
+## Part 2: What does "Confidence" actually mean?
+
+
+Run this chunk to load the functions into R
+```{r FUNCTIONS}  
+# Run this chunk to load functions into R
+
+# This function will approximate the coverage rate for CIs of means 
+# from normally distributed data using the t distribution
+
+coverage_rate_normal=function(n=15,mu=5,sigma=sqrt(125),alpha=0.05,n.sim=1000){
+  #n: sample size
+  #mu: true mean
+  #sigma: true standard deviation
+  #alpha: used to construct 1-alpha CI
+  #n.sim: the number of simulated CIs to create
+  
+  contain.mu=0  # a counter used to assess coverage rate
+  avg.width=0   # defining an object to determine the average width of the CIs
+  
+  for(i in 1:n.sim){
+    x = rnorm(n,mu,sigma)                                 # generate one of n.sim datasets
+    low = mean(x)-qt(1-alpha/2,df=n-1)*sd(x)/sqrt(n)      # find the lower bound for the CI
+    up = mean(x)+qt(1-alpha/2,df=n-1)*sd(x)/sqrt(n)       # find the upper bound for the CI
+    if(mu>=low && mu <= up) contain.mu = contain.mu+1     # determine in mu is within the CI
+    avg.width=avg.width+(up-low)                          # partial step to determine average width
+  }
+  
+  avg.width=avg.width/n.sim                               # calculate the average width of the n.sim CIs
+  res = c(contain.mu/n.sim,avg.width)                     # create a vector to store the results we want for output
+  names(res)=c("Coverage Rate","Avg CI Width")            # give names to the components of the vector
+  
+  return(res)                                             # the function will return the vector res
+}
+
+
+# This function will approximate the coverage rate for CIs of means 
+# from non-normally distributed data (from a gamma distribution)
+# using the t distribution
+
+coverage_rate_gamma=function(n=15,mu=5,sigma=sqrt(125),alpha=0.05,n.sim=1000){
+  #n: sample size
+  #mu: true mean
+  #sigma: true standard deviation
+  #alpha: used to construct 1-alpha CI
+  #n.sim: the number of simulated CIs to create
+  
+  lam = mu/sigma^2  # determine the parameters a and b needed for the gamma distribution
+  a = mu*lam
+  
+  contain.mu=0  # a counter used to assess coverage rate
+  avg.width=0   # defining an object to determine the average width of the CIs
+  
+  for(i in 1:n.sim){
+    x = rgamma(n,a,lam)                                 # generate data from gamma distribution
+    low = mean(x)-qt(1-alpha/2,df=n-1)*sd(x)/sqrt(n) 
+    up = mean(x)+qt(1-alpha/2,df=n-1)*sd(x)/sqrt(n)  
+    if(mu>=low && mu <= up) contain.mu = contain.mu+1
+    avg.width=avg.width+(up-low)
+  }
+  avg.width=avg.width/n.sim
+  res = c(contain.mu/n.sim,avg.width)
+  names(res)=c("Coverage Rate","Avg CI Width")  
+  
+  return(res)
+}
+
+```
+
+
+Use the functions to fill in the table on the board
+```{r}
+coverage_rate_normal(n=5)
+coverage_rate_gamma(n=5)
+```
+

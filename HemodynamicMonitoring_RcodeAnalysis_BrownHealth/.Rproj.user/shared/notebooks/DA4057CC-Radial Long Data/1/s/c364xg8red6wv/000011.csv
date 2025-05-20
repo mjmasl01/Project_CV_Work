@@ -1,0 +1,3 @@
+"0","surgeryinfoRL <- "
+"0","  RLdata %>% select(surgtype_char, surgtype)"
+"0","surgeryinfoRL"

@@ -1,0 +1,7 @@
+"0","ckdRS <-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(ckd),"
+"0","            Median = median(ckd),"
+"0","            Stan.Dev. = sd(ckd)"
+"0","            )"
+"0","ckdRS"

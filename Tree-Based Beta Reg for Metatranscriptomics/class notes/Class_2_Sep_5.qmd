@@ -1,0 +1,124 @@
+---
+title: "Class 2"
+author: "MA578"
+date: "2024 Sept 5"
+format: revealjs
+editor: visual
+---
+
+## Bayesian learning Framework
+
+Estimate $\theta \in \Theta$ from a dataset $y \in Y$.
+
+Prior distribution $p(\theta)$ defined for all $\theta \in \Theta$.
+
+Sampling model $p(y|\theta)$, the probability of a specific data set given a parameter.
+
+To estimate $\theta$ (update $p(\theta)$, use Bayes Rule
+
+$p(\theta|y) = \frac{P(y|\theta)p(\theta)}{\int_{\Theta}p(y|\theta)p(\theta)d\theta}$
+
+Given that the denominator is a normalizing constant, Bayesian methods typically use:
+
+$p(\theta|y) \propto p(y|\theta)p(\theta)$
+
+-----
+
+**Contrast:**
+
+     
+MLE (Maximum likelihood Estimation) Select the parameter most likely to have generated the observed data.  <br><br>
+MAP (Maxiumu a Posteriori Estimation) Select the parameter that is most likely given the observed data and our prior beliefs about the parameter.
+```
+
+When Prior $\theta$ \~ Uniform, MLE \<=\> MAP.
+
+-----
+
+### Example 1: Estimating the probability of a rare event
+
+We are interested in the prevelance of a disease in a city.
+<br>
+Let $\theta
+\in [0, 1]$ be the fraction of infected individuals. We take a sample of 20 individuals and record the number of individuals $y \in Y
+= {0, 1, \dots, 20}$ with the disease.
+<br>
+The sampling model is
+
+$$
+Y \mid \theta \sim \text{Binomial}(20, \theta),
+$$
+
+i.e. each individual has an independent $\theta$% chance of having the disease.
+
+-----
+
+```{r chunk1, fig.cap = "For various theta, the probability of observing y infected individuals in the sample."}
+
+library(tidyverse)
+
+d = data.frame(
+  y = 0:20,
+  theta = factor(rep(c(0.05, 0.10, 0.20), each = 21)),
+  probability = c(dbinom(0:20, 20, 0.05), dbinom(0:20, 20, 0.1), dbinom(0:20, 20, 0.2))
+)
+ggplot(d, aes(x = y, y = probability, fill = theta)) +
+  geom_bar(stat = "identity", position = "dodge")
+```
+
+
+-----
+
+Imagine we believe $\theta$ is probably in the interval $[0.05, 0.20]$. We will encode this prior as a Beta distribution.
+
+$$
+\theta \sim \text{Beta}(2, 20)
+$$
+
+
+Given $Y \mid \theta \sim
+\text{Binomial}(n, \theta)$ and $\theta \sim \text{Beta}(a, b)$,
+
+$$
+(\theta \mid Y = y) \sim \text{Beta}(a + y, b + n - y).
+$$
+
+For example, if we observe 0/20 individuals infected, $\theta \mid {Y = 0} \sim
+\text{Beta}(2, 40)$.
+
+-----
+```{r}
+
+```
+
+
+```{r fig.cap = "Prior and posterior distributions on theta after observing 0/20 infected individuals. Note the posterior is more tightly peaked around near-zero values.", fig.height=4}
+d = data.frame(
+  theta = seq(0, 1, by = 0.001),
+  distribution = rep(c("prior", "posterior"), each = 1001),
+  density = c(dbeta(seq(0, 1, by = 0.001), 2, 20), dbeta(seq(0, 1, by = 0.001), 2, 40))
+)
+ggplot(d, aes(x = theta, y = density, color = distribution)) +
+  geom_line()
+```
+
+-----
+
+Notice that Bayesian and frequentist approaches to parameter estimation differ:
+
+\begin{align}
+
+\theta_{ML} &= \underset{\theta}{\text{argmax}} \; P(Y = 0 \mid \theta) = 0 \\
+
+\theta_{MAP} &= \underset{\theta}{\text{argmax}} \; P(\theta \mid Y = 0) = \text{Mode}(\theta \mid Y = 0) = 0.025
+
+\end{align}
+
+but also notice that the point estimate is NOT equal to the expectation of 
+$\theta$, since $\mathbb{E}(\theta \mid Y = 0) = 0.048$. We will probably later 
+determine when to use the expectation over the mode.
+<br>
+Finally, notice that we can do very intuitive statistical tests (e.g $P(\theta <
+0.10 \mid Y = 0)$) by measuring the areas under our posterior distribution.
+
+

@@ -1,0 +1,6757 @@
+---
+title: "Logistic Regression - MAP"
+author: "Matthew Maslow"
+date: "2023-07-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+# Read in data
+```{r}
+Data <- read.csv("CSVdata.csv")
+```
+
+# Adding Proper Variables:
+
+```{r}
+Data <- Data %>% 
+  mutate(gender = ifelse(gender==1, 1, 0),
+                        scCABG = ifelse(surgtype==1, 1, 0),
+                        scAnyValve = ifelse(surgtype==2, 1, 0),
+                        scCABGValve = ifelse(surgtype==3, 1, 0),
+                        scOther = ifelse(surgtype==4, 1, 0),
+                        bmiGE35 = ifelse(bmi>=35, 0, 1),
+                        bmiGE40 = ifelse(bmi>=40, 0, 1),
+                        hyperlipid = ifelse(hyperlipid=="0", 0, 1),
+                        EF_pre = parse_number(EF_pre, na = "NA"),
+                        EF_post = parse_number(EF_post, na = "NA")
+                        )
+```
+
+```{r}
+BLdata <- 
+  Data %>% 
+  filter(Group_char == "BL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = (((map_cacc_postcpb2 - map_pacc_postcpb2)/map_cacc_postcpb2)*100),
+    pctCA_PA_mapPost10Diff = (((map_cacc_postcpb10-map_pacc_postcpb10)/map_cacc_postcpb10)*100),
+    # 10 percent
+    map2_10pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 10.00, 1, 0),
+    map10_10pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 10.00, 1, 0),
+    # 15 percent
+    map2_15pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 15.00, 1, 0),
+    map10_15pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 15.00, 1, 0),
+    # 20 percent
+    map2_20pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 20.00, 1, 0),
+    map10_20pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 20.00, 1, 0),
+    )
+```
+
+```{r}
+RLdata <- 
+  Data %>% 
+  filter(Group_char == "RL") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = (((map_cacc_postcpb2 - map_pacc_postcpb2)/map_cacc_postcpb2)*100),
+    pctCA_PA_mapPost10Diff = (((map_cacc_postcpb10-map_pacc_postcpb10)/map_cacc_postcpb10)*100),
+    # 10 percent
+    map2_10pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 10.00, 1, 0),
+    map10_10pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 10.00, 1, 0),
+    # 15 percent
+    map2_15pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 15.00, 1, 0),
+    map10_15pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 15.00, 1, 0),
+    # 20 percent
+    map2_20pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 20.00, 1, 0),
+    map10_20pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 20.00, 1, 0),
+    )
+```
+
+```{r}
+RSdata <- 
+  Data %>% 
+  filter(Group_char == "RS") %>%
+  mutate(map_pacc_postcpb10 = parse_number(map_pacc_postcpb10),
+    pctCA_PA_mapPost2Diff = (((map_cacc_postcpb2 - map_pacc_postcpb2)/map_cacc_postcpb2)*100),
+    pctCA_PA_mapPost10Diff = (((map_cacc_postcpb10-map_pacc_postcpb10)/map_cacc_postcpb10)*100),
+    # 10 percent
+    map2_10pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 10.00, 1, 0),
+    map10_10pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 10.00, 1, 0),
+    # 15 percent
+    map2_15pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 15.00, 1, 0),
+    map10_15pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 15.00, 1, 0),
+    # 20 percent
+    map2_20pct = ifelse(abs(pctCA_PA_mapPost2Diff) >= 20.00, 1, 0),
+    map10_20pct = ifelse(abs(pctCA_PA_mapPost10Diff) >= 20.00, 1, 0),
+    )
+```
+
+
+
+# Brachial Long (BL)
+
+## 10% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2BL10 <- glm(formula = map2_10pct ~ age, data = BLdata, family = "binomial")
+summary(age2BL10)
+exp(coef(age2BL10))
+exp(confint(age2BL10))
+anova(age2BL10)
+cbind(age2BL10,deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2BL10 <- glm(formula = map2_10pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps2BL10)
+exp(coef(asaps2BL10))
+exp(confint(asaps2BL10))
+anova(asaps2BL10)
+cbind(asaps2BL10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2BL10 <- glm(formula = map2_10pct ~ gender, data = BLdata, family = "binomial")
+summary(gender2BL10)
+exp(coef(gender2BL10))
+exp(confint(gender2BL10))
+anova(gender2BL10)
+cbind(gender2BL10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2BL10 <- glm(formula = map2_10pct ~ weight, data = BLdata, family = "binomial")
+summary(wght2BL10)
+exp(coef(wght2BL10))
+exp(confint(wght2BL10))
+anova(wght2BL10)
+cbind(wght2BL10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2BL10 <- glm(formula = map2_10pct ~ height, data = BLdata, family = "binomial")
+summary(hght2BL10)
+exp(coef(hght2BL10))
+exp(confint(hght2BL10))
+anova(hght2BL10)
+cbind(hght2BL10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2BL10 <- lm(formula = map2_10pct ~ bmi, data = BLdata)
+summary(bmi2BL10)
+exp(coef(bmi2BL10))
+exp(confint(bmi2BL10))
+anova(bmi2BL10)
+cbind(bmi2BL10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2BL10 <- glm(formula = map2_10pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_2BL10)
+exp(coef(bmi35_2BL10))
+exp(confint(bmi35_2BL10))
+anova(bmi35_2BL10)
+cbind(bmi35_2BL10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2BL10 <- glm(formula = map2_10pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_2BL10)
+exp(coef(bmi40_2BL10))
+exp(confint(bmi40_2BL10))
+anova(bmi40_2BL10)
+cbind(bmi40_2BL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2BL10 <- glm(formula = map2_10pct ~ af, data = BLdata, family = "binomial")
+summary(af2BL10)
+exp(coef(af2BL10))
+exp(confint(af2BL10))
+anova(af2BL10)
+cbind(af2BL10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2BL10 <- glm(formula = map2_10pct ~ dm, data = BLdata, family = "binomial")
+summary(dm2BL10)
+exp(coef(dm2BL10))
+exp(confint(dm2BL10))
+anova(dm2BL10)
+cbind(dm2BL10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2BL10 <- glm(formula = map2_10pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd2BL10)
+exp(coef(ckd2BL10))
+exp(confint(ckd2BL10))
+anova(ckd2BL10)
+cbind(ckd2BL10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2BL10 <- glm(formula = map2_10pct ~ htn, data = BLdata, family = "binomial")
+summary(htn2BL10)
+exp(coef(htn2BL10))
+exp(confint(htn2BL10))
+anova(htn2BL10)
+cbind(htn2BL10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2BL10 <- glm(formula = map2_10pct ~ copd, data = BLdata, family = "binomial")
+summary(copd2BL10)
+exp(coef(copd2BL10))
+exp(confint(copd2BL10))
+anova(copd2BL10)
+cbind(copd2BL10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2BL10 <- glm(formula = map2_10pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper2BL10)
+exp(coef(hyper2BL10))
+exp(confint(hyper2BL10))
+anova(hyper2BL10)
+cbind(hyper2BL10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2BL10 <- glm(formula = map2_10pct ~ osa, data = BLdata, family = "binomial")
+summary(osa2BL10)
+exp(coef(osa2BL10))
+exp(confint(osa2BL10))
+anova(osa2BL10)
+cbind(osa2BL10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2BL10 <- glm(formula = map2_10pct ~ pad, data = BLdata, family = "binomial")
+summary(pad2BL10)
+exp(coef(pad2BL10))
+exp(confint(pad2BL10))
+anova(pad2BL10)
+cbind(pad2BL10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2BL10 <- glm(formula = map2_10pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid2BL10)
+exp(coef(tnComorbid2BL10))
+exp(confint(tnComorbid2BL10))
+anova(tnComorbid2BL10)
+cbind(tnComorbid2BL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2BL10 <- lm(formula = map2_10pct ~ scCABG, data = BLdata)
+summary(sc1_2BL10)
+coef(sc1_2BL10)
+confint(sc1_2BL10)
+anova(sc1_2BL10)
+cbind(sc1_2BL10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2BL10 <- lm(formula = map2_10pct ~ scAnyValve, data = BLdata)
+summary(sc2_2BL10)
+coef(sc2_2BL10)
+confint(sc2_2BL10)
+anova(sc2_2BL10)
+cbind(sc2_2BL10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2BL10 <- lm(formula = map2_10pct ~ scCABGValve, data = BLdata)
+summary(sc3_2BL10)
+coef(sc3_2BL10)
+confint(sc3_2BL10)
+anova(sc3_2BL10)
+cbind(sc3_2BL10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2BL10 <- lm(formula = map2_10pct ~ scOther, data = BLdata)
+summary(sc4_2BL10)
+coef(sc4_2BL10)
+confint(sc4_2BL10)
+anova(sc4_2BL10)
+cbind(sc4_2BL10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2BL10 <- glm(formula = map2_10pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse2BL10)
+exp(coef(CrystUse2BL10))
+exp(confint(CrystUse2BL10))
+anova(CrystUse2BL10)
+cbind(CrystUse2BL10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2BL10 <- glm(formula = map2_10pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc2BL10)
+exp(coef(prbc2BL10))
+exp(confint(prbc2BL10))
+anova(prbc2BL10)
+cbind(prbc2BL10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2BL10 <- glm(formula = map2_10pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs2BL10)
+exp(coef(autolgs2BL10))
+exp(confint(autolgs2BL10))
+anova(autolgs2BL10)
+cbind(autolgs2BL10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2BL10 <- glm(formula = map2_10pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid2BL10)
+exp(coef(tnColloid2BL10))
+exp(confint(tnColloid2BL10))
+anova(tnColloid2BL10)
+cbind(tnColloid2BL10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2BL10 <- glm(formula = map2_10pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid2BL10)
+exp(coef(tmlsColloid2BL10))
+exp(confint(tmlsColloid2BL10))
+anova(tmlsColloid2BL10)
+cbind(tmlsColloid2BL10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2BL10 <- glm(formula = map2_10pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol2BL10)
+exp(coef(csvol2BL10))
+exp(confint(csvol2BL10))
+anova(csvol2BL10)
+cbind(csvol2BL10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2BL10 <- glm(formula = map2_10pct ~ urine, data = BLdata, family = "binomial")
+summary(urine2BL10)
+exp(coef(urine2BL10))
+exp(confint(urine2BL10))
+anova(urine2BL10)
+cbind(urine2BL10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2BL10 <- glm(formula = map2_10pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur2BL10)
+exp(coef(cpbDur2BL10))
+exp(confint(cpbDur2BL10))
+anova(cpbDur2BL10)
+cbind(cpbDur2BL10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2BL10 <- glm(formula = map2_10pct ~ aortic_clamp_time, data = BLdata, family = "binomial")
+summary(acTime2BL10)
+exp(coef(acTime2BL10))
+exp(confint(acTime2BL10))
+anova(acTime2BL10)
+cbind(acTime2BL10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2BL10 <- glm(formula = map2_10pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre2BL10)
+exp(coef(efPre2BL10))
+exp(confint(efPre2BL10))
+anova(efPre2BL10)
+cbind(efPre2BL10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2BL10 <- glm(formula = map2_10pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost2BL10)
+exp(coef(efPost2BL10))
+exp(confint(efPost2BL10))
+anova(efPost2BL10)
+cbind(efPost2BL10,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10BL10 <- glm(formula = map10_10pct ~ age, data = BLdata, family = "binomial")
+summary(age10BL10)
+exp(coef(age10BL10))
+exp(confint(age10BL10))
+anova(age10BL10)
+cbind(age10BL10,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10BL10 <- glm(formula = map10_10pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps10BL10)
+exp(coef(asaps10BL10))
+exp(confint(asaps10BL10))
+anova(asaps10BL10)
+cbind(asaps10BL10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10BL10 <- glm(formula = map10_10pct ~ gender, data = BLdata, family = "binomial")
+summary(gender10BL10)
+exp(coef(gender10BL10))
+# exp(confint(gender10BL10))
+anova(gender10BL10)
+cbind(gender10BL10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10BL10 <- glm(formula = map10_10pct ~ weight, data = BLdata, family = "binomial")
+summary(wght10BL10)
+exp(coef(wght10BL10))
+exp(confint(wght10BL10))
+anova(wght10BL10)
+cbind(wght10BL10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10BL10 <- glm(formula = map10_10pct ~ height, data = BLdata, family = "binomial")
+summary(hght10BL10)
+exp(coef(hght10BL10))
+exp(confint(hght10BL10))
+anova(hght10BL10)
+cbind(hght10BL10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10BL10 <- glm(formula = map10_10pct ~ bmi, data = BLdata, family = "binomial")
+summary(bmi10BL10)
+exp(coef(bmi10BL10))
+exp(confint(bmi10BL10))
+anova(bmi10BL10)
+cbind(bmi10BL10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10BL10 <- glm(formula = map10_10pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_10BL10)
+exp(coef(bmi35_10BL10))
+exp(confint(bmi35_10BL10))
+anova(bmi35_10BL10)
+cbind(bmi35_10BL10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10BL10 <- glm(formula = map10_10pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_10BL10)
+exp(coef(bmi40_10BL10))
+exp(confint(bmi40_10BL10))
+anova(bmi40_10BL10)
+cbind(bmi40_10BL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10BL10 <- glm(formula = map10_10pct ~ af, data = BLdata, family = "binomial")
+summary(af10BL10)
+exp(coef(af10BL10))
+exp(confint(af10BL10))
+anova(af10BL10)
+cbind(af10BL10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10BL10 <- glm(formula = map10_10pct ~ dm, data = BLdata, family = "binomial")
+summary(dm10BL10)
+exp(coef(dm10BL10))
+exp(confint(dm10BL10))
+anova(dm10BL10)
+cbind(dm10BL10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10BL10 <- glm(formula = map10_10pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd10BL10)
+exp(coef(ckd10BL10))
+exp(confint(ckd10BL10))
+anova(ckd10BL10)
+cbind(ckd10BL10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10BL10 <- glm(formula = map10_10pct ~ htn, data = BLdata, family = "binomial")
+summary(htn10BL10)
+exp(coef(htn10BL10))
+exp(confint(htn10BL10))
+anova(htn10BL10)
+cbind(htn10BL10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10BL10 <- glm(formula = map10_10pct ~ copd, data = BLdata, family = "binomial")
+summary(copd10BL10)
+exp(coef(copd10BL10))
+exp(confint(copd10BL10))
+anova(copd10BL10)
+cbind(copd10BL10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10BL10 <- glm(formula = map10_10pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper10BL10)
+exp(coef(hyper10BL10))
+exp(confint(hyper10BL10))
+anova(hyper10BL10)
+cbind(hyper10BL10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10BL10 <- glm(formula = map10_10pct ~ osa, data = BLdata, family = "binomial")
+summary(osa10BL10)
+exp(coef(osa10BL10))
+exp(confint(osa10BL10))
+anova(osa10BL10)
+cbind(osa10BL10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10BL10 <- glm(formula = map10_10pct ~ pad, data = BLdata, family = "binomial")
+summary(pad10BL10)
+exp(coef(pad10BL10))
+exp(confint(pad10BL10))
+anova(pad10BL10)
+cbind(pad10BL10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10BL10 <- glm(formula = map10_10pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid10BL10)
+exp(coef(tnComorbid10BL10))
+exp(confint(tnComorbid10BL10))
+anova(tnComorbid10BL10)
+cbind(tnComorbid10BL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10BL10 <- lm(formula = map10_10pct ~ scCABG, data = BLdata)
+summary(sc1_10BL10)
+coef(sc1_10BL10)
+confint(sc1_10BL10)
+anova(sc1_10BL10)
+cbind(sc1_10BL10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10BL10 <- lm(formula = map10_10pct ~ scAnyValve, data = BLdata)
+summary(sc2_10BL10)
+coef(sc2_10BL10)
+confint(sc2_10BL10)
+anova(sc2_10BL10)
+cbind(sc2_10BL10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10BL10 <- lm(formula = map10_10pct ~ scCABGValve, data = BLdata)
+summary(sc3_10BL10)
+coef(sc3_10BL10)
+confint(sc3_10BL10)
+anova(sc3_10BL10)
+cbind(sc3_10BL10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10BL10 <- lm(formula = map10_10pct ~ scOther, data = BLdata)
+summary(sc4_10BL10)
+coef(sc4_10BL10)
+confint(sc4_10BL10)
+anova(sc4_10BL10)
+cbind(sc4_10BL10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10BL10 <- glm(formula = map10_10pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse10BL10)
+exp(coef(CrystUse10BL10))
+exp(confint(CrystUse10BL10))
+anova(CrystUse10BL10)
+cbind(CrystUse10BL10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10BL10 <- glm(formula = map10_10pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc10BL10)
+exp(coef(prbc10BL10))
+exp(confint(prbc10BL10))
+anova(prbc10BL10)
+cbind(prbc10BL10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10BL10 <- glm(formula = map10_10pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs10BL10)
+exp(coef(autolgs10BL10))
+exp(confint(autolgs10BL10))
+anova(autolgs10BL10)
+cbind(autolgs10BL10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10BL10 <- glm(formula = map10_10pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid10BL10)
+exp(coef(tnColloid10BL10))
+exp(confint(autolgs10BL10))
+anova(tnColloid10BL10)
+cbind(tnColloid10BL10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10BL10 <- glm(formula = map10_10pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid10BL10)
+exp(coef(tmlsColloid10BL10))
+exp(confint(tmlsColloid10BL10))
+anova(tmlsColloid10BL10)
+cbind(tmlsColloid10BL10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10BL10 <- glm(formula = map10_10pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol10BL10)
+exp(coef(csvol10BL10))
+exp(confint(csvol10BL10))
+anova(csvol10BL10)
+cbind(csvol10BL10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10BL10 <- glm(formula = map10_10pct ~ urine, data = BLdata, family = "binomial")
+summary(urine10BL10)
+exp(coef(urine10BL10))
+exp(confint(urine10BL10))
+anova(urine10BL10)
+cbind(urine10BL10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10BL10 <- glm(formula = map10_10pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur10BL10)
+exp(coef(cpbDur10BL10))
+exp(confint(cpbDur10BL10))
+anova(cpbDur10BL10)
+cbind(cpbDur10BL10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10BL10 <- glm(formula = map10_10pct ~ aortic_clamp_time, data = BLdata, family = "binomial",)
+summary(acTime10BL10)
+exp(coef(acTime10BL10))
+exp(confint(acTime10BL10))
+anova(acTime10BL10)
+cbind(acTime10BL10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10BL10 <- glm(formula = map10_10pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre10BL10)
+exp(coef(efPre10BL10))
+exp(confint(efPre10BL10))
+anova(efPre10BL10)
+cbind(efPre10BL10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10BL10 <- glm(formula = map10_10pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost10BL10)
+exp(coef(efPost10BL10))
+exp(confint(efPost10BL10))
+anova(efPost10BL10)
+cbind(efPost10BL10,deparse.level = 2)
+```
+
+
+## 15% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2BL15 <- glm(formula = map2_15pct ~ age, data = BLdata, family = "binomial")
+summary(age2BL15)
+exp(coef(age2BL15))
+exp(confint(age2BL15))
+anova(age2BL15)
+cbind(age2BL15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2BL15 <- glm(formula = map2_15pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps2BL15)
+exp(coef(asaps2BL15))
+exp(confint(asaps2BL15))
+anova(asaps2BL15)
+cbind(asaps2BL15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2BL15 <- glm(formula = map2_15pct ~ gender, data = BLdata, family = "binomial")
+summary(gender2BL15)
+exp(coef(gender2BL15))
+exp(confint(gender2BL15))
+anova(gender2BL15)
+cbind(gender2BL15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2BL15 <- glm(formula = map2_15pct ~ weight, data = BLdata, family = "binomial")
+summary(wght2BL15)
+exp(coef(wght2BL15))
+exp(confint(wght2BL15))
+anova(wght2BL15)
+cbind(wght2BL15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2BL15 <- glm(formula = map2_15pct ~ height, data = BLdata, family = "binomial")
+summary(hght2BL15)
+exp(coef(hght2BL15))
+exp(confint(hght2BL15))
+anova(hght2BL15)
+cbind(hght2BL15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2BL15 <- glm(formula = map2_15pct ~ bmi, data = BLdata, family = "binomial")
+summary(bmi2BL15)
+exp(coef(bmi2BL15))
+exp(confint(bmi2BL15))
+anova(bmi2BL15)
+cbind(bmi2BL15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2BL15 <- glm(formula = map2_15pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_2BL15)
+exp(coef(bmi35_2BL15))
+exp(confint(bmi35_2BL15))
+anova(bmi35_2BL15)
+cbind(bmi35_2BL15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2BL15 <- glm(formula = map2_15pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_2BL15)
+exp(coef(bmi40_2BL15))
+exp(confint(bmi40_2BL15))
+anova(bmi40_2BL15)
+cbind(bmi40_2BL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2BL15 <- glm(formula = map2_15pct ~ af, data = BLdata, family = "binomial")
+summary(af2BL15)
+exp(coef(af2BL15))
+exp(confint(af2BL15))
+anova(af2BL15)
+cbind(af2BL15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2BL15 <- glm(formula = map2_15pct ~ dm, data = BLdata, family = "binomial")
+summary(dm2BL15)
+exp(coef(dm2BL15))
+exp(confint(dm2BL15))
+anova(dm2BL15)
+cbind(dm2BL15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2BL15 <- glm(formula = map2_15pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd2BL15)
+exp(coef(ckd2BL15))
+exp(confint(ckd2BL15))
+anova(ckd2BL15)
+cbind(ckd2BL15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2BL15 <- glm(formula = map2_15pct ~ htn, data = BLdata, family = "binomial")
+summary(htn2BL15)
+exp(coef(htn2BL15))
+exp(confint(htn2BL15))
+anova(htn2BL15)
+cbind(htn2BL15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2BL15 <- glm(formula = map2_15pct ~ copd, data = BLdata, family = "binomial")
+summary(copd2BL15)
+exp(coef(copd2BL15))
+exp(confint(copd2BL15))
+anova(copd2BL15)
+cbind(copd2BL15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2BL15 <- glm(formula = map2_15pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper2BL15)
+exp(coef(hyper2BL15))
+exp(confint(hyper2BL15))
+anova(hyper2BL15)
+cbind(hyper2BL15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2BL15 <- glm(formula = map2_15pct ~ osa, data = BLdata, family = "binomial")
+summary(osa2BL15)
+exp(coef(osa2BL15))
+exp(confint(osa2BL15))
+anova(osa2BL15)
+cbind(osa2BL15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2BL15 <- glm(formula = map2_15pct ~ pad, data = BLdata, family = "binomial")
+summary(pad2BL15)
+exp(coef(pad2BL15))
+exp(confint(pad2BL15))
+anova(pad2BL15)
+cbind(pad2BL15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2BL15 <- glm(formula = map2_15pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid2BL15)
+exp(coef(tnComorbid2BL15))
+exp(confint(tnComorbid2BL15))
+anova(tnComorbid2BL15)
+cbind(tnComorbid2BL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2BL15 <- lm(formula = map2_15pct ~ scCABG, data = BLdata)
+summary(sc1_2BL15)
+coef(sc1_2BL15)
+confint(sc1_2BL15)
+anova(sc1_2BL15)
+cbind(sc1_2BL15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2BL15 <- lm(formula = map2_15pct ~ scAnyValve, data = BLdata)
+summary(sc2_2BL15)
+coef(sc2_2BL15)
+confint(sc2_2BL15)
+anova(sc2_2BL15)
+cbind(sc2_2BL15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2BL15 <- lm(formula = map2_15pct ~ scCABGValve, data = BLdata)
+summary(sc3_2BL15)
+coef(sc3_2BL15)
+confint(sc3_2BL15)
+anova(sc3_2BL15)
+cbind(sc3_2BL15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2BL15 <- lm(formula = map2_15pct ~ scOther, data = BLdata)
+summary(sc4_2BL15)
+coef(sc4_2BL15)
+confint(sc4_2BL15)
+anova(sc4_2BL15)
+cbind(sc4_2BL15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2BL15 <- glm(formula = map2_15pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse2BL15)
+exp(coef(CrystUse2BL15))
+exp(confint(CrystUse2BL15))
+anova(CrystUse2BL15)
+cbind(CrystUse2BL15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2BL15 <- glm(formula = map2_15pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc2BL15)
+exp(coef(prbc2BL15))
+exp(confint(prbc2BL15))
+anova(prbc2BL15)
+cbind(prbc2BL15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2BL15 <- glm(formula = map2_15pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs2BL15)
+exp(coef(autolgs2BL15))
+exp(confint(autolgs2BL15))
+anova(autolgs2BL15)
+cbind(autolgs2BL15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2BL15 <- glm(formula = map2_15pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid2BL15)
+exp(coef(tnColloid2BL15))
+exp(confint(tnColloid2BL15))
+anova(tnColloid2BL15)
+cbind(tnColloid2BL15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2BL15 <- glm(formula = map2_15pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid2BL15)
+exp(coef(tmlsColloid2BL15))
+exp(confint(tmlsColloid2BL15))
+anova(tmlsColloid2BL15)
+cbind(tmlsColloid2BL15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2BL15 <- glm(formula = map2_15pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol2BL15)
+exp(coef(csvol2BL15))
+exp(confint(csvol2BL15))
+anova(csvol2BL15)
+cbind(csvol2BL15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2BL15 <- glm(formula = map2_15pct ~ urine, data = BLdata, family = "binomial")
+summary(urine2BL15)
+exp(coef(urine2BL15))
+exp(confint(urine2BL15))
+anova(urine2BL15)
+cbind(urine2BL15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2BL15 <- glm(formula = map2_15pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur2BL15)
+exp(coef(cpbDur2BL15))
+exp(confint(cpbDur2BL15))
+anova(cpbDur2BL15)
+cbind(cpbDur2BL15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2BL15 <- glm(formula = map2_15pct ~ aortic_clamp_time, data = BLdata, family = "binomial")
+summary(acTime2BL15)
+exp(coef(acTime2BL15))
+exp(confint(acTime2BL15))
+anova(acTime2BL15)
+cbind(acTime2BL15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2BL15 <- glm(formula = map2_15pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre2BL15)
+exp(coef(efPre2BL15))
+exp(confint(efPre2BL15))
+anova(efPre2BL15)
+cbind(efPre2BL15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2BL15 <- glm(formula = map2_15pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost2BL15)
+exp(coef(efPost2BL15))
+exp(confint(efPost2BL15))
+anova(efPost2BL15)
+cbind(efPost2BL15,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10BL15 <- glm(formula = map10_15pct ~ age, data = BLdata, family = "binomial")
+summary(age10BL15)
+exp(coef(age10BL15))
+exp(confint(age10BL15))
+anova(age10BL15)
+cbind(age10BL15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10BL15 <- glm(formula = map10_15pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps10BL15)
+exp(coef(asaps10BL15))
+exp(confint(asaps10BL15))
+anova(asaps10BL15)
+cbind(asaps10BL15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10BL15 <- glm(formula = map10_15pct ~ gender, data = BLdata, family = "binomial")
+summary(gender10BL15)
+exp(coef(gender10BL15))
+exp(confint(gender10BL15))
+anova(gender10BL15)
+cbind(gender10BL15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10BL15 <- glm(formula = map10_15pct ~ weight, data = BLdata, family = "binomial")
+summary(wght10BL15)
+exp(coef(wght10BL15))
+exp(confint(wght10BL15))
+anova(wght10BL15)
+cbind(wght10BL15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10BL15 <- glm(formula = map10_15pct ~ height, data = BLdata, family = "binomial")
+summary(hght10BL15)
+exp(coef(hght10BL15))
+exp(confint(hght10BL15))
+anova(hght10BL15)
+cbind(hght10BL15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10BL15 <- glm(formula = map10_15pct ~ bmi, data = BLdata, family = "binomial")
+summary(bmi10BL15)
+exp(coef(bmi10BL15))
+exp(confint(bmi10BL15))
+anova(bmi10BL15)
+cbind(bmi10BL15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10BL15 <- glm(formula = map10_15pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_10BL15)
+exp(coef(bmi35_10BL15))
+exp(confint(bmi35_10BL15))
+anova(bmi35_10BL15)
+cbind(bmi35_10BL15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10BL15 <- glm(formula = map10_15pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_10BL15)
+exp(coef(bmi40_10BL15))
+exp(confint(bmi40_10BL15))
+anova(bmi40_10BL15)
+cbind(bmi40_10BL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10BL15 <- glm(formula = map10_15pct ~ af, data = BLdata, family = "binomial")
+summary(af10BL15)
+exp(coef(af10BL15))
+exp(confint(af10BL15))
+anova(af10BL15)
+cbind(af10BL15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10BL15 <- glm(formula = map10_15pct ~ dm, data = BLdata, family = "binomial")
+summary(dm10BL15)
+exp(coef(dm10BL15))
+exp(confint(dm10BL15))
+anova(dm10BL15)
+cbind(dm10BL15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10BL15 <- glm(formula = map10_15pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd10BL15)
+exp(coef(ckd10BL15))
+exp(confint(ckd10BL15))
+anova(ckd10BL15)
+cbind(ckd10BL15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10BL15 <- glm(formula = map10_15pct ~ htn, data = BLdata, family = "binomial")
+summary(htn10BL15)
+exp(coef(htn10BL15))
+exp(confint(htn10BL15))
+anova(htn10BL15)
+cbind(htn10BL15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10BL15 <- glm(formula = map10_15pct ~ copd, data = BLdata, family = "binomial")
+summary(copd10BL15)
+exp(coef(copd10BL15))
+exp(confint(copd10BL15))
+anova(copd10BL15)
+cbind(copd10BL15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10BL15 <- glm(formula = map10_15pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper10BL15)
+exp(coef(hyper10BL15))
+exp(confint(hyper10BL15))
+anova(hyper10BL15)
+cbind(hyper10BL15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10BL15 <- glm(formula = map10_15pct ~ osa, data = BLdata, family = "binomial")
+summary(osa10BL15)
+exp(coef(osa10BL15))
+exp(confint(osa10BL15))
+anova(osa10BL15)
+cbind(osa10BL15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10BL15 <- glm(formula = map10_15pct ~ pad, data = BLdata, family = "binomial")
+summary(pad10BL15)
+exp(coef(pad10BL15))
+exp(confint(pad10BL15))
+anova(pad10BL15)
+cbind(pad10BL15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10BL15 <- glm(formula = map10_15pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid10BL15)
+exp(coef(tnComorbid10BL15))
+exp(confint(tnComorbid10BL15))
+anova(tnComorbid10BL15)
+cbind(tnComorbid10BL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10BL15 <- lm(formula = map10_15pct ~ scCABG, data = BLdata)
+summary(sc1_10BL15)
+coef(sc1_10BL15)
+confint(sc1_10BL15)
+anova(sc1_10BL15)
+cbind(sc1_10BL15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10BL15 <- lm(formula = map10_15pct ~ scAnyValve, data = BLdata)
+summary(sc2_10BL15)
+coef(sc2_10BL15)
+confint(sc2_10BL15)
+anova(sc2_10BL15)
+cbind(sc2_10BL15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10BL15 <- lm(formula = map10_15pct ~ scCABGValve, data = BLdata)
+summary(sc3_10BL15)
+coef(sc3_10BL15)
+confint(sc3_10BL15)
+anova(sc3_10BL15)
+cbind(sc3_10BL15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10BL15 <- lm(formula = map10_15pct ~ scOther, data = BLdata)
+summary(sc4_10BL15)
+coef(sc4_10BL15)
+confint(sc4_10BL15)
+anova(sc4_10BL15)
+cbind(sc4_10BL15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10BL15 <- glm(formula = map10_15pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse10BL15)
+exp(coef(CrystUse10BL15))
+exp(confint(CrystUse10BL15))
+anova(CrystUse10BL15)
+cbind(CrystUse10BL15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10BL15 <- glm(formula = map10_15pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc10BL15)
+exp(coef(prbc10BL15))
+exp(confint(prbc10BL15))
+anova(prbc10BL15)
+cbind(prbc10BL15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10BL15 <- glm(formula = map10_15pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs10BL15)
+exp(coef(autolgs10BL15))
+exp(confint(autolgs10BL15))
+anova(autolgs10BL15)
+cbind(autolgs10BL15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10BL15 <- glm(formula = map10_15pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid10BL15)
+exp(coef(tnColloid10BL15))
+exp(confint(tnColloid10BL15))
+anova(tnColloid10BL15)
+cbind(tnColloid10BL15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10BL15 <- glm(formula = map10_15pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid10BL15)
+exp(coef(tmlsColloid10BL15))
+exp(confint(tmlsColloid10BL15))
+anova(tmlsColloid10BL15)
+cbind(tmlsColloid10BL15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10BL15 <- glm(formula = map10_15pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol10BL15)
+exp(coef(csvol10BL15))
+exp(confint(csvol10BL15))
+anova(csvol10BL15)
+cbind(csvol10BL15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10BL15 <- glm(formula = map10_15pct ~ urine, data = BLdata, family = "binomial")
+summary(urine10BL15)
+exp(coef(urine10BL15))
+exp(confint(urine10BL15))
+anova(urine10BL15)
+cbind(urine10BL15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10BL15 <- glm(formula = map10_15pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur10BL15)
+exp(coef(cpbDur10BL15))
+exp(confint(cpbDur10BL15))
+anova(cpbDur10BL15)
+cbind(cpbDur10BL15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10BL15 <- glm(formula = map10_15pct ~ aortic_clamp_time, data = BLdata, family = "binomial")
+summary(acTime10BL15)
+exp(coef(acTime10BL15))
+exp(confint(acTime10BL15))
+anova(acTime10BL15)
+cbind(acTime10BL15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10BL15 <- glm(formula = map10_15pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre10BL15)
+exp(coef(efPre10BL15))
+exp(confint(efPre10BL15))
+anova(efPre10BL15)
+cbind(efPre10BL15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10BL15 <- glm(formula = map10_15pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost10BL15)
+exp(coef(efPost10BL15))
+exp(confint(efPost10BL15))
+anova(efPost10BL15)
+cbind(efPost10BL15,deparse.level = 2)
+```
+
+
+
+## 20% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2BL20 <- glm(formula = map2_20pct ~ age, data = BLdata, family = "binomial")
+summary(age2BL20)
+exp(coef(age2BL20))
+exp(confint(age2BL20))
+anova(age2BL20)
+cbind(age2BL20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2BL20 <- glm(formula = map2_20pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps2BL20)
+exp(coef(asaps2BL20))
+exp(confint(asaps2BL20))
+anova(asaps2BL20)
+cbind(asaps2BL20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2BL20 <- glm(formula = map2_20pct ~ gender, data = BLdata, family = "binomial")
+summary(gender2BL20)
+exp(coef(gender2BL20))
+exp(confint(gender2BL20))
+anova(gender2BL20)
+cbind(gender2BL20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2BL20 <- glm(formula = map2_20pct ~ weight, data = BLdata, family = "binomial")
+summary(wght2BL20)
+exp(coef(wght2BL20))
+exp(confint(wght2BL20))
+anova(wght2BL20)
+cbind(wght2BL20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2BL20 <- glm(formula = map2_20pct ~ height, data = BLdata, family = "binomial")
+summary(hght2BL20)
+exp(coef(hght2BL20))
+exp(confint(hght2BL20))
+anova(hght2BL20)
+cbind(hght2BL20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2BL20 <- glm(formula = map2_20pct ~ bmi, data = BLdata, family = "binomial")
+summary(bmi2BL20)
+exp(coef(bmi2BL20))
+exp(confint(bmi2BL20))
+anova(bmi2BL20)
+cbind(bmi2BL20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2BL20 <- glm(formula = map2_20pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_2BL20)
+exp(coef(bmi35_2BL20))
+exp(confint(bmi35_2BL20))
+anova(bmi35_2BL20)
+cbind(bmi35_2BL20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2BL20 <- glm(formula = map2_20pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_2BL20)
+exp(coef(bmi40_2BL20))
+exp(confint(bmi40_2BL20))
+anova(bmi40_2BL20)
+cbind(bmi40_2BL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2BL20 <- glm(formula = map2_20pct ~ af, data = BLdata, family = "binomial")
+summary(af2BL20)
+exp(coef(af2BL20))
+exp(confint(af2BL20))
+anova(af2BL20)
+cbind(af2BL20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2BL20 <- glm(formula = map2_20pct ~ dm, data = BLdata, family = "binomial")
+summary(dm2BL20)
+exp(coef(dm2BL20))
+exp(confint(dm2BL20))
+anova(dm2BL20)
+cbind(dm2BL20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2BL20 <- glm(formula = map2_20pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd2BL20)
+exp(coef(ckd2BL20))
+exp(confint(ckd2BL20))
+anova(ckd2BL20)
+cbind(ckd2BL20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2BL20 <- glm(formula = map2_20pct ~ htn, data = BLdata, family = "binomial")
+summary(htn2BL20)
+exp(coef(htn2BL20))
+exp(confint(htn2BL20))
+anova(htn2BL20)
+cbind(htn2BL20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2BL20 <- glm(formula = map2_20pct ~ copd, data = BLdata, family = "binomial")
+summary(copd2BL20)
+exp(coef(copd2BL20))
+exp(confint(copd2BL20))
+anova(copd2BL20)
+cbind(copd2BL20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2BL20 <- glm(formula = map2_20pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper2BL20)
+exp(coef(hyper2BL20))
+exp(confint(hyper2BL20))
+anova(hyper2BL20)
+cbind(hyper2BL20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2BL20 <- glm(formula = map2_20pct ~ osa, data = BLdata, family = "binomial")
+summary(osa2BL20)
+exp(coef(osa2BL20))
+exp(confint(osa2BL20))
+anova(osa2BL20)
+cbind(osa2BL20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2BL20 <- glm(formula = map2_20pct ~ pad, data = BLdata, family = "binomial")
+summary(pad2BL20)
+exp(coef(pad2BL20))
+exp(confint(pad2BL20))
+anova(pad2BL20)
+cbind(pad2BL20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2BL20 <- glm(formula = map2_20pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid2BL20)
+exp(coef(tnComorbid2BL20))
+exp(confint(tnComorbid2BL20))
+anova(tnComorbid2BL20)
+cbind(tnComorbid2BL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2BL20 <- lm(formula = map2_20pct ~ scCABG, data = BLdata)
+summary(sc1_2BL20)
+coef(sc1_2BL20)
+confint(sc1_2BL20)
+anova(sc1_2BL20)
+cbind(sc1_2BL20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2BL20 <- lm(formula = map2_20pct ~ scAnyValve, data = BLdata)
+summary(sc2_2BL20)
+coef(sc2_2BL20)
+confint(sc2_2BL20)
+anova(sc2_2BL20)
+cbind(sc2_2BL20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2BL20 <- lm(formula = map2_20pct ~ scCABGValve, data = BLdata)
+summary(sc3_2BL20)
+coef(sc3_2BL20)
+confint(sc3_2BL20)
+anova(sc3_2BL20)
+cbind(sc3_2BL20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2BL20 <- lm(formula = map2_20pct ~ scOther, data = BLdata)
+summary(sc4_2BL20)
+coef(sc4_2BL20)
+confint(sc4_2BL20)
+anova(sc4_2BL20)
+cbind(sc4_2BL20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2BL20 <- glm(formula = map2_20pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse2BL20)
+exp(coef(CrystUse2BL20))
+exp(confint(CrystUse2BL20))
+anova(CrystUse2BL20)
+cbind(CrystUse2BL20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2BL20 <- glm(formula = map2_20pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc2BL20)
+exp(coef(prbc2BL20))
+exp(confint(prbc2BL20))
+anova(prbc2BL20)
+cbind(prbc2BL20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2BL20 <- glm(formula = map2_20pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs2BL20)
+exp(coef(autolgs2BL20))
+exp(confint(autolgs2BL20))
+anova(autolgs2BL20)
+cbind(autolgs2BL20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2BL20 <- glm(formula = map2_20pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid2BL20)
+exp(coef(tnColloid2BL20))
+exp(confint(tnColloid2BL20))
+anova(tnColloid2BL20)
+cbind(tnColloid2BL20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2BL20 <- glm(formula = map2_20pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid2BL20)
+exp(coef(tmlsColloid2BL20))
+exp(confint(tmlsColloid2BL20))
+anova(tmlsColloid2BL20)
+cbind(tmlsColloid2BL20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2BL20 <- glm(formula = map2_20pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol2BL20)
+exp(coef(csvol2BL20))
+exp(confint(csvol2BL20))
+anova(csvol2BL20)
+cbind(csvol2BL20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2BL20 <- glm(formula = map2_20pct ~ urine, data = BLdata, family = "binomial")
+summary(urine2BL20)
+exp(coef(urine2BL20))
+exp(confint(urine2BL20))
+anova(urine2BL20)
+cbind(urine2BL20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2BL20 <- glm(formula = map2_20pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur2BL20)
+exp(coef(cpbDur2BL20))
+exp(confint(cpbDur2BL20))
+anova(cpbDur2BL20)
+cbind(cpbDur2BL20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2BL20 <- glm(formula = map2_20pct ~ aortic_clamp_time, data = BLdata, family = "binomial")
+summary(acTime2BL20)
+exp(coef(acTime2BL20))
+exp(confint(acTime2BL20))
+anova(acTime2BL20)
+cbind(acTime2BL20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2BL20 <- glm(formula = map2_20pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre2BL20)
+exp(coef(efPre2BL20))
+exp(confint(efPre2BL20))
+anova(efPre2BL20)
+cbind(efPre2BL20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2BL20 <- glm(formula = map2_20pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost2BL20)
+exp(coef(efPost2BL20))
+exp(confint(efPost2BL20))
+anova(efPost2BL20)
+cbind(efPost2BL20,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10BL20 <- glm(formula = map10_20pct ~ age, data = BLdata, family = "binomial")
+summary(age10BL20)
+exp(coef(age10BL20))
+exp(confint(age10BL20))
+anova(age10BL20)
+cbind(age10BL20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10BL20 <- glm(formula = map10_20pct ~ asaps, data = BLdata, family = "binomial")
+summary(asaps10BL20)
+exp(coef(asaps10BL20))
+exp(confint(asaps10BL20))
+anova(asaps10BL20)
+cbind(asaps10BL20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10BL20 <- glm(formula = map10_20pct ~ gender, data = BLdata, family = "binomial")
+summary(gender10BL20)
+exp(coef(gender10BL20))
+exp(confint(gender10BL20))
+anova(gender10BL20)
+cbind(gender10BL20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10BL20 <- glm(formula = map10_20pct ~ weight, data = BLdata, family = "binomial")
+summary(wght10BL20)
+exp(coef(wght10BL20))
+exp(confint(wght10BL20))
+anova(wght10BL20)
+cbind(wght10BL20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10BL20 <- glm(formula = map10_20pct ~ height, data = BLdata, family = "binomial")
+summary(hght10BL20)
+exp(coef(hght10BL20))
+exp(confint(hght10BL20))
+anova(hght10BL20)
+cbind(hght10BL20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10BL20 <- glm(formula = map10_20pct ~ bmi, data = BLdata, family = "binomial")
+summary(bmi10BL20)
+exp(coef(bmi10BL20))
+exp(confint(bmi10BL20))
+anova(bmi10BL20)
+cbind(bmi10BL20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10BL20 <- glm(formula = map10_20pct ~ bmiGE35, data = BLdata, family = "binomial")
+summary(bmi35_10BL20)
+exp(coef(bmi35_10BL20))
+exp(confint(bmi35_10BL20))
+anova(bmi35_10BL20)
+cbind(bmi35_10BL20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10BL20 <- glm(formula = map10_20pct ~ bmiGE40, data = BLdata, family = "binomial")
+summary(bmi40_10BL20)
+exp(coef(bmi40_10BL20))
+exp(confint(bmi40_10BL20))
+anova(bmi40_10BL20)
+cbind(bmi40_10BL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10BL20 <- glm(formula = map10_20pct ~ af, data = BLdata, family = "binomial")
+summary(af10BL20)
+exp(coef(af10BL20))
+exp(confint(af10BL20))
+anova(af10BL20)
+cbind(af10BL20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10BL20 <- glm(formula = map10_20pct ~ dm, data = BLdata, family = "binomial")
+summary(dm10BL20)
+exp(coef(dm10BL20))
+exp(confint(dm10BL20))
+anova(dm10BL20)
+cbind(dm10BL20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10BL20 <- glm(formula = map10_20pct ~ ckd, data = BLdata, family = "binomial")
+summary(ckd10BL20)
+exp(coef(ckd10BL20))
+exp(confint(ckd10BL20))
+anova(ckd10BL20)
+cbind(ckd10BL20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10BL20 <- glm(formula = map10_20pct ~ htn, data = BLdata, family = "binomial")
+summary(htn10BL20)
+exp(coef(htn10BL20))
+exp(confint(htn10BL20))
+anova(htn10BL20)
+cbind(htn10BL20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10BL20 <- glm(formula = map10_20pct ~ copd, data = BLdata, family = "binomial")
+summary(copd10BL20)
+exp(coef(copd10BL20))
+exp(confint(copd10BL20))
+anova(copd10BL20)
+cbind(copd10BL20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10BL20 <- glm(formula = map10_20pct ~ hyperlipid, data = BLdata, family = "binomial")
+summary(hyper10BL20)
+exp(coef(hyper10BL20))
+exp(confint(hyper10BL20))
+anova(hyper10BL20)
+cbind(hyper10BL20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10BL20 <- glm(formula = map10_20pct ~ osa, data = BLdata, family = "binomial")
+summary(osa10BL20)
+exp(coef(osa10BL20))
+exp(confint(osa10BL20))
+anova(osa10BL20)
+cbind(osa10BL20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10BL20 <- glm(formula = map10_20pct ~ pad, data = BLdata, family = "binomial")
+summary(pad10BL20)
+exp(coef(pad10BL20))
+exp(confint(pad10BL20))
+anova(pad10BL20)
+cbind(pad10BL20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10BL20 <- glm(formula = map10_20pct ~ totnum_comorbid, data = BLdata, family = "binomial")
+summary(tnComorbid10BL20)
+exp(coef(tnComorbid10BL20))
+exp(confint(tnComorbid10BL20))
+anova(tnComorbid10BL20)
+cbind(tnComorbid10BL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10BL20 <- lm(formula = map10_20pct ~ scCABG, data = BLdata)
+summary(sc1_10BL20)
+coef(sc1_10BL20)
+confint(sc1_10BL20)
+anova(sc1_10BL20)
+cbind(sc1_10BL20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10BL20 <- lm(formula = map10_20pct ~ scAnyValve, data = BLdata)
+summary(sc2_10BL20)
+coef(sc2_10BL20)
+confint(sc2_10BL20)
+anova(sc2_10BL20)
+cbind(sc2_10BL20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10BL20 <- lm(formula = map10_20pct ~ scCABGValve, data = BLdata)
+summary(sc3_10BL20)
+coef(sc3_10BL20)
+confint(sc3_10BL20)
+anova(sc3_10BL20)
+cbind(sc3_10BL20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10BL20 <- lm(formula = map10_20pct ~ scOther, data = BLdata)
+summary(sc4_10BL20)
+coef(sc4_10BL20)
+confint(sc4_10BL20)
+anova(sc4_10BL20)
+cbind(sc4_10BL20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10BL20 <- glm(formula = map10_20pct ~ crystalloid, data = BLdata, family = "binomial")
+summary(CrystUse10BL20)
+exp(coef(CrystUse10BL20))
+exp(confint(CrystUse10BL20))
+anova(CrystUse10BL20)
+cbind(CrystUse10BL20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10BL20 <- glm(formula = map10_20pct ~ prbc, data = BLdata, family = "binomial")
+summary(prbc10BL20)
+exp(coef(prbc10BL20))
+exp(confint(prbc10BL20))
+anova(prbc10BL20)
+cbind(prbc10BL20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10BL20 <- glm(formula = map10_20pct ~ autologous, data = BLdata, family = "binomial")
+summary(autolgs10BL20)
+exp(coef(autolgs10BL20))
+exp(confint(autolgs10BL20))
+anova(autolgs10BL20)
+cbind(autolgs10BL20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10BL20 <- glm(formula = map10_20pct ~ totnum_colloid, data = BLdata, family = "binomial")
+summary(tnColloid10BL20)
+exp(coef(tnColloid10BL20))
+exp(confint(tnColloid10BL20))
+anova(tnColloid10BL20)
+cbind(tnColloid10BL20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10BL20 <- glm(formula = map10_20pct ~ totml_colloid, data = BLdata, family = "binomial")
+summary(tmlsColloid10BL20)
+exp(coef(tmlsColloid10BL20))
+exp(confint(tmlsColloid10BL20))
+anova(tmlsColloid10BL20)
+cbind(tmlsColloid10BL20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10BL20 <- glm(formula = map10_20pct ~ cellsaver_vol, data = BLdata, family = "binomial")
+summary(csvol10BL20)
+exp(coef(csvol10BL20))
+exp(confint(csvol10BL20))
+anova(csvol10BL20)
+cbind(csvol10BL20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10BL20 <- glm(formula = map10_20pct ~ urine, data = BLdata, family = "binomial")
+summary(urine10BL20)
+exp(coef(urine10BL20))
+exp(confint(urine10BL20))
+anova(urine10BL20)
+cbind(urine10BL20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10BL20 <- glm(formula = map10_20pct ~ cpb_duration, data = BLdata, family = "binomial")
+summary(cpbDur10BL20)
+exp(coef(cpbDur10BL20))
+exp(confint(cpbDur10BL20))
+anova(cpbDur10BL20)
+cbind(cpbDur10BL20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10BL20 <- glm(formula = map10_20pct ~ aortic_clamp_time, data = BLdata, family = "binomial")
+summary(acTime10BL20)
+exp(coef(acTime10BL20))
+exp(confint(acTime10BL20))
+anova(acTime10BL20)
+cbind(acTime10BL20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10BL20 <- glm(formula = map10_20pct ~ EF_pre, data = BLdata, family = "binomial")
+summary(efPre10BL20)
+exp(coef(efPre10BL20))
+exp(confint(efPre10BL20))
+anova(efPre10BL20)
+cbind(efPre10BL20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10BL20 <- glm(formula = map10_20pct ~ EF_post, data = BLdata, family = "binomial")
+summary(efPost10BL20)
+exp(coef(efPost10BL20))
+exp(confint(efPost10BL20))
+anova(efPost10BL20)
+cbind(efPost10BL20,deparse.level = 2)
+```
+
+ 
+ 
+ 
+#Radial Long (RL)
+
+## 10% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RL10 <- glm(formula = map2_10pct ~ age, data = RLdata, family = "binomial")
+summary(age2RL10)
+exp(coef(age2RL10))
+exp(confint(age2RL10))
+anova(age2RL10)
+cbind(age2RL10,deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2RL10 <- glm(formula = map2_10pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps2RL10)
+exp(coef(asaps2RL10))
+exp(confint(asaps2RL10))
+anova(asaps2RL10)
+cbind(asaps2RL10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RL10 <- glm(formula = map2_10pct ~ gender, data = RLdata, family = "binomial")
+summary(gender2RL10)
+exp(coef(gender2RL10))
+exp(confint(gender2RL10))
+anova(gender2RL10)
+cbind(gender2RL10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RL10 <- glm(formula = map2_10pct ~ weight, data = RLdata, family = "binomial")
+summary(wght2RL10)
+exp(coef(wght2RL10))
+exp(confint(wght2RL10))
+anova(wght2RL10)
+cbind(wght2RL10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RL10 <- glm(formula = map2_10pct ~ height, data = RLdata, family = "binomial")
+summary(hght2RL10)
+exp(coef(hght2RL10))
+exp(confint(hght2RL10))
+anova(hght2RL10)
+cbind(hght2RL10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RL10 <- lm(formula = map2_10pct ~ bmi, data = RLdata)
+summary(bmi2RL10)
+exp(coef(bmi2RL10))
+exp(confint(bmi2RL10))
+anova(bmi2RL10)
+cbind(bmi2RL10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RL10 <- glm(formula = map2_10pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_2RL10)
+exp(coef(bmi35_2RL10))
+exp(confint(bmi35_2RL10))
+anova(bmi35_2RL10)
+cbind(bmi35_2RL10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RL10 <- glm(formula = map2_10pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_2RL10)
+exp(coef(bmi40_2RL10))
+exp(confint(bmi40_2RL10))
+anova(bmi40_2RL10)
+cbind(bmi40_2RL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RL10 <- glm(formula = map2_10pct ~ af, data = RLdata, family = "binomial")
+summary(af2RL10)
+exp(coef(af2RL10))
+exp(confint(af2RL10))
+anova(af2RL10)
+cbind(af2RL10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RL10 <- glm(formula = map2_10pct ~ dm, data = RLdata, family = "binomial")
+summary(dm2RL10)
+exp(coef(dm2RL10))
+exp(confint(dm2RL10))
+anova(dm2RL10)
+cbind(dm2RL10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RL10 <- glm(formula = map2_10pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd2RL10)
+exp(coef(ckd2RL10))
+exp(confint(ckd2RL10))
+anova(ckd2RL10)
+cbind(ckd2RL10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RL10 <- glm(formula = map2_10pct ~ htn, data = RLdata, family = "binomial")
+summary(htn2RL10)
+exp(coef(htn2RL10))
+exp(confint(htn2RL10))
+anova(htn2RL10)
+cbind(htn2RL10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RL10 <- glm(formula = map2_10pct ~ copd, data = RLdata, family = "binomial")
+summary(copd2RL10)
+exp(coef(copd2RL10))
+exp(confint(copd2RL10))
+anova(copd2RL10)
+cbind(copd2RL10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RL10 <- glm(formula = map2_10pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper2RL10)
+exp(coef(hyper2RL10))
+exp(confint(hyper2RL10))
+anova(hyper2RL10)
+cbind(hyper2RL10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RL10 <- glm(formula = map2_10pct ~ osa, data = RLdata, family = "binomial")
+summary(osa2RL10)
+exp(coef(osa2RL10))
+exp(confint(osa2RL10))
+anova(osa2RL10)
+cbind(osa2RL10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RL10 <- glm(formula = map2_10pct ~ pad, data = RLdata, family = "binomial")
+summary(pad2RL10)
+exp(coef(pad2RL10))
+exp(confint(pad2RL10))
+anova(pad2RL10)
+cbind(pad2RL10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RL10 <- glm(formula = map2_10pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid2RL10)
+exp(coef(tnComorbid2RL10))
+exp(confint(tnComorbid2RL10))
+anova(tnComorbid2RL10)
+cbind(tnComorbid2RL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RL10 <- lm(formula = map2_10pct ~ scCABG, data = RLdata)
+summary(sc1_2RL10)
+coef(sc1_2RL10)
+confint(sc1_2RL10)
+anova(sc1_2RL10)
+cbind(sc1_2RL10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RL10 <- lm(formula = map2_10pct ~ scAnyValve, data = RLdata)
+summary(sc2_2RL10)
+coef(sc2_2RL10)
+confint(sc2_2RL10)
+anova(sc2_2RL10)
+cbind(sc2_2RL10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RL10 <- lm(formula = map2_10pct ~ scCABGValve, data = RLdata)
+summary(sc3_2RL10)
+coef(sc3_2RL10)
+confint(sc3_2RL10)
+anova(sc3_2RL10)
+cbind(sc3_2RL10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RL10 <- lm(formula = map2_10pct ~ scOther, data = RLdata)
+summary(sc4_2RL10)
+coef(sc4_2RL10)
+confint(sc4_2RL10)
+anova(sc4_2RL10)
+cbind(sc4_2RL10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RL10 <- glm(formula = map2_10pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse2RL10)
+exp(coef(CrystUse2RL10))
+exp(confint(CrystUse2RL10))
+anova(CrystUse2RL10)
+cbind(CrystUse2RL10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RL10 <- glm(formula = map2_10pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc2RL10)
+exp(coef(prbc2RL10))
+exp(confint(prbc2RL10))
+anova(prbc2RL10)
+cbind(prbc2RL10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RL10 <- glm(formula = map2_10pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs2RL10)
+exp(coef(autolgs2RL10))
+exp(confint(autolgs2RL10))
+anova(autolgs2RL10)
+cbind(autolgs2RL10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RL10 <- glm(formula = map2_10pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid2RL10)
+exp(coef(tnColloid2RL10))
+exp(confint(tnColloid2RL10))
+anova(tnColloid2RL10)
+cbind(tnColloid2RL10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RL10 <- glm(formula = map2_10pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid2RL10)
+exp(coef(tmlsColloid2RL10))
+exp(confint(tmlsColloid2RL10))
+anova(tmlsColloid2RL10)
+cbind(tmlsColloid2RL10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RL10 <- glm(formula = map2_10pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol2RL10)
+exp(coef(csvol2RL10))
+exp(confint(csvol2RL10))
+anova(csvol2RL10)
+cbind(csvol2RL10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RL10 <- glm(formula = map2_10pct ~ urine, data = RLdata, family = "binomial")
+summary(urine2RL10)
+exp(coef(urine2RL10))
+exp(confint(urine2RL10))
+anova(urine2RL10)
+cbind(urine2RL10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RL10 <- glm(formula = map2_10pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur2RL10)
+exp(coef(cpbDur2RL10))
+exp(confint(cpbDur2RL10))
+anova(cpbDur2RL10)
+cbind(cpbDur2RL10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RL10 <- glm(formula = map2_10pct ~ aortic_clamp_time, data = RLdata, family = "binomial")
+summary(acTime2RL10)
+exp(coef(acTime2RL10))
+exp(confint(acTime2RL10))
+anova(acTime2RL10)
+cbind(acTime2RL10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RL10 <- glm(formula = map2_10pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre2RL10)
+exp(coef(efPre2RL10))
+exp(confint(efPre2RL10))
+anova(efPre2RL10)
+cbind(efPre2RL10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RL10 <- glm(formula = map2_10pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost2RL10)
+exp(coef(efPost2RL10))
+exp(confint(efPost2RL10))
+anova(efPost2RL10)
+cbind(efPost2RL10,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RL10 <- glm(formula = map10_10pct ~ age, data = RLdata, family = "binomial")
+summary(age10RL10)
+exp(coef(age10RL10))
+exp(confint(age10RL10))
+anova(age10RL10)
+cbind(age10RL10,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RL10 <- glm(formula = map10_10pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps10RL10)
+exp(coef(asaps10RL10))
+exp(confint(asaps10RL10))
+anova(asaps10RL10)
+cbind(asaps10RL10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RL10 <- glm(formula = map10_10pct ~ gender, data = RLdata, family = "binomial")
+summary(gender10RL10)
+exp(coef(gender10RL10))
+# exp(confint(gender10RL10))
+anova(gender10RL10)
+cbind(gender10RL10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RL10 <- glm(formula = map10_10pct ~ weight, data = RLdata, family = "binomial")
+summary(wght10RL10)
+exp(coef(wght10RL10))
+exp(confint(wght10RL10))
+anova(wght10RL10)
+cbind(wght10RL10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RL10 <- glm(formula = map10_10pct ~ height, data = RLdata, family = "binomial")
+summary(hght10RL10)
+exp(coef(hght10RL10))
+exp(confint(hght10RL10))
+anova(hght10RL10)
+cbind(hght10RL10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RL10 <- glm(formula = map10_10pct ~ bmi, data = RLdata, family = "binomial")
+summary(bmi10RL10)
+exp(coef(bmi10RL10))
+exp(confint(bmi10RL10))
+anova(bmi10RL10)
+cbind(bmi10RL10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RL10 <- glm(formula = map10_10pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_10RL10)
+exp(coef(bmi35_10RL10))
+exp(confint(bmi35_10RL10))
+anova(bmi35_10RL10)
+cbind(bmi35_10RL10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RL10 <- glm(formula = map10_10pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_10RL10)
+exp(coef(bmi40_10RL10))
+exp(confint(bmi40_10RL10))
+anova(bmi40_10RL10)
+cbind(bmi40_10RL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RL10 <- glm(formula = map10_10pct ~ af, data = RLdata, family = "binomial")
+summary(af10RL10)
+exp(coef(af10RL10))
+exp(confint(af10RL10))
+anova(af10RL10)
+cbind(af10RL10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RL10 <- glm(formula = map10_10pct ~ dm, data = RLdata, family = "binomial")
+summary(dm10RL10)
+exp(coef(dm10RL10))
+exp(confint(dm10RL10))
+anova(dm10RL10)
+cbind(dm10RL10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RL10 <- glm(formula = map10_10pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd10RL10)
+exp(coef(ckd10RL10))
+exp(confint(ckd10RL10))
+anova(ckd10RL10)
+cbind(ckd10RL10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RL10 <- glm(formula = map10_10pct ~ htn, data = RLdata, family = "binomial")
+summary(htn10RL10)
+exp(coef(htn10RL10))
+exp(confint(htn10RL10))
+anova(htn10RL10)
+cbind(htn10RL10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RL10 <- glm(formula = map10_10pct ~ copd, data = RLdata, family = "binomial")
+summary(copd10RL10)
+exp(coef(copd10RL10))
+exp(confint(copd10RL10))
+anova(copd10RL10)
+cbind(copd10RL10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RL10 <- glm(formula = map10_10pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper10RL10)
+exp(coef(hyper10RL10))
+exp(confint(hyper10RL10))
+anova(hyper10RL10)
+cbind(hyper10RL10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RL10 <- glm(formula = map10_10pct ~ osa, data = RLdata, family = "binomial")
+summary(osa10RL10)
+exp(coef(osa10RL10))
+exp(confint(osa10RL10))
+anova(osa10RL10)
+cbind(osa10RL10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RL10 <- glm(formula = map10_10pct ~ pad, data = RLdata, family = "binomial")
+summary(pad10RL10)
+exp(coef(pad10RL10))
+exp(confint(pad10RL10))
+anova(pad10RL10)
+cbind(pad10RL10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RL10 <- glm(formula = map10_10pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid10RL10)
+exp(coef(tnComorbid10RL10))
+exp(confint(tnComorbid10RL10))
+anova(tnComorbid10RL10)
+cbind(tnComorbid10RL10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RL10 <- lm(formula = map10_10pct ~ scCABG, data = RLdata)
+summary(sc1_10RL10)
+coef(sc1_10RL10)
+confint(sc1_10RL10)
+anova(sc1_10RL10)
+cbind(sc1_10RL10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RL10 <- lm(formula = map10_10pct ~ scAnyValve, data = RLdata)
+summary(sc2_10RL10)
+coef(sc2_10RL10)
+confint(sc2_10RL10)
+anova(sc2_10RL10)
+cbind(sc2_10RL10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RL10 <- lm(formula = map10_10pct ~ scCABGValve, data = RLdata)
+summary(sc3_10RL10)
+coef(sc3_10RL10)
+confint(sc3_10RL10)
+anova(sc3_10RL10)
+cbind(sc3_10RL10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RL10 <- lm(formula = map10_10pct ~ scOther, data = RLdata)
+summary(sc4_10RL10)
+coef(sc4_10RL10)
+confint(sc4_10RL10)
+anova(sc4_10RL10)
+cbind(sc4_10RL10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RL10 <- glm(formula = map10_10pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse10RL10)
+exp(coef(CrystUse10RL10))
+exp(confint(CrystUse10RL10))
+anova(CrystUse10RL10)
+cbind(CrystUse10RL10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RL10 <- glm(formula = map10_10pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc10RL10)
+exp(coef(prbc10RL10))
+exp(confint(prbc10RL10))
+anova(prbc10RL10)
+cbind(prbc10RL10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RL10 <- glm(formula = map10_10pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs10RL10)
+exp(coef(autolgs10RL10))
+exp(confint(autolgs10RL10))
+anova(autolgs10RL10)
+cbind(autolgs10RL10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RL10 <- glm(formula = map10_10pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid10RL10)
+exp(coef(tnColloid10RL10))
+exp(confint(autolgs10RL10))
+anova(tnColloid10RL10)
+cbind(tnColloid10RL10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RL10 <- glm(formula = map10_10pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid10RL10)
+exp(coef(tmlsColloid10RL10))
+exp(confint(tmlsColloid10RL10))
+anova(tmlsColloid10RL10)
+cbind(tmlsColloid10RL10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RL10 <- glm(formula = map10_10pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol10RL10)
+exp(coef(csvol10RL10))
+exp(confint(csvol10RL10))
+anova(csvol10RL10)
+cbind(csvol10RL10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RL10 <- glm(formula = map10_10pct ~ urine, data = RLdata, family = "binomial")
+summary(urine10RL10)
+exp(coef(urine10RL10))
+exp(confint(urine10RL10))
+anova(urine10RL10)
+cbind(urine10RL10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RL10 <- glm(formula = map10_10pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur10RL10)
+exp(coef(cpbDur10RL10))
+exp(confint(cpbDur10RL10))
+anova(cpbDur10RL10)
+cbind(cpbDur10RL10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RL10 <- glm(formula = map10_10pct ~ aortic_clamp_time, data = RLdata, family = "binomial",)
+summary(acTime10RL10)
+exp(coef(acTime10RL10))
+exp(confint(acTime10RL10))
+anova(acTime10RL10)
+cbind(acTime10RL10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RL10 <- glm(formula = map10_10pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre10RL10)
+exp(coef(efPre10RL10))
+exp(confint(efPre10RL10))
+anova(efPre10RL10)
+cbind(efPre10RL10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RL10 <- glm(formula = map10_10pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost10RL10)
+exp(coef(efPost10RL10))
+exp(confint(efPost10RL10))
+anova(efPost10RL10)
+cbind(efPost10RL10,deparse.level = 2)
+```
+
+
+## 15% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RL15 <- glm(formula = map2_15pct ~ age, data = RLdata, family = "binomial")
+summary(age2RL15)
+exp(coef(age2RL15))
+exp(confint(age2RL15))
+anova(age2RL15)
+cbind(age2RL15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2RL15 <- glm(formula = map2_15pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps2RL15)
+exp(coef(asaps2RL15))
+exp(confint(asaps2RL15))
+anova(asaps2RL15)
+cbind(asaps2RL15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RL15 <- glm(formula = map2_15pct ~ gender, data = RLdata, family = "binomial")
+summary(gender2RL15)
+exp(coef(gender2RL15))
+exp(confint(gender2RL15))
+anova(gender2RL15)
+cbind(gender2RL15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RL15 <- glm(formula = map2_15pct ~ weight, data = RLdata, family = "binomial")
+summary(wght2RL15)
+exp(coef(wght2RL15))
+exp(confint(wght2RL15))
+anova(wght2RL15)
+cbind(wght2RL15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RL15 <- glm(formula = map2_15pct ~ height, data = RLdata, family = "binomial")
+summary(hght2RL15)
+exp(coef(hght2RL15))
+exp(confint(hght2RL15))
+anova(hght2RL15)
+cbind(hght2RL15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RL15 <- glm(formula = map2_15pct ~ bmi, data = RLdata, family = "binomial")
+summary(bmi2RL15)
+exp(coef(bmi2RL15))
+exp(confint(bmi2RL15))
+anova(bmi2RL15)
+cbind(bmi2RL15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RL15 <- glm(formula = map2_15pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_2RL15)
+exp(coef(bmi35_2RL15))
+exp(confint(bmi35_2RL15))
+anova(bmi35_2RL15)
+cbind(bmi35_2RL15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RL15 <- glm(formula = map2_15pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_2RL15)
+exp(coef(bmi40_2RL15))
+exp(confint(bmi40_2RL15))
+anova(bmi40_2RL15)
+cbind(bmi40_2RL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RL15 <- glm(formula = map2_15pct ~ af, data = RLdata, family = "binomial")
+summary(af2RL15)
+exp(coef(af2RL15))
+exp(confint(af2RL15))
+anova(af2RL15)
+cbind(af2RL15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RL15 <- glm(formula = map2_15pct ~ dm, data = RLdata, family = "binomial")
+summary(dm2RL15)
+exp(coef(dm2RL15))
+exp(confint(dm2RL15))
+anova(dm2RL15)
+cbind(dm2RL15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RL15 <- glm(formula = map2_15pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd2RL15)
+exp(coef(ckd2RL15))
+exp(confint(ckd2RL15))
+anova(ckd2RL15)
+cbind(ckd2RL15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RL15 <- glm(formula = map2_15pct ~ htn, data = RLdata, family = "binomial")
+summary(htn2RL15)
+exp(coef(htn2RL15))
+exp(confint(htn2RL15))
+anova(htn2RL15)
+cbind(htn2RL15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RL15 <- glm(formula = map2_15pct ~ copd, data = RLdata, family = "binomial")
+summary(copd2RL15)
+exp(coef(copd2RL15))
+exp(confint(copd2RL15))
+anova(copd2RL15)
+cbind(copd2RL15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RL15 <- glm(formula = map2_15pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper2RL15)
+exp(coef(hyper2RL15))
+exp(confint(hyper2RL15))
+anova(hyper2RL15)
+cbind(hyper2RL15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RL15 <- glm(formula = map2_15pct ~ osa, data = RLdata, family = "binomial")
+summary(osa2RL15)
+exp(coef(osa2RL15))
+exp(confint(osa2RL15))
+anova(osa2RL15)
+cbind(osa2RL15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RL15 <- glm(formula = map2_15pct ~ pad, data = RLdata, family = "binomial")
+summary(pad2RL15)
+exp(coef(pad2RL15))
+exp(confint(pad2RL15))
+anova(pad2RL15)
+cbind(pad2RL15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RL15 <- glm(formula = map2_15pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid2RL15)
+exp(coef(tnComorbid2RL15))
+exp(confint(tnComorbid2RL15))
+anova(tnComorbid2RL15)
+cbind(tnComorbid2RL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RL15 <- lm(formula = map2_15pct ~ scCABG, data = RLdata)
+summary(sc1_2RL15)
+coef(sc1_2RL15)
+confint(sc1_2RL15)
+anova(sc1_2RL15)
+cbind(sc1_2RL15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RL15 <- lm(formula = map2_15pct ~ scAnyValve, data = RLdata)
+summary(sc2_2RL15)
+coef(sc2_2RL15)
+confint(sc2_2RL15)
+anova(sc2_2RL15)
+cbind(sc2_2RL15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RL15 <- lm(formula = map2_15pct ~ scCABGValve, data = RLdata)
+summary(sc3_2RL15)
+coef(sc3_2RL15)
+confint(sc3_2RL15)
+anova(sc3_2RL15)
+cbind(sc3_2RL15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RL15 <- lm(formula = map2_15pct ~ scOther, data = RLdata)
+summary(sc4_2RL15)
+coef(sc4_2RL15)
+confint(sc4_2RL15)
+anova(sc4_2RL15)
+cbind(sc4_2RL15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RL15 <- glm(formula = map2_15pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse2RL15)
+exp(coef(CrystUse2RL15))
+exp(confint(CrystUse2RL15))
+anova(CrystUse2RL15)
+cbind(CrystUse2RL15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RL15 <- glm(formula = map2_15pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc2RL15)
+exp(coef(prbc2RL15))
+exp(confint(prbc2RL15))
+anova(prbc2RL15)
+cbind(prbc2RL15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RL15 <- glm(formula = map2_15pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs2RL15)
+exp(coef(autolgs2RL15))
+exp(confint(autolgs2RL15))
+anova(autolgs2RL15)
+cbind(autolgs2RL15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RL15 <- glm(formula = map2_15pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid2RL15)
+exp(coef(tnColloid2RL15))
+exp(confint(tnColloid2RL15))
+anova(tnColloid2RL15)
+cbind(tnColloid2RL15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RL15 <- glm(formula = map2_15pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid2RL15)
+exp(coef(tmlsColloid2RL15))
+exp(confint(tmlsColloid2RL15))
+anova(tmlsColloid2RL15)
+cbind(tmlsColloid2RL15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RL15 <- glm(formula = map2_15pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol2RL15)
+exp(coef(csvol2RL15))
+exp(confint(csvol2RL15))
+anova(csvol2RL15)
+cbind(csvol2RL15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RL15 <- glm(formula = map2_15pct ~ urine, data = RLdata, family = "binomial")
+summary(urine2RL15)
+exp(coef(urine2RL15))
+exp(confint(urine2RL15))
+anova(urine2RL15)
+cbind(urine2RL15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RL15 <- glm(formula = map2_15pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur2RL15)
+exp(coef(cpbDur2RL15))
+exp(confint(cpbDur2RL15))
+anova(cpbDur2RL15)
+cbind(cpbDur2RL15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RL15 <- glm(formula = map2_15pct ~ aortic_clamp_time, data = RLdata, family = "binomial")
+summary(acTime2RL15)
+exp(coef(acTime2RL15))
+exp(confint(acTime2RL15))
+anova(acTime2RL15)
+cbind(acTime2RL15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RL15 <- glm(formula = map2_15pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre2RL15)
+exp(coef(efPre2RL15))
+exp(confint(efPre2RL15))
+anova(efPre2RL15)
+cbind(efPre2RL15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RL15 <- glm(formula = map2_15pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost2RL15)
+exp(coef(efPost2RL15))
+exp(confint(efPost2RL15))
+anova(efPost2RL15)
+cbind(efPost2RL15,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RL15 <- glm(formula = map10_15pct ~ age, data = RLdata, family = "binomial")
+summary(age10RL15)
+exp(coef(age10RL15))
+exp(confint(age10RL15))
+anova(age10RL15)
+cbind(age10RL15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RL15 <- glm(formula = map10_15pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps10RL15)
+exp(coef(asaps10RL15))
+exp(confint(asaps10RL15))
+anova(asaps10RL15)
+cbind(asaps10RL15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RL15 <- glm(formula = map10_15pct ~ gender, data = RLdata, family = "binomial")
+summary(gender10RL15)
+exp(coef(gender10RL15))
+exp(confint(gender10RL15))
+anova(gender10RL15)
+cbind(gender10RL15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RL15 <- glm(formula = map10_15pct ~ weight, data = RLdata, family = "binomial")
+summary(wght10RL15)
+exp(coef(wght10RL15))
+exp(confint(wght10RL15))
+anova(wght10RL15)
+cbind(wght10RL15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RL15 <- glm(formula = map10_15pct ~ height, data = RLdata, family = "binomial")
+summary(hght10RL15)
+exp(coef(hght10RL15))
+exp(confint(hght10RL15))
+anova(hght10RL15)
+cbind(hght10RL15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RL15 <- glm(formula = map10_15pct ~ bmi, data = RLdata, family = "binomial")
+summary(bmi10RL15)
+exp(coef(bmi10RL15))
+exp(confint(bmi10RL15))
+anova(bmi10RL15)
+cbind(bmi10RL15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RL15 <- glm(formula = map10_15pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_10RL15)
+exp(coef(bmi35_10RL15))
+exp(confint(bmi35_10RL15))
+anova(bmi35_10RL15)
+cbind(bmi35_10RL15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RL15 <- glm(formula = map10_15pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_10RL15)
+exp(coef(bmi40_10RL15))
+exp(confint(bmi40_10RL15))
+anova(bmi40_10RL15)
+cbind(bmi40_10RL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RL15 <- glm(formula = map10_15pct ~ af, data = RLdata, family = "binomial")
+summary(af10RL15)
+exp(coef(af10RL15))
+exp(confint(af10RL15))
+anova(af10RL15)
+cbind(af10RL15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RL15 <- glm(formula = map10_15pct ~ dm, data = RLdata, family = "binomial")
+summary(dm10RL15)
+exp(coef(dm10RL15))
+exp(confint(dm10RL15))
+anova(dm10RL15)
+cbind(dm10RL15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RL15 <- glm(formula = map10_15pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd10RL15)
+exp(coef(ckd10RL15))
+exp(confint(ckd10RL15))
+anova(ckd10RL15)
+cbind(ckd10RL15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RL15 <- glm(formula = map10_15pct ~ htn, data = RLdata, family = "binomial")
+summary(htn10RL15)
+exp(coef(htn10RL15))
+exp(confint(htn10RL15))
+anova(htn10RL15)
+cbind(htn10RL15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RL15 <- glm(formula = map10_15pct ~ copd, data = RLdata, family = "binomial")
+summary(copd10RL15)
+exp(coef(copd10RL15))
+exp(confint(copd10RL15))
+anova(copd10RL15)
+cbind(copd10RL15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RL15 <- glm(formula = map10_15pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper10RL15)
+exp(coef(hyper10RL15))
+exp(confint(hyper10RL15))
+anova(hyper10RL15)
+cbind(hyper10RL15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RL15 <- glm(formula = map10_15pct ~ osa, data = RLdata, family = "binomial")
+summary(osa10RL15)
+exp(coef(osa10RL15))
+exp(confint(osa10RL15))
+anova(osa10RL15)
+cbind(osa10RL15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RL15 <- glm(formula = map10_15pct ~ pad, data = RLdata, family = "binomial")
+summary(pad10RL15)
+exp(coef(pad10RL15))
+exp(confint(pad10RL15))
+anova(pad10RL15)
+cbind(pad10RL15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RL15 <- glm(formula = map10_15pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid10RL15)
+exp(coef(tnComorbid10RL15))
+exp(confint(tnComorbid10RL15))
+anova(tnComorbid10RL15)
+cbind(tnComorbid10RL15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RL15 <- lm(formula = map10_15pct ~ scCABG, data = RLdata)
+summary(sc1_10RL15)
+coef(sc1_10RL15)
+confint(sc1_10RL15)
+anova(sc1_10RL15)
+cbind(sc1_10RL15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RL15 <- lm(formula = map10_15pct ~ scAnyValve, data = RLdata)
+summary(sc2_10RL15)
+coef(sc2_10RL15)
+confint(sc2_10RL15)
+anova(sc2_10RL15)
+cbind(sc2_10RL15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RL15 <- lm(formula = map10_15pct ~ scCABGValve, data = RLdata)
+summary(sc3_10RL15)
+coef(sc3_10RL15)
+confint(sc3_10RL15)
+anova(sc3_10RL15)
+cbind(sc3_10RL15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RL15 <- lm(formula = map10_15pct ~ scOther, data = RLdata)
+summary(sc4_10RL15)
+coef(sc4_10RL15)
+confint(sc4_10RL15)
+anova(sc4_10RL15)
+cbind(sc4_10RL15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RL15 <- glm(formula = map10_15pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse10RL15)
+exp(coef(CrystUse10RL15))
+exp(confint(CrystUse10RL15))
+anova(CrystUse10RL15)
+cbind(CrystUse10RL15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RL15 <- glm(formula = map10_15pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc10RL15)
+exp(coef(prbc10RL15))
+exp(confint(prbc10RL15))
+anova(prbc10RL15)
+cbind(prbc10RL15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RL15 <- glm(formula = map10_15pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs10RL15)
+exp(coef(autolgs10RL15))
+exp(confint(autolgs10RL15))
+anova(autolgs10RL15)
+cbind(autolgs10RL15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RL15 <- glm(formula = map10_15pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid10RL15)
+exp(coef(tnColloid10RL15))
+exp(confint(tnColloid10RL15))
+anova(tnColloid10RL15)
+cbind(tnColloid10RL15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RL15 <- glm(formula = map10_15pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid10RL15)
+exp(coef(tmlsColloid10RL15))
+exp(confint(tmlsColloid10RL15))
+anova(tmlsColloid10RL15)
+cbind(tmlsColloid10RL15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RL15 <- glm(formula = map10_15pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol10RL15)
+exp(coef(csvol10RL15))
+exp(confint(csvol10RL15))
+anova(csvol10RL15)
+cbind(csvol10RL15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RL15 <- glm(formula = map10_15pct ~ urine, data = RLdata, family = "binomial")
+summary(urine10RL15)
+exp(coef(urine10RL15))
+exp(confint(urine10RL15))
+anova(urine10RL15)
+cbind(urine10RL15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RL15 <- glm(formula = map10_15pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur10RL15)
+exp(coef(cpbDur10RL15))
+exp(confint(cpbDur10RL15))
+anova(cpbDur10RL15)
+cbind(cpbDur10RL15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RL15 <- glm(formula = map10_15pct ~ aortic_clamp_time, data = RLdata, family = "binomial")
+summary(acTime10RL15)
+exp(coef(acTime10RL15))
+exp(confint(acTime10RL15))
+anova(acTime10RL15)
+cbind(acTime10RL15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RL15 <- glm(formula = map10_15pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre10RL15)
+exp(coef(efPre10RL15))
+exp(confint(efPre10RL15))
+anova(efPre10RL15)
+cbind(efPre10RL15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RL15 <- glm(formula = map10_15pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost10RL15)
+exp(coef(efPost10RL15))
+exp(confint(efPost10RL15))
+anova(efPost10RL15)
+cbind(efPost10RL15,deparse.level = 2)
+```
+
+
+
+## 20% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RL20 <- glm(formula = map2_20pct ~ age, data = RLdata, family = "binomial")
+summary(age2RL20)
+exp(coef(age2RL20))
+exp(confint(age2RL20))
+anova(age2RL20)
+cbind(age2RL20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2RL20 <- glm(formula = map2_20pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps2RL20)
+exp(coef(asaps2RL20))
+exp(confint(asaps2RL20))
+anova(asaps2RL20)
+cbind(asaps2RL20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RL20 <- glm(formula = map2_20pct ~ gender, data = RLdata, family = "binomial")
+summary(gender2RL20)
+exp(coef(gender2RL20))
+exp(confint(gender2RL20))
+anova(gender2RL20)
+cbind(gender2RL20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RL20 <- glm(formula = map2_20pct ~ weight, data = RLdata, family = "binomial")
+summary(wght2RL20)
+exp(coef(wght2RL20))
+exp(confint(wght2RL20))
+anova(wght2RL20)
+cbind(wght2RL20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RL20 <- glm(formula = map2_20pct ~ height, data = RLdata, family = "binomial")
+summary(hght2RL20)
+exp(coef(hght2RL20))
+exp(confint(hght2RL20))
+anova(hght2RL20)
+cbind(hght2RL20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RL20 <- glm(formula = map2_20pct ~ bmi, data = RLdata, family = "binomial")
+summary(bmi2RL20)
+exp(coef(bmi2RL20))
+exp(confint(bmi2RL20))
+anova(bmi2RL20)
+cbind(bmi2RL20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RL20 <- glm(formula = map2_20pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_2RL20)
+exp(coef(bmi35_2RL20))
+exp(confint(bmi35_2RL20))
+anova(bmi35_2RL20)
+cbind(bmi35_2RL20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RL20 <- glm(formula = map2_20pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_2RL20)
+exp(coef(bmi40_2RL20))
+exp(confint(bmi40_2RL20))
+anova(bmi40_2RL20)
+cbind(bmi40_2RL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RL20 <- glm(formula = map2_20pct ~ af, data = RLdata, family = "binomial")
+summary(af2RL20)
+exp(coef(af2RL20))
+exp(confint(af2RL20))
+anova(af2RL20)
+cbind(af2RL20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RL20 <- glm(formula = map2_20pct ~ dm, data = RLdata, family = "binomial")
+summary(dm2RL20)
+exp(coef(dm2RL20))
+exp(confint(dm2RL20))
+anova(dm2RL20)
+cbind(dm2RL20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RL20 <- glm(formula = map2_20pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd2RL20)
+exp(coef(ckd2RL20))
+exp(confint(ckd2RL20))
+anova(ckd2RL20)
+cbind(ckd2RL20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RL20 <- glm(formula = map2_20pct ~ htn, data = RLdata, family = "binomial")
+summary(htn2RL20)
+exp(coef(htn2RL20))
+exp(confint(htn2RL20))
+anova(htn2RL20)
+cbind(htn2RL20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RL20 <- glm(formula = map2_20pct ~ copd, data = RLdata, family = "binomial")
+summary(copd2RL20)
+exp(coef(copd2RL20))
+exp(confint(copd2RL20))
+anova(copd2RL20)
+cbind(copd2RL20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RL20 <- glm(formula = map2_20pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper2RL20)
+exp(coef(hyper2RL20))
+exp(confint(hyper2RL20))
+anova(hyper2RL20)
+cbind(hyper2RL20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RL20 <- glm(formula = map2_20pct ~ osa, data = RLdata, family = "binomial")
+summary(osa2RL20)
+exp(coef(osa2RL20))
+exp(confint(osa2RL20))
+anova(osa2RL20)
+cbind(osa2RL20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RL20 <- glm(formula = map2_20pct ~ pad, data = RLdata, family = "binomial")
+summary(pad2RL20)
+exp(coef(pad2RL20))
+exp(confint(pad2RL20))
+anova(pad2RL20)
+cbind(pad2RL20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RL20 <- glm(formula = map2_20pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid2RL20)
+exp(coef(tnComorbid2RL20))
+exp(confint(tnComorbid2RL20))
+anova(tnComorbid2RL20)
+cbind(tnComorbid2RL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RL20 <- lm(formula = map2_20pct ~ scCABG, data = RLdata)
+summary(sc1_2RL20)
+coef(sc1_2RL20)
+confint(sc1_2RL20)
+anova(sc1_2RL20)
+cbind(sc1_2RL20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RL20 <- lm(formula = map2_20pct ~ scAnyValve, data = RLdata)
+summary(sc2_2RL20)
+coef(sc2_2RL20)
+confint(sc2_2RL20)
+anova(sc2_2RL20)
+cbind(sc2_2RL20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RL20 <- lm(formula = map2_20pct ~ scCABGValve, data = RLdata)
+summary(sc3_2RL20)
+coef(sc3_2RL20)
+confint(sc3_2RL20)
+anova(sc3_2RL20)
+cbind(sc3_2RL20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RL20 <- lm(formula = map2_20pct ~ scOther, data = RLdata)
+summary(sc4_2RL20)
+coef(sc4_2RL20)
+confint(sc4_2RL20)
+anova(sc4_2RL20)
+cbind(sc4_2RL20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RL20 <- glm(formula = map2_20pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse2RL20)
+exp(coef(CrystUse2RL20))
+exp(confint(CrystUse2RL20))
+anova(CrystUse2RL20)
+cbind(CrystUse2RL20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RL20 <- glm(formula = map2_20pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc2RL20)
+exp(coef(prbc2RL20))
+exp(confint(prbc2RL20))
+anova(prbc2RL20)
+cbind(prbc2RL20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RL20 <- glm(formula = map2_20pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs2RL20)
+exp(coef(autolgs2RL20))
+exp(confint(autolgs2RL20))
+anova(autolgs2RL20)
+cbind(autolgs2RL20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RL20 <- glm(formula = map2_20pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid2RL20)
+exp(coef(tnColloid2RL20))
+exp(confint(tnColloid2RL20))
+anova(tnColloid2RL20)
+cbind(tnColloid2RL20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RL20 <- glm(formula = map2_20pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid2RL20)
+exp(coef(tmlsColloid2RL20))
+exp(confint(tmlsColloid2RL20))
+anova(tmlsColloid2RL20)
+cbind(tmlsColloid2RL20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RL20 <- glm(formula = map2_20pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol2RL20)
+exp(coef(csvol2RL20))
+exp(confint(csvol2RL20))
+anova(csvol2RL20)
+cbind(csvol2RL20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RL20 <- glm(formula = map2_20pct ~ urine, data = RLdata, family = "binomial")
+summary(urine2RL20)
+exp(coef(urine2RL20))
+exp(confint(urine2RL20))
+anova(urine2RL20)
+cbind(urine2RL20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RL20 <- glm(formula = map2_20pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur2RL20)
+exp(coef(cpbDur2RL20))
+exp(confint(cpbDur2RL20))
+anova(cpbDur2RL20)
+cbind(cpbDur2RL20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RL20 <- glm(formula = map2_20pct ~ aortic_clamp_time, data = RLdata, family = "binomial")
+summary(acTime2RL20)
+exp(coef(acTime2RL20))
+exp(confint(acTime2RL20))
+anova(acTime2RL20)
+cbind(acTime2RL20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RL20 <- glm(formula = map2_20pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre2RL20)
+exp(coef(efPre2RL20))
+exp(confint(efPre2RL20))
+anova(efPre2RL20)
+cbind(efPre2RL20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RL20 <- glm(formula = map2_20pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost2RL20)
+exp(coef(efPost2RL20))
+exp(confint(efPost2RL20))
+anova(efPost2RL20)
+cbind(efPost2RL20,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RL20 <- glm(formula = map10_20pct ~ age, data = RLdata, family = "binomial")
+summary(age10RL20)
+exp(coef(age10RL20))
+exp(confint(age10RL20))
+anova(age10RL20)
+cbind(age10RL20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RL20 <- glm(formula = map10_20pct ~ asaps, data = RLdata, family = "binomial")
+summary(asaps10RL20)
+exp(coef(asaps10RL20))
+exp(confint(asaps10RL20))
+anova(asaps10RL20)
+cbind(asaps10RL20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RL20 <- glm(formula = map10_20pct ~ gender, data = RLdata, family = "binomial")
+summary(gender10RL20)
+exp(coef(gender10RL20))
+exp(confint(gender10RL20))
+anova(gender10RL20)
+cbind(gender10RL20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RL20 <- glm(formula = map10_20pct ~ weight, data = RLdata, family = "binomial")
+summary(wght10RL20)
+exp(coef(wght10RL20))
+exp(confint(wght10RL20))
+anova(wght10RL20)
+cbind(wght10RL20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RL20 <- glm(formula = map10_20pct ~ height, data = RLdata, family = "binomial")
+summary(hght10RL20)
+exp(coef(hght10RL20))
+exp(confint(hght10RL20))
+anova(hght10RL20)
+cbind(hght10RL20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RL20 <- glm(formula = map10_20pct ~ bmi, data = RLdata, family = "binomial")
+summary(bmi10RL20)
+exp(coef(bmi10RL20))
+exp(confint(bmi10RL20))
+anova(bmi10RL20)
+cbind(bmi10RL20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RL20 <- glm(formula = map10_20pct ~ bmiGE35, data = RLdata, family = "binomial")
+summary(bmi35_10RL20)
+exp(coef(bmi35_10RL20))
+exp(confint(bmi35_10RL20))
+anova(bmi35_10RL20)
+cbind(bmi35_10RL20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RL20 <- glm(formula = map10_20pct ~ bmiGE40, data = RLdata, family = "binomial")
+summary(bmi40_10RL20)
+exp(coef(bmi40_10RL20))
+exp(confint(bmi40_10RL20))
+anova(bmi40_10RL20)
+cbind(bmi40_10RL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RL20 <- glm(formula = map10_20pct ~ af, data = RLdata, family = "binomial")
+summary(af10RL20)
+exp(coef(af10RL20))
+exp(confint(af10RL20))
+anova(af10RL20)
+cbind(af10RL20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RL20 <- glm(formula = map10_20pct ~ dm, data = RLdata, family = "binomial")
+summary(dm10RL20)
+exp(coef(dm10RL20))
+exp(confint(dm10RL20))
+anova(dm10RL20)
+cbind(dm10RL20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RL20 <- glm(formula = map10_20pct ~ ckd, data = RLdata, family = "binomial")
+summary(ckd10RL20)
+exp(coef(ckd10RL20))
+exp(confint(ckd10RL20))
+anova(ckd10RL20)
+cbind(ckd10RL20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RL20 <- glm(formula = map10_20pct ~ htn, data = RLdata, family = "binomial")
+summary(htn10RL20)
+exp(coef(htn10RL20))
+exp(confint(htn10RL20))
+anova(htn10RL20)
+cbind(htn10RL20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RL20 <- glm(formula = map10_20pct ~ copd, data = RLdata, family = "binomial")
+summary(copd10RL20)
+exp(coef(copd10RL20))
+exp(confint(copd10RL20))
+anova(copd10RL20)
+cbind(copd10RL20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RL20 <- glm(formula = map10_20pct ~ hyperlipid, data = RLdata, family = "binomial")
+summary(hyper10RL20)
+exp(coef(hyper10RL20))
+exp(confint(hyper10RL20))
+anova(hyper10RL20)
+cbind(hyper10RL20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RL20 <- glm(formula = map10_20pct ~ osa, data = RLdata, family = "binomial")
+summary(osa10RL20)
+exp(coef(osa10RL20))
+exp(confint(osa10RL20))
+anova(osa10RL20)
+cbind(osa10RL20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RL20 <- glm(formula = map10_20pct ~ pad, data = RLdata, family = "binomial")
+summary(pad10RL20)
+exp(coef(pad10RL20))
+exp(confint(pad10RL20))
+anova(pad10RL20)
+cbind(pad10RL20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RL20 <- glm(formula = map10_20pct ~ totnum_comorbid, data = RLdata, family = "binomial")
+summary(tnComorbid10RL20)
+exp(coef(tnComorbid10RL20))
+exp(confint(tnComorbid10RL20))
+anova(tnComorbid10RL20)
+cbind(tnComorbid10RL20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RL20 <- lm(formula = map10_20pct ~ scCABG, data = RLdata)
+summary(sc1_10RL20)
+coef(sc1_10RL20)
+confint(sc1_10RL20)
+anova(sc1_10RL20)
+cbind(sc1_10RL20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RL20 <- lm(formula = map10_20pct ~ scAnyValve, data = RLdata)
+summary(sc2_10RL20)
+coef(sc2_10RL20)
+confint(sc2_10RL20)
+anova(sc2_10RL20)
+cbind(sc2_10RL20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RL20 <- lm(formula = map10_20pct ~ scCABGValve, data = RLdata)
+summary(sc3_10RL20)
+coef(sc3_10RL20)
+confint(sc3_10RL20)
+anova(sc3_10RL20)
+cbind(sc3_10RL20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RL20 <- lm(formula = map10_20pct ~ scOther, data = RLdata)
+summary(sc4_10RL20)
+coef(sc4_10RL20)
+confint(sc4_10RL20)
+anova(sc4_10RL20)
+cbind(sc4_10RL20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RL20 <- glm(formula = map10_20pct ~ crystalloid, data = RLdata, family = "binomial")
+summary(CrystUse10RL20)
+exp(coef(CrystUse10RL20))
+exp(confint(CrystUse10RL20))
+anova(CrystUse10RL20)
+cbind(CrystUse10RL20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RL20 <- glm(formula = map10_20pct ~ prbc, data = RLdata, family = "binomial")
+summary(prbc10RL20)
+exp(coef(prbc10RL20))
+exp(confint(prbc10RL20))
+anova(prbc10RL20)
+cbind(prbc10RL20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RL20 <- glm(formula = map10_20pct ~ autologous, data = RLdata, family = "binomial")
+summary(autolgs10RL20)
+exp(coef(autolgs10RL20))
+exp(confint(autolgs10RL20))
+anova(autolgs10RL20)
+cbind(autolgs10RL20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RL20 <- glm(formula = map10_20pct ~ totnum_colloid, data = RLdata, family = "binomial")
+summary(tnColloid10RL20)
+exp(coef(tnColloid10RL20))
+exp(confint(tnColloid10RL20))
+anova(tnColloid10RL20)
+cbind(tnColloid10RL20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RL20 <- glm(formula = map10_20pct ~ totml_colloid, data = RLdata, family = "binomial")
+summary(tmlsColloid10RL20)
+exp(coef(tmlsColloid10RL20))
+exp(confint(tmlsColloid10RL20))
+anova(tmlsColloid10RL20)
+cbind(tmlsColloid10RL20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RL20 <- glm(formula = map10_20pct ~ cellsaver_vol, data = RLdata, family = "binomial")
+summary(csvol10RL20)
+exp(coef(csvol10RL20))
+exp(confint(csvol10RL20))
+anova(csvol10RL20)
+cbind(csvol10RL20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RL20 <- glm(formula = map10_20pct ~ urine, data = RLdata, family = "binomial")
+summary(urine10RL20)
+exp(coef(urine10RL20))
+exp(confint(urine10RL20))
+anova(urine10RL20)
+cbind(urine10RL20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RL20 <- glm(formula = map10_20pct ~ cpb_duration, data = RLdata, family = "binomial")
+summary(cpbDur10RL20)
+exp(coef(cpbDur10RL20))
+exp(confint(cpbDur10RL20))
+anova(cpbDur10RL20)
+cbind(cpbDur10RL20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RL20 <- glm(formula = map10_20pct ~ aortic_clamp_time, data = RLdata, family = "binomial")
+summary(acTime10RL20)
+exp(coef(acTime10RL20))
+exp(confint(acTime10RL20))
+anova(acTime10RL20)
+cbind(acTime10RL20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RL20 <- glm(formula = map10_20pct ~ EF_pre, data = RLdata, family = "binomial")
+summary(efPre10RL20)
+exp(coef(efPre10RL20))
+exp(confint(efPre10RL20))
+anova(efPre10RL20)
+cbind(efPre10RL20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RL20 <- glm(formula = map10_20pct ~ EF_post, data = RLdata, family = "binomial")
+summary(efPost10RL20)
+exp(coef(efPost10RL20))
+exp(confint(efPost10RL20))
+anova(efPost10RL20)
+cbind(efPost10RL20,deparse.level = 2)
+```
+ 
+ 
+# Radial Short (RS)
+
+## 10% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RS10 <- glm(formula = map2_10pct ~ age, data = RSdata, family = "binomial")
+summary(age2RS10)
+exp(coef(age2RS10))
+exp(confint(age2RS10))
+anova(age2RS10)
+cbind(age2RS10,deparse.level = 2)
+```
+
+
+#### ASA PS
+
+```{r}
+asaps2RS10 <- glm(formula = map2_10pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps2RS10)
+exp(coef(asaps2RS10))
+exp(confint(asaps2RS10))
+anova(asaps2RS10)
+cbind(asaps2RS10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RS10 <- glm(formula = map2_10pct ~ gender, data = RSdata, family = "binomial")
+summary(gender2RS10)
+exp(coef(gender2RS10))
+exp(confint(gender2RS10))
+anova(gender2RS10)
+cbind(gender2RS10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RS10 <- glm(formula = map2_10pct ~ weight, data = RSdata, family = "binomial")
+summary(wght2RS10)
+exp(coef(wght2RS10))
+exp(confint(wght2RS10))
+anova(wght2RS10)
+cbind(wght2RS10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RS10 <- glm(formula = map2_10pct ~ height, data = RSdata, family = "binomial")
+summary(hght2RS10)
+exp(coef(hght2RS10))
+exp(confint(hght2RS10))
+anova(hght2RS10)
+cbind(hght2RS10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RS10 <- lm(formula = map2_10pct ~ bmi, data = RSdata)
+summary(bmi2RS10)
+exp(coef(bmi2RS10))
+exp(confint(bmi2RS10))
+anova(bmi2RS10)
+cbind(bmi2RS10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RS10 <- glm(formula = map2_10pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_2RS10)
+exp(coef(bmi35_2RS10))
+exp(confint(bmi35_2RS10))
+anova(bmi35_2RS10)
+cbind(bmi35_2RS10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RS10 <- glm(formula = map2_10pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_2RS10)
+exp(coef(bmi40_2RS10))
+exp(confint(bmi40_2RS10))
+anova(bmi40_2RS10)
+cbind(bmi40_2RS10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RS10 <- glm(formula = map2_10pct ~ af, data = RSdata, family = "binomial")
+summary(af2RS10)
+exp(coef(af2RS10))
+exp(confint(af2RS10))
+anova(af2RS10)
+cbind(af2RS10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RS10 <- glm(formula = map2_10pct ~ dm, data = RSdata, family = "binomial")
+summary(dm2RS10)
+exp(coef(dm2RS10))
+exp(confint(dm2RS10))
+anova(dm2RS10)
+cbind(dm2RS10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RS10 <- glm(formula = map2_10pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd2RS10)
+exp(coef(ckd2RS10))
+exp(confint(ckd2RS10))
+anova(ckd2RS10)
+cbind(ckd2RS10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RS10 <- glm(formula = map2_10pct ~ htn, data = RSdata, family = "binomial")
+summary(htn2RS10)
+exp(coef(htn2RS10))
+exp(confint(htn2RS10))
+anova(htn2RS10)
+cbind(htn2RS10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RS10 <- glm(formula = map2_10pct ~ copd, data = RSdata, family = "binomial")
+summary(copd2RS10)
+exp(coef(copd2RS10))
+exp(confint(copd2RS10))
+anova(copd2RS10)
+cbind(copd2RS10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RS10 <- glm(formula = map2_10pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper2RS10)
+exp(coef(hyper2RS10))
+exp(confint(hyper2RS10))
+anova(hyper2RS10)
+cbind(hyper2RS10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RS10 <- glm(formula = map2_10pct ~ osa, data = RSdata, family = "binomial")
+summary(osa2RS10)
+exp(coef(osa2RS10))
+exp(confint(osa2RS10))
+anova(osa2RS10)
+cbind(osa2RS10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RS10 <- glm(formula = map2_10pct ~ pad, data = RSdata, family = "binomial")
+summary(pad2RS10)
+exp(coef(pad2RS10))
+exp(confint(pad2RS10))
+anova(pad2RS10)
+cbind(pad2RS10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RS10 <- glm(formula = map2_10pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid2RS10)
+exp(coef(tnComorbid2RS10))
+exp(confint(tnComorbid2RS10))
+anova(tnComorbid2RS10)
+cbind(tnComorbid2RS10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RS10 <- lm(formula = map2_10pct ~ scCABG, data = RSdata)
+summary(sc1_2RS10)
+coef(sc1_2RS10)
+confint(sc1_2RS10)
+anova(sc1_2RS10)
+cbind(sc1_2RS10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RS10 <- lm(formula = map2_10pct ~ scAnyValve, data = RSdata)
+summary(sc2_2RS10)
+coef(sc2_2RS10)
+confint(sc2_2RS10)
+anova(sc2_2RS10)
+cbind(sc2_2RS10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RS10 <- lm(formula = map2_10pct ~ scCABGValve, data = RSdata)
+summary(sc3_2RS10)
+coef(sc3_2RS10)
+confint(sc3_2RS10)
+anova(sc3_2RS10)
+cbind(sc3_2RS10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RS10 <- lm(formula = map2_10pct ~ scOther, data = RSdata)
+summary(sc4_2RS10)
+coef(sc4_2RS10)
+confint(sc4_2RS10)
+anova(sc4_2RS10)
+cbind(sc4_2RS10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RS10 <- glm(formula = map2_10pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse2RS10)
+exp(coef(CrystUse2RS10))
+exp(confint(CrystUse2RS10))
+anova(CrystUse2RS10)
+cbind(CrystUse2RS10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RS10 <- glm(formula = map2_10pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc2RS10)
+exp(coef(prbc2RS10))
+exp(confint(prbc2RS10))
+anova(prbc2RS10)
+cbind(prbc2RS10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RS10 <- glm(formula = map2_10pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs2RS10)
+exp(coef(autolgs2RS10))
+exp(confint(autolgs2RS10))
+anova(autolgs2RS10)
+cbind(autolgs2RS10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RS10 <- glm(formula = map2_10pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid2RS10)
+exp(coef(tnColloid2RS10))
+exp(confint(tnColloid2RS10))
+anova(tnColloid2RS10)
+cbind(tnColloid2RS10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RS10 <- glm(formula = map2_10pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid2RS10)
+exp(coef(tmlsColloid2RS10))
+exp(confint(tmlsColloid2RS10))
+anova(tmlsColloid2RS10)
+cbind(tmlsColloid2RS10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RS10 <- glm(formula = map2_10pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol2RS10)
+exp(coef(csvol2RS10))
+exp(confint(csvol2RS10))
+anova(csvol2RS10)
+cbind(csvol2RS10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RS10 <- glm(formula = map2_10pct ~ urine, data = RSdata, family = "binomial")
+summary(urine2RS10)
+exp(coef(urine2RS10))
+exp(confint(urine2RS10))
+anova(urine2RS10)
+cbind(urine2RS10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RS10 <- glm(formula = map2_10pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur2RS10)
+exp(coef(cpbDur2RS10))
+exp(confint(cpbDur2RS10))
+anova(cpbDur2RS10)
+cbind(cpbDur2RS10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RS10 <- glm(formula = map2_10pct ~ aortic_clamp_time, data = RSdata, family = "binomial")
+summary(acTime2RS10)
+exp(coef(acTime2RS10))
+exp(confint(acTime2RS10))
+anova(acTime2RS10)
+cbind(acTime2RS10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RS10 <- glm(formula = map2_10pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre2RS10)
+exp(coef(efPre2RS10))
+exp(confint(efPre2RS10))
+anova(efPre2RS10)
+cbind(efPre2RS10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RS10 <- glm(formula = map2_10pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost2RS10)
+exp(coef(efPost2RS10))
+exp(confint(efPost2RS10))
+anova(efPost2RS10)
+cbind(efPost2RS10,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RS10 <- glm(formula = map10_10pct ~ age, data = RSdata, family = "binomial")
+summary(age10RS10)
+exp(coef(age10RS10))
+exp(confint(age10RS10))
+anova(age10RS10)
+cbind(age10RS10,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RS10 <- glm(formula = map10_10pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps10RS10)
+exp(coef(asaps10RS10))
+exp(confint(asaps10RS10))
+anova(asaps10RS10)
+cbind(asaps10RS10,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RS10 <- glm(formula = map10_10pct ~ gender, data = RSdata, family = "binomial")
+summary(gender10RS10)
+exp(coef(gender10RS10))
+# exp(confint(gender10RS10))
+anova(gender10RS10)
+cbind(gender10RS10,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RS10 <- glm(formula = map10_10pct ~ weight, data = RSdata, family = "binomial")
+summary(wght10RS10)
+exp(coef(wght10RS10))
+exp(confint(wght10RS10))
+anova(wght10RS10)
+cbind(wght10RS10,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RS10 <- glm(formula = map10_10pct ~ height, data = RSdata, family = "binomial")
+summary(hght10RS10)
+exp(coef(hght10RS10))
+exp(confint(hght10RS10))
+anova(hght10RS10)
+cbind(hght10RS10,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RS10 <- glm(formula = map10_10pct ~ bmi, data = RSdata, family = "binomial")
+summary(bmi10RS10)
+exp(coef(bmi10RS10))
+exp(confint(bmi10RS10))
+anova(bmi10RS10)
+cbind(bmi10RS10,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RS10 <- glm(formula = map10_10pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_10RS10)
+exp(coef(bmi35_10RS10))
+exp(confint(bmi35_10RS10))
+anova(bmi35_10RS10)
+cbind(bmi35_10RS10,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RS10 <- glm(formula = map10_10pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_10RS10)
+exp(coef(bmi40_10RS10))
+exp(confint(bmi40_10RS10))
+anova(bmi40_10RS10)
+cbind(bmi40_10RS10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RS10 <- glm(formula = map10_10pct ~ af, data = RSdata, family = "binomial")
+summary(af10RS10)
+exp(coef(af10RS10))
+exp(confint(af10RS10))
+anova(af10RS10)
+cbind(af10RS10,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RS10 <- glm(formula = map10_10pct ~ dm, data = RSdata, family = "binomial")
+summary(dm10RS10)
+exp(coef(dm10RS10))
+exp(confint(dm10RS10))
+anova(dm10RS10)
+cbind(dm10RS10,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RS10 <- glm(formula = map10_10pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd10RS10)
+exp(coef(ckd10RS10))
+exp(confint(ckd10RS10))
+anova(ckd10RS10)
+cbind(ckd10RS10,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RS10 <- glm(formula = map10_10pct ~ htn, data = RSdata, family = "binomial")
+summary(htn10RS10)
+exp(coef(htn10RS10))
+exp(confint(htn10RS10))
+anova(htn10RS10)
+cbind(htn10RS10,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RS10 <- glm(formula = map10_10pct ~ copd, data = RSdata, family = "binomial")
+summary(copd10RS10)
+exp(coef(copd10RS10))
+exp(confint(copd10RS10))
+anova(copd10RS10)
+cbind(copd10RS10,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RS10 <- glm(formula = map10_10pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper10RS10)
+exp(coef(hyper10RS10))
+exp(confint(hyper10RS10))
+anova(hyper10RS10)
+cbind(hyper10RS10,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RS10 <- glm(formula = map10_10pct ~ osa, data = RSdata, family = "binomial")
+summary(osa10RS10)
+exp(coef(osa10RS10))
+exp(confint(osa10RS10))
+anova(osa10RS10)
+cbind(osa10RS10,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RS10 <- glm(formula = map10_10pct ~ pad, data = RSdata, family = "binomial")
+summary(pad10RS10)
+exp(coef(pad10RS10))
+exp(confint(pad10RS10))
+anova(pad10RS10)
+cbind(pad10RS10,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RS10 <- glm(formula = map10_10pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid10RS10)
+exp(coef(tnComorbid10RS10))
+exp(confint(tnComorbid10RS10))
+anova(tnComorbid10RS10)
+cbind(tnComorbid10RS10,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RS10 <- lm(formula = map10_10pct ~ scCABG, data = RSdata)
+summary(sc1_10RS10)
+coef(sc1_10RS10)
+confint(sc1_10RS10)
+anova(sc1_10RS10)
+cbind(sc1_10RS10, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RS10 <- lm(formula = map10_10pct ~ scAnyValve, data = RSdata)
+summary(sc2_10RS10)
+coef(sc2_10RS10)
+confint(sc2_10RS10)
+anova(sc2_10RS10)
+cbind(sc2_10RS10, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RS10 <- lm(formula = map10_10pct ~ scCABGValve, data = RSdata)
+summary(sc3_10RS10)
+coef(sc3_10RS10)
+confint(sc3_10RS10)
+anova(sc3_10RS10)
+cbind(sc3_10RS10, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RS10 <- lm(formula = map10_10pct ~ scOther, data = RSdata)
+summary(sc4_10RS10)
+coef(sc4_10RS10)
+confint(sc4_10RS10)
+anova(sc4_10RS10)
+cbind(sc4_10RS10, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RS10 <- glm(formula = map10_10pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse10RS10)
+exp(coef(CrystUse10RS10))
+exp(confint(CrystUse10RS10))
+anova(CrystUse10RS10)
+cbind(CrystUse10RS10,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RS10 <- glm(formula = map10_10pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc10RS10)
+exp(coef(prbc10RS10))
+exp(confint(prbc10RS10))
+anova(prbc10RS10)
+cbind(prbc10RS10,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RS10 <- glm(formula = map10_10pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs10RS10)
+exp(coef(autolgs10RS10))
+exp(confint(autolgs10RS10))
+anova(autolgs10RS10)
+cbind(autolgs10RS10,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RS10 <- glm(formula = map10_10pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid10RS10)
+exp(coef(tnColloid10RS10))
+exp(confint(autolgs10RS10))
+anova(tnColloid10RS10)
+cbind(tnColloid10RS10,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RS10 <- glm(formula = map10_10pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid10RS10)
+exp(coef(tmlsColloid10RS10))
+exp(confint(tmlsColloid10RS10))
+anova(tmlsColloid10RS10)
+cbind(tmlsColloid10RS10,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RS10 <- glm(formula = map10_10pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol10RS10)
+exp(coef(csvol10RS10))
+exp(confint(csvol10RS10))
+anova(csvol10RS10)
+cbind(csvol10RS10,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RS10 <- glm(formula = map10_10pct ~ urine, data = RSdata, family = "binomial")
+summary(urine10RS10)
+exp(coef(urine10RS10))
+exp(confint(urine10RS10))
+anova(urine10RS10)
+cbind(urine10RS10,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RS10 <- glm(formula = map10_10pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur10RS10)
+exp(coef(cpbDur10RS10))
+exp(confint(cpbDur10RS10))
+anova(cpbDur10RS10)
+cbind(cpbDur10RS10,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RS10 <- glm(formula = map10_10pct ~ aortic_clamp_time, data = RSdata, family = "binomial",)
+summary(acTime10RS10)
+exp(coef(acTime10RS10))
+exp(confint(acTime10RS10))
+anova(acTime10RS10)
+cbind(acTime10RS10,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RS10 <- glm(formula = map10_10pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre10RS10)
+exp(coef(efPre10RS10))
+exp(confint(efPre10RS10))
+anova(efPre10RS10)
+cbind(efPre10RS10,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RS10 <- glm(formula = map10_10pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost10RS10)
+exp(coef(efPost10RS10))
+exp(confint(efPost10RS10))
+anova(efPost10RS10)
+cbind(efPost10RS10,deparse.level = 2)
+```
+
+
+## 15% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RS15 <- glm(formula = map2_15pct ~ age, data = RSdata, family = "binomial")
+summary(age2RS15)
+exp(coef(age2RS15))
+exp(confint(age2RS15))
+anova(age2RS15)
+cbind(age2RS15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2RS15 <- glm(formula = map2_15pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps2RS15)
+exp(coef(asaps2RS15))
+exp(confint(asaps2RS15))
+anova(asaps2RS15)
+cbind(asaps2RS15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RS15 <- glm(formula = map2_15pct ~ gender, data = RSdata, family = "binomial")
+summary(gender2RS15)
+exp(coef(gender2RS15))
+exp(confint(gender2RS15))
+anova(gender2RS15)
+cbind(gender2RS15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RS15 <- glm(formula = map2_15pct ~ weight, data = RSdata, family = "binomial")
+summary(wght2RS15)
+exp(coef(wght2RS15))
+exp(confint(wght2RS15))
+anova(wght2RS15)
+cbind(wght2RS15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RS15 <- glm(formula = map2_15pct ~ height, data = RSdata, family = "binomial")
+summary(hght2RS15)
+exp(coef(hght2RS15))
+exp(confint(hght2RS15))
+anova(hght2RS15)
+cbind(hght2RS15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RS15 <- glm(formula = map2_15pct ~ bmi, data = RSdata, family = "binomial")
+summary(bmi2RS15)
+exp(coef(bmi2RS15))
+exp(confint(bmi2RS15))
+anova(bmi2RS15)
+cbind(bmi2RS15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RS15 <- glm(formula = map2_15pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_2RS15)
+exp(coef(bmi35_2RS15))
+exp(confint(bmi35_2RS15))
+anova(bmi35_2RS15)
+cbind(bmi35_2RS15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RS15 <- glm(formula = map2_15pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_2RS15)
+exp(coef(bmi40_2RS15))
+exp(confint(bmi40_2RS15))
+anova(bmi40_2RS15)
+cbind(bmi40_2RS15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RS15 <- glm(formula = map2_15pct ~ af, data = RSdata, family = "binomial")
+summary(af2RS15)
+exp(coef(af2RS15))
+exp(confint(af2RS15))
+anova(af2RS15)
+cbind(af2RS15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RS15 <- glm(formula = map2_15pct ~ dm, data = RSdata, family = "binomial")
+summary(dm2RS15)
+exp(coef(dm2RS15))
+exp(confint(dm2RS15))
+anova(dm2RS15)
+cbind(dm2RS15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RS15 <- glm(formula = map2_15pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd2RS15)
+exp(coef(ckd2RS15))
+exp(confint(ckd2RS15))
+anova(ckd2RS15)
+cbind(ckd2RS15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RS15 <- glm(formula = map2_15pct ~ htn, data = RSdata, family = "binomial")
+summary(htn2RS15)
+exp(coef(htn2RS15))
+exp(confint(htn2RS15))
+anova(htn2RS15)
+cbind(htn2RS15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RS15 <- glm(formula = map2_15pct ~ copd, data = RSdata, family = "binomial")
+summary(copd2RS15)
+exp(coef(copd2RS15))
+exp(confint(copd2RS15))
+anova(copd2RS15)
+cbind(copd2RS15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RS15 <- glm(formula = map2_15pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper2RS15)
+exp(coef(hyper2RS15))
+exp(confint(hyper2RS15))
+anova(hyper2RS15)
+cbind(hyper2RS15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RS15 <- glm(formula = map2_15pct ~ osa, data = RSdata, family = "binomial")
+summary(osa2RS15)
+exp(coef(osa2RS15))
+exp(confint(osa2RS15))
+anova(osa2RS15)
+cbind(osa2RS15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RS15 <- glm(formula = map2_15pct ~ pad, data = RSdata, family = "binomial")
+summary(pad2RS15)
+exp(coef(pad2RS15))
+exp(confint(pad2RS15))
+anova(pad2RS15)
+cbind(pad2RS15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RS15 <- glm(formula = map2_15pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid2RS15)
+exp(coef(tnComorbid2RS15))
+exp(confint(tnComorbid2RS15))
+anova(tnComorbid2RS15)
+cbind(tnComorbid2RS15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RS15 <- lm(formula = map2_15pct ~ scCABG, data = RSdata)
+summary(sc1_2RS15)
+coef(sc1_2RS15)
+confint(sc1_2RS15)
+anova(sc1_2RS15)
+cbind(sc1_2RS15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RS15 <- lm(formula = map2_15pct ~ scAnyValve, data = RSdata)
+summary(sc2_2RS15)
+coef(sc2_2RS15)
+confint(sc2_2RS15)
+anova(sc2_2RS15)
+cbind(sc2_2RS15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RS15 <- lm(formula = map2_15pct ~ scCABGValve, data = RSdata)
+summary(sc3_2RS15)
+coef(sc3_2RS15)
+confint(sc3_2RS15)
+anova(sc3_2RS15)
+cbind(sc3_2RS15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RS15 <- lm(formula = map2_15pct ~ scOther, data = RSdata)
+summary(sc4_2RS15)
+coef(sc4_2RS15)
+confint(sc4_2RS15)
+anova(sc4_2RS15)
+cbind(sc4_2RS15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RS15 <- glm(formula = map2_15pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse2RS15)
+exp(coef(CrystUse2RS15))
+exp(confint(CrystUse2RS15))
+anova(CrystUse2RS15)
+cbind(CrystUse2RS15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RS15 <- glm(formula = map2_15pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc2RS15)
+exp(coef(prbc2RS15))
+exp(confint(prbc2RS15))
+anova(prbc2RS15)
+cbind(prbc2RS15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RS15 <- glm(formula = map2_15pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs2RS15)
+exp(coef(autolgs2RS15))
+exp(confint(autolgs2RS15))
+anova(autolgs2RS15)
+cbind(autolgs2RS15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RS15 <- glm(formula = map2_15pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid2RS15)
+exp(coef(tnColloid2RS15))
+exp(confint(tnColloid2RS15))
+anova(tnColloid2RS15)
+cbind(tnColloid2RS15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RS15 <- glm(formula = map2_15pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid2RS15)
+exp(coef(tmlsColloid2RS15))
+exp(confint(tmlsColloid2RS15))
+anova(tmlsColloid2RS15)
+cbind(tmlsColloid2RS15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RS15 <- glm(formula = map2_15pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol2RS15)
+exp(coef(csvol2RS15))
+exp(confint(csvol2RS15))
+anova(csvol2RS15)
+cbind(csvol2RS15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RS15 <- glm(formula = map2_15pct ~ urine, data = RSdata, family = "binomial")
+summary(urine2RS15)
+exp(coef(urine2RS15))
+exp(confint(urine2RS15))
+anova(urine2RS15)
+cbind(urine2RS15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RS15 <- glm(formula = map2_15pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur2RS15)
+exp(coef(cpbDur2RS15))
+exp(confint(cpbDur2RS15))
+anova(cpbDur2RS15)
+cbind(cpbDur2RS15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RS15 <- glm(formula = map2_15pct ~ aortic_clamp_time, data = RSdata, family = "binomial")
+summary(acTime2RS15)
+exp(coef(acTime2RS15))
+exp(confint(acTime2RS15))
+anova(acTime2RS15)
+cbind(acTime2RS15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RS15 <- glm(formula = map2_15pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre2RS15)
+exp(coef(efPre2RS15))
+exp(confint(efPre2RS15))
+anova(efPre2RS15)
+cbind(efPre2RS15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RS15 <- glm(formula = map2_15pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost2RS15)
+exp(coef(efPost2RS15))
+exp(confint(efPost2RS15))
+anova(efPost2RS15)
+cbind(efPost2RS15,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RS15 <- glm(formula = map10_15pct ~ age, data = RSdata, family = "binomial")
+summary(age10RS15)
+exp(coef(age10RS15))
+exp(confint(age10RS15))
+anova(age10RS15)
+cbind(age10RS15,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RS15 <- glm(formula = map10_15pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps10RS15)
+exp(coef(asaps10RS15))
+exp(confint(asaps10RS15))
+anova(asaps10RS15)
+cbind(asaps10RS15,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RS15 <- glm(formula = map10_15pct ~ gender, data = RSdata, family = "binomial")
+summary(gender10RS15)
+exp(coef(gender10RS15))
+exp(confint(gender10RS15))
+anova(gender10RS15)
+cbind(gender10RS15,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RS15 <- glm(formula = map10_15pct ~ weight, data = RSdata, family = "binomial")
+summary(wght10RS15)
+exp(coef(wght10RS15))
+exp(confint(wght10RS15))
+anova(wght10RS15)
+cbind(wght10RS15,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RS15 <- glm(formula = map10_15pct ~ height, data = RSdata, family = "binomial")
+summary(hght10RS15)
+exp(coef(hght10RS15))
+exp(confint(hght10RS15))
+anova(hght10RS15)
+cbind(hght10RS15,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RS15 <- glm(formula = map10_15pct ~ bmi, data = RSdata, family = "binomial")
+summary(bmi10RS15)
+exp(coef(bmi10RS15))
+exp(confint(bmi10RS15))
+anova(bmi10RS15)
+cbind(bmi10RS15,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RS15 <- glm(formula = map10_15pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_10RS15)
+exp(coef(bmi35_10RS15))
+exp(confint(bmi35_10RS15))
+anova(bmi35_10RS15)
+cbind(bmi35_10RS15,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RS15 <- glm(formula = map10_15pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_10RS15)
+exp(coef(bmi40_10RS15))
+exp(confint(bmi40_10RS15))
+anova(bmi40_10RS15)
+cbind(bmi40_10RS15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RS15 <- glm(formula = map10_15pct ~ af, data = RSdata, family = "binomial")
+summary(af10RS15)
+exp(coef(af10RS15))
+exp(confint(af10RS15))
+anova(af10RS15)
+cbind(af10RS15,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RS15 <- glm(formula = map10_15pct ~ dm, data = RSdata, family = "binomial")
+summary(dm10RS15)
+exp(coef(dm10RS15))
+exp(confint(dm10RS15))
+anova(dm10RS15)
+cbind(dm10RS15,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RS15 <- glm(formula = map10_15pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd10RS15)
+exp(coef(ckd10RS15))
+exp(confint(ckd10RS15))
+anova(ckd10RS15)
+cbind(ckd10RS15,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RS15 <- glm(formula = map10_15pct ~ htn, data = RSdata, family = "binomial")
+summary(htn10RS15)
+exp(coef(htn10RS15))
+exp(confint(htn10RS15))
+anova(htn10RS15)
+cbind(htn10RS15,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RS15 <- glm(formula = map10_15pct ~ copd, data = RSdata, family = "binomial")
+summary(copd10RS15)
+exp(coef(copd10RS15))
+exp(confint(copd10RS15))
+anova(copd10RS15)
+cbind(copd10RS15,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RS15 <- glm(formula = map10_15pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper10RS15)
+exp(coef(hyper10RS15))
+exp(confint(hyper10RS15))
+anova(hyper10RS15)
+cbind(hyper10RS15,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RS15 <- glm(formula = map10_15pct ~ osa, data = RSdata, family = "binomial")
+summary(osa10RS15)
+exp(coef(osa10RS15))
+exp(confint(osa10RS15))
+anova(osa10RS15)
+cbind(osa10RS15,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RS15 <- glm(formula = map10_15pct ~ pad, data = RSdata, family = "binomial")
+summary(pad10RS15)
+exp(coef(pad10RS15))
+exp(confint(pad10RS15))
+anova(pad10RS15)
+cbind(pad10RS15,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RS15 <- glm(formula = map10_15pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid10RS15)
+exp(coef(tnComorbid10RS15))
+exp(confint(tnComorbid10RS15))
+anova(tnComorbid10RS15)
+cbind(tnComorbid10RS15,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RS15 <- lm(formula = map10_15pct ~ scCABG, data = RSdata)
+summary(sc1_10RS15)
+coef(sc1_10RS15)
+confint(sc1_10RS15)
+anova(sc1_10RS15)
+cbind(sc1_10RS15, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RS15 <- lm(formula = map10_15pct ~ scAnyValve, data = RSdata)
+summary(sc2_10RS15)
+coef(sc2_10RS15)
+confint(sc2_10RS15)
+anova(sc2_10RS15)
+cbind(sc2_10RS15, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RS15 <- lm(formula = map10_15pct ~ scCABGValve, data = RSdata)
+summary(sc3_10RS15)
+coef(sc3_10RS15)
+confint(sc3_10RS15)
+anova(sc3_10RS15)
+cbind(sc3_10RS15, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RS15 <- lm(formula = map10_15pct ~ scOther, data = RSdata)
+summary(sc4_10RS15)
+coef(sc4_10RS15)
+confint(sc4_10RS15)
+anova(sc4_10RS15)
+cbind(sc4_10RS15, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RS15 <- glm(formula = map10_15pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse10RS15)
+exp(coef(CrystUse10RS15))
+exp(confint(CrystUse10RS15))
+anova(CrystUse10RS15)
+cbind(CrystUse10RS15,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RS15 <- glm(formula = map10_15pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc10RS15)
+exp(coef(prbc10RS15))
+exp(confint(prbc10RS15))
+anova(prbc10RS15)
+cbind(prbc10RS15,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RS15 <- glm(formula = map10_15pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs10RS15)
+exp(coef(autolgs10RS15))
+exp(confint(autolgs10RS15))
+anova(autolgs10RS15)
+cbind(autolgs10RS15,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RS15 <- glm(formula = map10_15pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid10RS15)
+exp(coef(tnColloid10RS15))
+exp(confint(tnColloid10RS15))
+anova(tnColloid10RS15)
+cbind(tnColloid10RS15,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RS15 <- glm(formula = map10_15pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid10RS15)
+exp(coef(tmlsColloid10RS15))
+exp(confint(tmlsColloid10RS15))
+anova(tmlsColloid10RS15)
+cbind(tmlsColloid10RS15,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RS15 <- glm(formula = map10_15pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol10RS15)
+exp(coef(csvol10RS15))
+exp(confint(csvol10RS15))
+anova(csvol10RS15)
+cbind(csvol10RS15,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RS15 <- glm(formula = map10_15pct ~ urine, data = RSdata, family = "binomial")
+summary(urine10RS15)
+exp(coef(urine10RS15))
+exp(confint(urine10RS15))
+anova(urine10RS15)
+cbind(urine10RS15,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RS15 <- glm(formula = map10_15pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur10RS15)
+exp(coef(cpbDur10RS15))
+exp(confint(cpbDur10RS15))
+anova(cpbDur10RS15)
+cbind(cpbDur10RS15,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RS15 <- glm(formula = map10_15pct ~ aortic_clamp_time, data = RSdata, family = "binomial")
+summary(acTime10RS15)
+exp(coef(acTime10RS15))
+exp(confint(acTime10RS15))
+anova(acTime10RS15)
+cbind(acTime10RS15,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RS15 <- glm(formula = map10_15pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre10RS15)
+exp(coef(efPre10RS15))
+exp(confint(efPre10RS15))
+anova(efPre10RS15)
+cbind(efPre10RS15,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RS15 <- glm(formula = map10_15pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost10RS15)
+exp(coef(efPost10RS15))
+exp(confint(efPost10RS15))
+anova(efPost10RS15)
+cbind(efPost10RS15,deparse.level = 2)
+```
+
+
+
+## 20% Difference
+
+### Post 2 Minutes
+
+#### Age
+
+```{r}
+age2RS20 <- glm(formula = map2_20pct ~ age, data = RSdata, family = "binomial")
+summary(age2RS20)
+exp(coef(age2RS20))
+exp(confint(age2RS20))
+anova(age2RS20)
+cbind(age2RS20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps2RS20 <- glm(formula = map2_20pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps2RS20)
+exp(coef(asaps2RS20))
+exp(confint(asaps2RS20))
+anova(asaps2RS20)
+cbind(asaps2RS20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender2RS20 <- glm(formula = map2_20pct ~ gender, data = RSdata, family = "binomial")
+summary(gender2RS20)
+exp(coef(gender2RS20))
+exp(confint(gender2RS20))
+anova(gender2RS20)
+cbind(gender2RS20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght2RS20 <- glm(formula = map2_20pct ~ weight, data = RSdata, family = "binomial")
+summary(wght2RS20)
+exp(coef(wght2RS20))
+exp(confint(wght2RS20))
+anova(wght2RS20)
+cbind(wght2RS20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght2RS20 <- glm(formula = map2_20pct ~ height, data = RSdata, family = "binomial")
+summary(hght2RS20)
+exp(coef(hght2RS20))
+exp(confint(hght2RS20))
+anova(hght2RS20)
+cbind(hght2RS20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi2RS20 <- glm(formula = map2_20pct ~ bmi, data = RSdata, family = "binomial")
+summary(bmi2RS20)
+exp(coef(bmi2RS20))
+exp(confint(bmi2RS20))
+anova(bmi2RS20)
+cbind(bmi2RS20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_2RS20 <- glm(formula = map2_20pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_2RS20)
+exp(coef(bmi35_2RS20))
+exp(confint(bmi35_2RS20))
+anova(bmi35_2RS20)
+cbind(bmi35_2RS20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_2RS20 <- glm(formula = map2_20pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_2RS20)
+exp(coef(bmi40_2RS20))
+exp(confint(bmi40_2RS20))
+anova(bmi40_2RS20)
+cbind(bmi40_2RS20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af2RS20 <- glm(formula = map2_20pct ~ af, data = RSdata, family = "binomial")
+summary(af2RS20)
+exp(coef(af2RS20))
+exp(confint(af2RS20))
+anova(af2RS20)
+cbind(af2RS20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm2RS20 <- glm(formula = map2_20pct ~ dm, data = RSdata, family = "binomial")
+summary(dm2RS20)
+exp(coef(dm2RS20))
+exp(confint(dm2RS20))
+anova(dm2RS20)
+cbind(dm2RS20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd2RS20 <- glm(formula = map2_20pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd2RS20)
+exp(coef(ckd2RS20))
+exp(confint(ckd2RS20))
+anova(ckd2RS20)
+cbind(ckd2RS20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn2RS20 <- glm(formula = map2_20pct ~ htn, data = RSdata, family = "binomial")
+summary(htn2RS20)
+exp(coef(htn2RS20))
+exp(confint(htn2RS20))
+anova(htn2RS20)
+cbind(htn2RS20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd2RS20 <- glm(formula = map2_20pct ~ copd, data = RSdata, family = "binomial")
+summary(copd2RS20)
+exp(coef(copd2RS20))
+exp(confint(copd2RS20))
+anova(copd2RS20)
+cbind(copd2RS20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper2RS20 <- glm(formula = map2_20pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper2RS20)
+exp(coef(hyper2RS20))
+exp(confint(hyper2RS20))
+anova(hyper2RS20)
+cbind(hyper2RS20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa2RS20 <- glm(formula = map2_20pct ~ osa, data = RSdata, family = "binomial")
+summary(osa2RS20)
+exp(coef(osa2RS20))
+exp(confint(osa2RS20))
+anova(osa2RS20)
+cbind(osa2RS20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad2RS20 <- glm(formula = map2_20pct ~ pad, data = RSdata, family = "binomial")
+summary(pad2RS20)
+exp(coef(pad2RS20))
+exp(confint(pad2RS20))
+anova(pad2RS20)
+cbind(pad2RS20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid2RS20 <- glm(formula = map2_20pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid2RS20)
+exp(coef(tnComorbid2RS20))
+exp(confint(tnComorbid2RS20))
+anova(tnComorbid2RS20)
+cbind(tnComorbid2RS20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_2RS20 <- lm(formula = map2_20pct ~ scCABG, data = RSdata)
+summary(sc1_2RS20)
+coef(sc1_2RS20)
+confint(sc1_2RS20)
+anova(sc1_2RS20)
+cbind(sc1_2RS20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_2RS20 <- lm(formula = map2_20pct ~ scAnyValve, data = RSdata)
+summary(sc2_2RS20)
+coef(sc2_2RS20)
+confint(sc2_2RS20)
+anova(sc2_2RS20)
+cbind(sc2_2RS20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_2RS20 <- lm(formula = map2_20pct ~ scCABGValve, data = RSdata)
+summary(sc3_2RS20)
+coef(sc3_2RS20)
+confint(sc3_2RS20)
+anova(sc3_2RS20)
+cbind(sc3_2RS20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_2RS20 <- lm(formula = map2_20pct ~ scOther, data = RSdata)
+summary(sc4_2RS20)
+coef(sc4_2RS20)
+confint(sc4_2RS20)
+anova(sc4_2RS20)
+cbind(sc4_2RS20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse2RS20 <- glm(formula = map2_20pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse2RS20)
+exp(coef(CrystUse2RS20))
+exp(confint(CrystUse2RS20))
+anova(CrystUse2RS20)
+cbind(CrystUse2RS20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc2RS20 <- glm(formula = map2_20pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc2RS20)
+exp(coef(prbc2RS20))
+exp(confint(prbc2RS20))
+anova(prbc2RS20)
+cbind(prbc2RS20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs2RS20 <- glm(formula = map2_20pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs2RS20)
+exp(coef(autolgs2RS20))
+exp(confint(autolgs2RS20))
+anova(autolgs2RS20)
+cbind(autolgs2RS20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid2RS20 <- glm(formula = map2_20pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid2RS20)
+exp(coef(tnColloid2RS20))
+exp(confint(tnColloid2RS20))
+anova(tnColloid2RS20)
+cbind(tnColloid2RS20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid2RS20 <- glm(formula = map2_20pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid2RS20)
+exp(coef(tmlsColloid2RS20))
+exp(confint(tmlsColloid2RS20))
+anova(tmlsColloid2RS20)
+cbind(tmlsColloid2RS20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol2RS20 <- glm(formula = map2_20pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol2RS20)
+exp(coef(csvol2RS20))
+exp(confint(csvol2RS20))
+anova(csvol2RS20)
+cbind(csvol2RS20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine2RS20 <- glm(formula = map2_20pct ~ urine, data = RSdata, family = "binomial")
+summary(urine2RS20)
+exp(coef(urine2RS20))
+exp(confint(urine2RS20))
+anova(urine2RS20)
+cbind(urine2RS20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur2RS20 <- glm(formula = map2_20pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur2RS20)
+exp(coef(cpbDur2RS20))
+exp(confint(cpbDur2RS20))
+anova(cpbDur2RS20)
+cbind(cpbDur2RS20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime2RS20 <- glm(formula = map2_20pct ~ aortic_clamp_time, data = RSdata, family = "binomial")
+summary(acTime2RS20)
+exp(coef(acTime2RS20))
+exp(confint(acTime2RS20))
+anova(acTime2RS20)
+cbind(acTime2RS20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre2RS20 <- glm(formula = map2_20pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre2RS20)
+exp(coef(efPre2RS20))
+exp(confint(efPre2RS20))
+anova(efPre2RS20)
+cbind(efPre2RS20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost2RS20 <- glm(formula = map2_20pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost2RS20)
+exp(coef(efPost2RS20))
+exp(confint(efPost2RS20))
+anova(efPost2RS20)
+cbind(efPost2RS20,deparse.level = 2)
+```
+
+
+### Post 10 Minutes
+
+#### Age
+
+```{r}
+age10RS20 <- glm(formula = map10_20pct ~ age, data = RSdata, family = "binomial")
+summary(age10RS20)
+exp(coef(age10RS20))
+exp(confint(age10RS20))
+anova(age10RS20)
+cbind(age10RS20,deparse.level = 2)
+```
+
+#### ASA PS
+
+```{r}
+asaps10RS20 <- glm(formula = map10_20pct ~ asaps, data = RSdata, family = "binomial")
+summary(asaps10RS20)
+exp(coef(asaps10RS20))
+exp(confint(asaps10RS20))
+anova(asaps10RS20)
+cbind(asaps10RS20,deparse.level = 2)
+```
+
+#### Male Vs. Female
+
+```{r}
+gender10RS20 <- glm(formula = map10_20pct ~ gender, data = RSdata, family = "binomial")
+summary(gender10RS20)
+exp(coef(gender10RS20))
+exp(confint(gender10RS20))
+anova(gender10RS20)
+cbind(gender10RS20,deparse.level = 2)
+```
+
+#### Weight
+
+```{r}
+wght10RS20 <- glm(formula = map10_20pct ~ weight, data = RSdata, family = "binomial")
+summary(wght10RS20)
+exp(coef(wght10RS20))
+exp(confint(wght10RS20))
+anova(wght10RS20)
+cbind(wght10RS20,deparse.level = 2)
+```
+
+#### Height
+
+```{r}
+hght10RS20 <- glm(formula = map10_20pct ~ height, data = RSdata, family = "binomial")
+summary(hght10RS20)
+exp(coef(hght10RS20))
+exp(confint(hght10RS20))
+anova(hght10RS20)
+cbind(hght10RS20,deparse.level = 2)
+```
+
+#### BMI (Continuous)
+
+```{r}
+bmi10RS20 <- glm(formula = map10_20pct ~ bmi, data = RSdata, family = "binomial")
+summary(bmi10RS20)
+exp(coef(bmi10RS20))
+exp(confint(bmi10RS20))
+anova(bmi10RS20)
+cbind(bmi10RS20,deparse.level = 2)
+```
+
+#### BMI ≥ 35 (binary: Yes=1, No=2)
+
+```{r}
+bmi35_10RS20 <- glm(formula = map10_20pct ~ bmiGE35, data = RSdata, family = "binomial")
+summary(bmi35_10RS20)
+exp(coef(bmi35_10RS20))
+exp(confint(bmi35_10RS20))
+anova(bmi35_10RS20)
+cbind(bmi35_10RS20,deparse.level = 2)
+```
+
+#### BMI ≥ 40 (binary: Yes=1, No=2)
+
+```{r}
+bmi40_10RS20 <- glm(formula = map10_20pct ~ bmiGE40, data = RSdata, family = "binomial")
+summary(bmi40_10RS20)
+exp(coef(bmi40_10RS20))
+exp(confint(bmi40_10RS20))
+anova(bmi40_10RS20)
+cbind(bmi40_10RS20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### AF
+
+```{r}
+af10RS20 <- glm(formula = map10_20pct ~ af, data = RSdata, family = "binomial")
+summary(af10RS20)
+exp(coef(af10RS20))
+exp(confint(af10RS20))
+anova(af10RS20)
+cbind(af10RS20,deparse.level = 2)
+```
+
+#### DM
+
+```{r}
+dm10RS20 <- glm(formula = map10_20pct ~ dm, data = RSdata, family = "binomial")
+summary(dm10RS20)
+exp(coef(dm10RS20))
+exp(confint(dm10RS20))
+anova(dm10RS20)
+cbind(dm10RS20,deparse.level = 2)
+```
+
+#### CKD
+
+```{r}
+ckd10RS20 <- glm(formula = map10_20pct ~ ckd, data = RSdata, family = "binomial")
+summary(ckd10RS20)
+exp(coef(ckd10RS20))
+exp(confint(ckd10RS20))
+anova(ckd10RS20)
+cbind(ckd10RS20,deparse.level = 2)
+```
+
+#### HTN
+
+```{r}
+htn10RS20 <- glm(formula = map10_20pct ~ htn, data = RSdata, family = "binomial")
+summary(htn10RS20)
+exp(coef(htn10RS20))
+exp(confint(htn10RS20))
+anova(htn10RS20)
+cbind(htn10RS20,deparse.level = 2)
+```
+
+#### COPD
+
+```{r}
+copd10RS20 <- glm(formula = map10_20pct ~ copd, data = RSdata, family = "binomial")
+summary(copd10RS20)
+exp(coef(copd10RS20))
+exp(confint(copd10RS20))
+anova(copd10RS20)
+cbind(copd10RS20,deparse.level = 2)
+```
+
+#### Hyperlipidemia
+
+```{r}
+hyper10RS20 <- glm(formula = map10_20pct ~ hyperlipid, data = RSdata, family = "binomial")
+summary(hyper10RS20)
+exp(coef(hyper10RS20))
+exp(confint(hyper10RS20))
+anova(hyper10RS20)
+cbind(hyper10RS20,deparse.level = 2)
+```
+
+#### OSA
+
+```{r}
+osa10RS20 <- glm(formula = map10_20pct ~ osa, data = RSdata, family = "binomial")
+summary(osa10RS20)
+exp(coef(osa10RS20))
+exp(confint(osa10RS20))
+anova(osa10RS20)
+cbind(osa10RS20,deparse.level = 2)
+```
+
+#### PAD
+
+```{r}
+pad10RS20 <- glm(formula = map10_20pct ~ pad, data = RSdata, family = "binomial")
+summary(pad10RS20)
+exp(coef(pad10RS20))
+exp(confint(pad10RS20))
+anova(pad10RS20)
+cbind(pad10RS20,deparse.level = 2)
+```
+
+#### Total (# comorbidities) 
+
+```{r}
+tnComorbid10RS20 <- glm(formula = map10_20pct ~ totnum_comorbid, data = RSdata, family = "binomial")
+summary(tnComorbid10RS20)
+exp(coef(tnComorbid10RS20))
+exp(confint(tnComorbid10RS20))
+anova(tnComorbid10RS20)
+cbind(tnComorbid10RS20,deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Surgical Code (CABG=1, Any Valves =2, CABG+valve=3, Other=4) 
+
+##### CABG = 1
+
+```{r}
+sc1_10RS20 <- lm(formula = map10_20pct ~ scCABG, data = RSdata)
+summary(sc1_10RS20)
+coef(sc1_10RS20)
+confint(sc1_10RS20)
+anova(sc1_10RS20)
+cbind(sc1_10RS20, deparse.level = 2)
+```
+
+##### Any Valve = 2
+
+```{r}
+sc2_10RS20 <- lm(formula = map10_20pct ~ scAnyValve, data = RSdata)
+summary(sc2_10RS20)
+coef(sc2_10RS20)
+confint(sc2_10RS20)
+anova(sc2_10RS20)
+cbind(sc2_10RS20, deparse.level = 2)
+```
+
+##### CABG + Valve = 3
+
+```{r}
+sc3_10RS20 <- lm(formula = map10_20pct ~ scCABGValve, data = RSdata)
+summary(sc3_10RS20)
+coef(sc3_10RS20)
+confint(sc3_10RS20)
+anova(sc3_10RS20)
+cbind(sc3_10RS20, deparse.level = 2)
+```
+
+##### Other = 4
+
+```{r}
+sc4_10RS20 <- lm(formula = map10_20pct ~ scOther, data = RSdata)
+summary(sc4_10RS20)
+coef(sc4_10RS20)
+confint(sc4_10RS20)
+anova(sc4_10RS20)
+cbind(sc4_10RS20, deparse.level = 2)
+```
+
+#### -------------------------------------------
+
+#### Crystalloid Use
+
+```{r}
+CrystUse10RS20 <- glm(formula = map10_20pct ~ crystalloid, data = RSdata, family = "binomial")
+summary(CrystUse10RS20)
+exp(coef(CrystUse10RS20))
+exp(confint(CrystUse10RS20))
+anova(CrystUse10RS20)
+cbind(CrystUse10RS20,deparse.level = 2)
+```
+
+#### PRBC
+
+```{r}
+prbc10RS20 <- glm(formula = map10_20pct ~ prbc, data = RSdata, family = "binomial")
+summary(prbc10RS20)
+exp(coef(prbc10RS20))
+exp(confint(prbc10RS20))
+anova(prbc10RS20)
+cbind(prbc10RS20,deparse.level = 2)
+```
+
+#### Autologous
+
+```{r}
+autolgs10RS20 <- glm(formula = map10_20pct ~ autologous, data = RSdata, family = "binomial")
+summary(autolgs10RS20)
+exp(coef(autolgs10RS20))
+exp(confint(autolgs10RS20))
+anova(autolgs10RS20)
+cbind(autolgs10RS20,deparse.level = 2)
+```
+
+#### Total # Colloid Products 
+
+```{r}
+tnColloid10RS20 <- glm(formula = map10_20pct ~ totnum_colloid, data = RSdata, family = "binomial")
+summary(tnColloid10RS20)
+exp(coef(tnColloid10RS20))
+exp(confint(tnColloid10RS20))
+anova(tnColloid10RS20)
+cbind(tnColloid10RS20,deparse.level = 2)
+```
+
+#### Total Colloiod prducts (mls) 
+
+```{r}
+tmlsColloid10RS20 <- glm(formula = map10_20pct ~ totml_colloid, data = RSdata, family = "binomial")
+summary(tmlsColloid10RS20)
+exp(coef(tmlsColloid10RS20))
+exp(confint(tmlsColloid10RS20))
+anova(tmlsColloid10RS20)
+cbind(tmlsColloid10RS20,deparse.level = 2)
+```
+
+#### Cell Saver volume retained
+
+```{r}
+csvol10RS20 <- glm(formula = map10_20pct ~ cellsaver_vol, data = RSdata, family = "binomial")
+summary(csvol10RS20)
+exp(coef(csvol10RS20))
+exp(confint(csvol10RS20))
+anova(csvol10RS20)
+cbind(csvol10RS20,deparse.level = 2)
+```
+
+#### Urine Output
+
+```{r}
+urine10RS20 <- glm(formula = map10_20pct ~ urine, data = RSdata, family = "binomial")
+summary(urine10RS20)
+exp(coef(urine10RS20))
+exp(confint(urine10RS20))
+anova(urine10RS20)
+cbind(urine10RS20,deparse.level = 2)
+```
+
+
+#### -------------------------------------------
+
+#### CPB duration (min)
+
+```{r}
+cpbDur10RS20 <- glm(formula = map10_20pct ~ cpb_duration, data = RSdata, family = "binomial")
+summary(cpbDur10RS20)
+exp(coef(cpbDur10RS20))
+exp(confint(cpbDur10RS20))
+anova(cpbDur10RS20)
+cbind(cpbDur10RS20,deparse.level = 2)
+```
+
+#### Aortic Clamp time (min)
+
+```{r}
+acTime10RS20 <- glm(formula = map10_20pct ~ aortic_clamp_time, data = RSdata, family = "binomial")
+summary(acTime10RS20)
+exp(coef(acTime10RS20))
+exp(confint(acTime10RS20))
+anova(acTime10RS20)
+cbind(acTime10RS20,deparse.level = 2)
+```
+
+#### Ejection Fraction PRE (%)
+
+```{r}
+efPre10RS20 <- glm(formula = map10_20pct ~ EF_pre, data = RSdata, family = "binomial")
+summary(efPre10RS20)
+exp(coef(efPre10RS20))
+exp(confint(efPre10RS20))
+anova(efPre10RS20)
+cbind(efPre10RS20,deparse.level = 2)
+```
+
+#### Ejection Fraction POST (%)
+
+```{r}
+efPost10RS20 <- glm(formula = map10_20pct ~ EF_post, data = RSdata, family = "binomial")
+summary(efPost10RS20)
+exp(coef(efPost10RS20))
+exp(confint(efPost10RS20))
+anova(efPost10RS20)
+cbind(efPost10RS20,deparse.level = 2)
+```
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+

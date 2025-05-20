@@ -1,0 +1,7 @@
+"0","autologousRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(autologous),"
+"0","            Median = median(autologous),"
+"0","            Stan.Dev. = sd(autologous)"
+"0","            )"
+"0","autologousRL"

@@ -1,0 +1,7 @@
+"0","intra_phenylRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(intra_phenyl),"
+"0","            Median = median(intra_phenyl),"
+"0","            Stan.Dev. = sd(intra_phenyl)"
+"0","            )"
+"0","intra_phenylRL"

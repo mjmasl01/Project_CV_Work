@@ -1,0 +1,4 @@
+"0","# BL"
+"0","# n = 68"
+"0","BLdata <- data %>%"
+"0","  filter(Group_char == ""BL"")"

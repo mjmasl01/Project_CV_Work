@@ -1,0 +1,7 @@
+"0","prbcRL <- "
+"0","  RLdata %>%"
+"0","  summarise(Mean = mean(prbc),"
+"0","            Median = median(prbc),"
+"0","            Stan.Dev. = sd(prbc)"
+"0","            )"
+"0","prbcRL"

@@ -1,0 +1,8 @@
+"0","paccDIASTcicuRS <- "
+"0","  RSdata %>% "
+"0","  mutate(diast_pacc_cicu = parse_number(diast_pacc_cicu)) %>%"
+"0","  summarise(Mean = mean(diast_pacc_cicu, na.rm = TRUE),"
+"0","            Median = median(diast_pacc_cicu, na.rm = TRUE),"
+"0","            Standard_Deviation = sd(diast_pacc_cicu,na.rm = TRUE)"
+"0","            )"
+"0","paccDIASTcicuRS"

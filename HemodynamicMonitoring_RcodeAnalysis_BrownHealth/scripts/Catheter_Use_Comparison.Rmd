@@ -1,0 +1,206 @@
+---
+title: "Catheter_Use_Comparisons"
+author: "Matthew Maslow"
+date: "2023-09-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(BSDA)
+```
+
+# Group Statistics
+
+*All three groups are in same sample*
+
+## Hypothesis
+
+$ H_o: P_G = 0$
+$ H_a: P_G \not= 0$
+
+## Population Statistics
+```{r}
+pG = 0.07537688 # 15/199
+pNull = 0
+sdG = 0.2647
+nG = 199
+```
+```{r}
+(zG = (pG - pNull) / (sdG/sqrt(nG)))
+```
+
+## P-Value
+```{r}
+2 * pnorm(abs(zG), lower.tail = FALSE)
+```
+*We reject H_o, accept H_a*
+
+
+
+# Individual Statistics
+
+## Brachial Long (BL)
+
+### Hypothesis:
+
+$ H_o: P_{BL}-P_G = 0 $
+$ H_a: P_{BL}-P_G \not= 0 $
+
+### BL Stats
+
+```{r}
+pBL = 0.04411765 # 3/68
+sdBL = 0.1702
+nBL = 68
+```
+
+```{r}
+(zBL = (pBL - pG) / ( (pBL-pG) / sqrt((pG*(1-pG))/nBL) ))
+```
+
+### P-Value
+
+```{r}
+2 * pnorm(abs(zBL), lower.tail = FALSE)
+```
+
+*In comparison of the Brachial Long group to the whole group, we reject the alternative, and accept the null. Therefore, the BL group is not significantly different from the whole group.*
+
+
+## Radial Long (RL)
+
+### Hypothesis:
+
+$ H_o: P_{RL}-P_G = 0 $
+$ H_a: P_{RL}-P_G \not= 0 $
+
+### RL Stats
+
+```{r}
+pRL = 0.03174603 # 2/63
+sdRL = 0.2458
+nRL = 63
+```
+
+```{r}
+(zRL = (pRL - pG) / ( (pRL-pG) / sqrt((pG*(1-pG))/nRL) ))
+```
+
+### P-Value
+
+```{r}
+2 * pnorm(abs(zRL), lower.tail = FALSE)
+```
+
+*In comparison of the Radial Long group to the whole group, we reject the alternative, and accept the null. Therefore, the BL group is not significantly different from the whole group.*
+
+
+## Radial Short (RS)
+
+### Hypothesis:
+
+$ H_o: P_{RS}-P_G = 0 $
+$ H_a: P_{RS}-P_G \not= 0 $
+
+### RS Stats
+
+```{r}
+pRS = 0.1470588 # 10/68
+sdRS = 0.3414
+nRS = 68
+```
+
+```{r}
+(zRS = (pRS - pG) / ( (pRS-pG) / sqrt((pG*(1-pG))/nRS) ))
+```
+
+### P-Value
+
+```{r}
+2 * pnorm(abs(zRS), lower.tail = FALSE)
+```
+
+*In comparison of the Radial Short group to the whole group, we reject the alternative, and accept the null. Therefore, the BL group is not significantly different from the whole group.*
+
+
+
+# Group Comparisons
+
+## BL Vs. RL
+
+### Hypothesis:
+
+$ H_o: P_{BL} - P_{RL} = 0 $
+$ H_a: P_{BL} - P_{RL} \not= 0 $
+
+### Stats
+
+```{r}
+(zBLRL = (pBL-pRL) / sqrt( (sdBL^2/nBL) + (sdRL^2/nRL) ))
+```
+
+### P-Value
+
+```{r}
+2 * pnorm(abs(zBLRL), lower.tail = FALSE)
+```
+
+*There is NO difference between Brachial and Radial Long*
+
+
+
+## BL Vs. RS
+
+### Hypothesis:
+
+$ H_o: P_{BL} - P_{RS} = 0 $
+$ H_a: P_{BL} - P_{RS} \not= 0 $
+
+### Stats
+
+```{r}
+(zBLRS = (pBL-pRS) / sqrt( (sdBL^2/nBL) + (sdRS^2/nRS) ))
+```
+
+### P-Value
+
+```{r}
+2 * pnorm(abs(zBLRS), lower.tail = FALSE)
+```
+
+*There is a difference between Brachial long and Radial short*
+
+
+
+## RL Vs. RS
+
+### Hypothesis:
+
+$ H_o: P_{RL} - P_{RS} = 0 $
+$ H_a: P_{RL} - P_{RS} \not= 0 $
+
+### Stats
+
+```{r}
+(zRLRS = (pRL-pRS) / sqrt( (sdRL^2/nRL) + (sdRS^2/nRS) ))
+```
+
+### P-value
+
+```{r}
+2 * pnorm(abs(zRLRS), lower.tail = FALSE)
+```
+
+*There is a difference between Radial short and long*
+
+
+
+
+
+
+

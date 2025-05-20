@@ -1,0 +1,15 @@
+"0","asa_psBL <- "
+"0","  BLdata %>% "
+"0","  summarise(Mean = mean(asaps),"
+"0","            Median = median(asaps),"
+"0","            Stan.Dev. = sd(asaps)"
+"0","            )"
+"0","asa_psBL %>% pander::pander()"
+"1","
+----------------------------
+ Mean    Median   Stan.Dev. 
+------- -------- -----------
+ 3.985     4       0.1213   
+----------------------------
+
+"

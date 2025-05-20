@@ -1,0 +1,15 @@
+"0","ageRS <- "
+"0","  RSdata %>% "
+"0","  summarise(Mean = mean(age),"
+"0","            Median = median(age),"
+"0","            Stan.Dev. = sd(age)"
+"0","            )"
+"0","ageRS %>% pander::pander()"
+"1","
+----------------------------
+ Mean    Median   Stan.Dev. 
+------- -------- -----------
+ 66.12    68.5      11.82   
+----------------------------
+
+"

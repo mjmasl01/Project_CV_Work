@@ -1,0 +1,7 @@
+"0","weightRS<-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(weight),"
+"0","            Median = median(weight),"
+"0","            Stan.Dev. = sd(weight)"
+"0","            )"
+"0","weightRS"

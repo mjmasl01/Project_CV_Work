@@ -1,0 +1,7 @@
+"0","heightRS<-"
+"0","  RSdata %>%"
+"0","  summarise(Mean = mean(height),"
+"0","            Median = median(height),"
+"0","            Stan.Dev. = sd(height)"
+"0","            )"
+"0","heightRS"
