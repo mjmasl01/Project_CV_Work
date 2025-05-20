@@ -1,0 +1,287 @@
+{
+    "BaselineClass": {
+        "No": 0
+    },
+    "Disability": {
+        "With Disability": 0,
+        "Without Disability": 1
+    },
+    "LastCuCCycleStatus": {
+        "0": 0,
+        "No": 1
+    },
+    "EoR1": {
+        "No": 0,
+        "Yes": 1
+    },
+    "EoR2": {
+        "No": 0,
+        "Yes": 1
+    },
+    "EoR3/Endline": {
+        "No": 0,
+        "Yes": 1
+    },
+    "Project": {
+        "Baana": 0,
+        "Hempel": 1,
+        "PPL": 2
+    },
+    "Hearing": {
+        "0": 0,
+        "No difficulty": 1,
+        "Some difficulty": 2
+    },
+    "Baseline to Endline": {
+        "Decrease": 0,
+        "Increase": 1,
+        "Stayed The Same": 2
+    },
+    "Gender": {
+        "Female": 0,
+        "Male": 1,
+        "Unknown": 2
+    },
+    "SafeAtHome": {
+        "0": 0,
+        "Neutral": 1,
+        "Safe": 2,
+        "Very Safe": 3
+    },
+    "SafeAtSchool": {
+        "0": 0,
+        "Neutral": 1,
+        "Safe": 2,
+        "Very Safe": 3
+    },
+    "IsBikeAvailable?": {
+        "0": 0,
+        "Don't_Know": 1,
+        "No": 2,
+        "Yes": 3
+    },
+    "IsTelephoneAvailable?": {
+        "0": 0,
+        "Don't_Know": 1,
+        "No": 2,
+        "Yes": 3
+    },
+    "IsRadioTVAvailable?": {
+        "0": 0,
+        "Don't_Know": 1,
+        "No": 2,
+        "Yes": 3
+    },
+    "IsElectricityAvailable?": {
+        "0": 0,
+        "Don't_Know": 1,
+        "No": 2,
+        "Yes": 3
+    },
+    "Baseline to Round 1": {
+        "0": 0,
+        "Decrease": 1,
+        "Increase": 2,
+        "Stayed The Same": 3
+    },
+    "Round 1 to Round 2": {
+        "0": 0,
+        "Decrease": 1,
+        "Increase": 2,
+        "Stayed The Same": 3
+    },
+    "Selfcare": {
+        "0": 0,
+        "A lot of difficulty": 1,
+        "Cannot do at all": 2,
+        "No difficulty": 3,
+        "Some difficulty": 4
+    },
+    "FloorMaterial": {
+        "0": 0,
+        "Don't_know": 1,
+        "Mud": 2,
+        "Tile/Cement": 3,
+        "Tile_cement": 4
+    },
+    "MemoryConcentration": {
+        "0": 0,
+        "A lot of difficulty": 1,
+        "No difficulty": 2,
+        "Refused": 3,
+        "Some difficulty": 4
+    },
+    "ResultEndline": {
+        "Beginner": 0,
+        "Letter": 1,
+        "Sentence": 2,
+        "Story": 3,
+        "Story with comprehension": 4,
+        "Word": 5
+    },
+    "Walking/Climbing": {
+        "0": 0,
+        "A lot of difficulty": 1,
+        "Don't_know": 2,
+        "No difficulty": 3,
+        "Refused": 4,
+        "Some difficulty": 5
+    },
+    "ResultBaseline": {
+        "Beginner": 0,
+        "Letter": 1,
+        "Sentence": 2,
+        "Story": 3,
+        "Story with comprehension": 4,
+        "Word": 5
+    },
+    "Vision": {
+        "0": 0,
+        "A lot of difficulty": 1,
+        "Don't_know": 2,
+        "No difficulty": 3,
+        "Refused": 4,
+        "Some difficulty": 5
+    },
+    "Baseline_Endline": {
+        "Decrease": 0,
+        "Increase 1 Level": 1,
+        "Increase 2 Levels": 2,
+        "Increase 3 Levels": 3,
+        "Increase 4 Levels": 4,
+        "Increase 5 Levels": 5,
+        "No Change": 6
+    },
+    "CommunicationIssue": {
+        "0": 0,
+        "A lot of difficulty": 1,
+        "Cannot do at all": 2,
+        "Don't_know": 3,
+        "No difficulty": 4,
+        "Refused": 5,
+        "Some difficulty": 6
+    },
+    "Grade": {
+        "Grade 1": 0,
+        "Grade 2": 1,
+        "Grade 3": 2,
+        "Grade 4": 3,
+        "Grade 5": 4,
+        "Grade 6": 5,
+        "Unknown": 6
+    },
+    "AssessmentResultAchieved": {
+        "0": 0,
+        "Beginner": 1,
+        "Letter": 2,
+        "Sentence": 3,
+        "Story": 4,
+        "Story with comprehension": 5,
+        "Word": 6
+    },
+    "ResultRound2": {
+        "0": 0,
+        "Beginner": 1,
+        "Letter": 2,
+        "Sentence": 3,
+        "Story": 4,
+        "Story with comprehension": 5,
+        "Word": 6
+    },
+    "ResultRound1": {
+        "0": 0,
+        "Beginner": 1,
+        "Letter": 2,
+        "Sentence": 3,
+        "Story": 4,
+        "Story with comprehension": 5,
+        "Word": 6
+    },
+    "Safety Status Category": {
+        "0": 0,
+        "Neutral": 1,
+        "Safe": 2,
+        "Un safe": 3,
+        "Very Safe": 4,
+        "Very Un safe": 5,
+        "very_safe": 6,
+        "very_un_safe": 7
+    },
+    "WillingnessInCUC?": {
+        "0": 0,
+        "Likely": 1,
+        "Neutral": 2,
+        "Not Likely": 3,
+        "Not Likely at All": 4,
+        "NotLikely": 5,
+        "NotLikelyatAll": 6,
+        "Very Likely": 7,
+        "VeryLikely": 8
+    },
+    "PrimaryCareGiver": {
+        "0": 0,
+        "Aunt": 1,
+        "Father": 2,
+        "Grandfather": 3,
+        "Grandmother": 4,
+        "Mother": 5,
+        "Non-relative caregiver": 6,
+        "Other": 7,
+        "Other relatives": 8,
+        "Sibling": 9,
+        "Uncle": 10
+    },
+    "WallMaterial": {
+        "0": 0,
+        "Brick": 1,
+        "Burnt Bricks": 2,
+        "Don't_know": 3,
+        "Iron sheets": 4,
+        "Mud": 5,
+        "Others": 6,
+        "Plaster": 7,
+        "Tapline": 8,
+        "Timbers": 9,
+        "Wood": 10
+    },
+    "RoofMaterial": {
+        "0": 0,
+        "Bricks": 1,
+        "Cement": 2,
+        "Clay tiles": 3,
+        "Don't_know": 4,
+        "Grass": 5,
+        "Grasses": 6,
+        "Grasses.": 7,
+        "Iron  sheets": 8,
+        "Iron Iron sheets.": 9,
+        "Iron Sheets": 10,
+        "Iron and timber": 11,
+        "Iron sheet": 12,
+        "Iron sheet and timber": 13,
+        "Iron sheet.": 14,
+        "Iron sheeta": 15,
+        "Iron sheeto": 16,
+        "Iron sheets and timber": 17,
+        "Iron sheets.": 18,
+        "Ironsheets": 19,
+        "Kisembo sedrack": 20,
+        "Kobusinge lukia": 21,
+        "Mbambu Doreen": 22,
+        "Mud": 23,
+        "Muzima Juliet": 24,
+        "Others": 25,
+        "Palm leaves": 26,
+        "Plaster": 27,
+        "Plastic sheeting": 28,
+        "Sheets": 29,
+        "Speargrass": 30,
+        "Tapine": 31,
+        "Tapline": 32,
+        "Tent": 33,
+        "Tile": 34,
+        "Timber and iron sheet": 35,
+        "Tin": 36,
+        "straw": 37
+    }
+}

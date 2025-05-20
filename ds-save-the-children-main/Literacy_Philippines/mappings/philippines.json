@@ -1,0 +1,149 @@
+{
+    "ResultBaseline": {
+        "Beginner": 0,
+        "Letter": 1,
+        "Sentence": 2,
+        "Story": 3,
+        "Story with comprehension": 4,
+        "Word": 5
+    },
+    "ResultRound1": {
+        "0": 0,
+        "Beginner": 1,
+        "Letter": 2,
+        "Sentence": 3,
+        "Story": 4,
+        "Story with comprehension": 5,
+        "Word": 6
+    },
+    "ResultRound2": {
+        "0": 0,
+        "Beginner": 1,
+        "Letter": 2,
+        "Sentence": 3,
+        "Story": 4,
+        "Story with comprehension": 5,
+        "Word": 6
+    },
+    "ResultEndline": {
+        "Beginner": 0,
+        "Letter": 1,
+        "Sentence": 2,
+        "Story": 3,
+        "Story with comprehension": 4,
+        "Word": 5
+    },
+    "Baseline to Round 1": {
+        "0": 0,
+        "Decrease": 1,
+        "Increase": 2,
+        "Stayed The Same": 3
+    },
+    "Round 1 to Round 2": {
+        "0": 0,
+        "Decrease": 1,
+        "Increase": 2,
+        "Stayed The Same": 3
+    },
+    "Round 2 to Endline": {
+        "0": 0,
+        "Decrease": 1,
+        "Increase": 2,
+        "Stayed The Same": 3
+    },
+    "Baseline to Endline - Group": {
+        "Decrease": 0,
+        "Increase": 1,
+        "Stayed The Same": 2
+    },
+    "Gender": {
+        "Female": 0,
+        "Male": 1
+    },
+    "Baseline to Endline - Type": {
+        "Decrease": 0,
+        "Increase 1 Level": 1,
+        "Increase 2 Levels": 2,
+        "Increase 3 Levels": 3,
+        "Increase 4 Levels": 4,
+        "Increase 5 Levels": 5,
+        "No Change": 6
+    },
+    "BatchCycle": {
+        "Batch 1-Cycle 1": 0,
+        "Batch 2-Cycle 1": 1
+    },
+    "Batch": {
+        "Batch 1": 0,
+        "Batch 2": 1
+    },
+    "Grade": {
+        "Grade 4": 0,
+        "Grade 5": 1,
+        "Grade 6": 2,
+        "Unknown": 3
+    },
+    "EoR1": {
+        "No": 0,
+        "Yes": 1
+    },
+    "EoR2": {
+        "No": 0,
+        "Yes": 1
+    },
+    "EoR3/Endline": {
+        "Yes": 0
+    },
+    "Safety Status Category": {
+        "0": 0,
+        "Neutral": 1,
+        "Safe": 2,
+        "Un safe": 3,
+        "Very Safe": 4,
+        "Very Un safe": 5
+    },
+    "WillingnessInCUC?": {
+        "0": 0,
+        "Likely": 1,
+        "Neutral": 2,
+        "Not Likely": 3,
+        "Not Likely at All": 4,
+        "Very Likely": 5
+    },
+    "SpendTimeWithFamily": {
+        "0": 0,
+        "1. Yes": 1,
+        "2. No": 2,
+        "3. Don\u2019t know": 3,
+        "No": 4,
+        "Refuse to answer": 5,
+        "Yes": 6
+    },
+    "TellFamilyWhenStress": {
+        "0": 0,
+        "1. Yes": 1,
+        "2. No": 2,
+        "3. Don\u2019t know": 3,
+        "No": 4,
+        "Refuse to answer": 5,
+        "Yes": 6
+    },
+    "HowResolveProblem": {
+        "0": 0,
+        "1. Yes": 1,
+        "2. No": 2,
+        "3. Don\u2019t know": 3,
+        "No": 4,
+        "Refuse to answer": 5,
+        "Yes": 6
+    },
+    "WhoResolveProblem": {
+        "0": 0,
+        "1. Yes": 1,
+        "2. No": 2,
+        "3. Don\u2019t know": 3,
+        "No": 4,
+        "Refuse to answer": 5,
+        "Yes": 6
+    }
+}
