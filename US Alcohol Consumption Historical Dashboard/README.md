@@ -1,4 +1,4 @@
-# 🍺 US Alcohol Consumption Explorer
+# US Alcohol Consumption Explorer
 
 **Author**: Matt Maslow  
 **Project Type**: Interactive Shiny App  
@@ -6,7 +6,7 @@
 
 ---
 
-## 🧾 Overview
+## Overview
 
 This was a fun college project built with **R** and **Shiny** that lets users explore alcohol consumption patterns across the United States. Users can interactively visualize per capita consumption of **Beer**, **Wine**, **Spirits**, or **All Types** of alcoholic beverages across time and states.
 
@@ -17,7 +17,7 @@ Depending on your selection, the app dynamically switches between:
 
 ---
 
-## 📊 Features
+## Features
 
 - Choose alcohol type: `Beer`, `Wine`, `Spirits`, or `All Types`
 - Compare across all 50 states or just a few
@@ -26,7 +26,7 @@ Depending on your selection, the app dynamically switches between:
 
 ---
 
-## 📁 Files in This Repo
+## Files in This Repo
 
 | File | Description |
 |------|-------------|
@@ -37,13 +37,7 @@ Depending on your selection, the app dynamically switches between:
 
 ---
 
-## 📷 Preview
-
-![beer](beer.jpg)
-
----
-
-## 🛠 Tools Used
+## Tools Used
 
 - **R**  
 - **Shiny**  
@@ -53,9 +47,9 @@ Depending on your selection, the app dynamically switches between:
 
 ---
 
-## 🔗 Try It Live
+## Try It Live
 
-👉 **Launch the app here**:  
+**Launch the app here**:  
 https://mjmasl01.shinyapps.io/us_alcohol_consumption/
 
 
