@@ -13,13 +13,13 @@ Ishanay Sharma
 
 ## Project Overview
 
-This project explores the volatility of the cryptocurrency market—specifically Bitcoin—by building a real-time analytics pipeline on Microsoft Azure. The system integrates live market data and social sentiment to forecast price fluctuations and inform trading decisions.
+This project explores the volatility of the cryptocurrency market—specifically Bitcoin—by building a analytics pipeline on Microsoft Azure. The system integrates historical market data and social sentiment to forecast price fluctuations and inform trading decisions.
 
 ---
 
 ## Problem Statement
 
-- Bitcoin price movements are highly influenced by public sentiment and real-time macroeconomic news.
+- Bitcoin price movements are highly influenced by public sentiment and historical macroeconomic news.
 - Traditional financial analysis techniques lack the ability to detect or respond to sudden sentiment-driven shifts.
 - There is a gap in existing models regarding the integration of live sentiment data into market prediction systems.
 
@@ -30,7 +30,7 @@ This project explores the volatility of the cryptocurrency market—specifically
 To develop an early warning system powered by:
 
 - Twitter and financial news sentiment analysis  
-- Live Bitcoin price and trading volume metrics  
+- Historical Bitcoin price and trading volume metrics  
 - Machine learning predictions for short-term returns  
 - Interactive dashboards for real-time insights
 
