@@ -64,10 +64,6 @@ HemodynamicMonitoring_RcodeAnalysis_BrownHealth/
 ├── LifeSpan Data Work.Rproj # RStudio project file
 └── README.md # You're reading it
 
-yaml
-Copy
-Edit
-
 ---
 
 ## Methods Used
