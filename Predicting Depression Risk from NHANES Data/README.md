@@ -1,7 +1,7 @@
 # Predicting Depression Risk from NHANES Data  
 **Author**: Matthew Maslow  
 **Course**: CDS-DS-596 – Special Topics in Medical Science for Data Science  
-**Date**: May 2025
+**Date**: April-May 2025
 
 ---
 
@@ -22,9 +22,9 @@ The project integrates behavioral, socioeconomic, and clinical features (e.g., s
 
 ---
 
-## Project Structure
+<h2> Project Structure</h2>
 
-Predicting Depression Risk from NHANES Data/
+<pre><code>Predicting Depression Risk from NHANES Data/
 │
 ├── data/                     # Raw XPT files (excluded from GitHub)
 ├── DataCSV/                  # Cleaned merged dataset in CSV format
@@ -41,6 +41,7 @@ Predicting Depression Risk from NHANES Data/
 │
 ├── Final Project Notes.docx     # Draft notes and ideas
 └── Final Project Sp25.pdf       # Older project doc (optional archive)
+</code></pre>
 
 ---
 
