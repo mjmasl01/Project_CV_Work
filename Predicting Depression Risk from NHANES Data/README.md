@@ -22,29 +22,25 @@ The project integrates behavioral, socioeconomic, and clinical features (e.g., s
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 Predicting Depression Risk from NHANES Data/
 │
-├── data/ # Raw XPT files (excluded from GitHub)
-├── DataCSV/ # Cleaned merged dataset in CSV format
+├── data/                     # Raw XPT files (excluded from GitHub)
+├── DataCSV/                  # Cleaned merged dataset in CSV format
 │
-├── README.md # This file
-├── data.zip # ZIP archive of raw data (6337 rows, 28 columns)
+├── README.md                 # This file
+├── data.zip                  # ZIP archive of raw data (6337 rows, 28 columns)
 │
-├── Final Project Report - mjmaslow.pdf # Final research paper writeup
-├── Final Project Report.docx # Editable version of the report
-├── Works Cited.docx # Citation file
+├── Final Project Report - mjmaslow.pdf   # Final research paper writeup
+├── Final Project Report.docx             # Editable version of the report
+├── Works Cited.docx                      # Citation file
 │
-├── finalProjCode_mjmaslow.pdf # Cleaned final model notebook (PDF)
-├── finalProjCode.ipynb # Original modeling notebook
+├── finalProjCode_mjmaslow.pdf   # Cleaned final model notebook (PDF)
+├── finalProjCode.ipynb          # Original modeling notebook
 │
-├── Final Project Notes.docx # Draft notes and ideas
-├── Final Project Sp25.pdf # Older project doc (optional archive)
-
-yaml
-Copy
-Edit
+├── Final Project Notes.docx     # Draft notes and ideas
+└── Final Project Sp25.pdf       # Older project doc (optional archive)
 
 ---
 
