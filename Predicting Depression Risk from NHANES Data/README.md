@@ -40,7 +40,7 @@ The project integrates behavioral, socioeconomic, and clinical features (e.g., s
 ├── finalProjCode.ipynb          # Original modeling notebook
 │
 ├── Final Project Notes.docx     # Draft notes and ideas
-└── Final Project Sp25.pdf       # Final project doc
+└── Final Project Sp25.pdf       # Final project instructions
 </code></pre>
 
 ---
